@@ -40,7 +40,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 /* セクション見出し：番号＋英字＋日本語＋細い罫線 */
 .sh{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;letter-spacing:.12em;color:var(--cyan);white-space:nowrap;margin-bottom:10px}
 .sh .no{color:var(--faint)}
-.sh .jp{font-family:var(--jp);font-weight:700;letter-spacing:.04em;color:var(--sub);font-size:13px}
+.sh .jp{font-family:var(--jp);font-weight:900;letter-spacing:.06em;color:var(--cyan);font-size:15px}
 .sh .rl{flex:1;height:1px;background:linear-gradient(90deg,var(--rule),transparent)}
 .sh .aux{color:var(--sub);font-family:var(--jp);font-size:12px;letter-spacing:.02em}
 
@@ -63,7 +63,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 #nowTemp{font-family:var(--num);font-weight:800;font-size:78px;line-height:1}
 #nowTemp sup{font-size:.45em;vertical-align:.9em;margin-left:2px}
 .ndesc b{display:block;font-size:22px;font-weight:900}
-.ndesc span{display:block;font-family:var(--mono);font-size:15px;color:var(--sub);margin-top:2px;letter-spacing:.06em}
+.ndesc span{display:block;font-size:15px;font-weight:700;color:var(--sub);margin-top:2px}
 .nstats{display:flex;gap:26px;margin-top:12px;padding-top:10px;border-top:1px solid var(--rule);white-space:nowrap}
 .nstats div{font-size:13px;color:var(--sub);font-weight:700}
 .nstats b{font-family:var(--num);font-size:20px;color:var(--text);margin-left:8px;font-weight:600}
@@ -73,7 +73,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
   clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,0 100%);
   box-shadow:inset 0 0 0 1px rgba(255,61,127,.55)}
 .train::after{content:"";position:absolute;right:0;top:0;width:37px;height:1px;background:rgba(255,61,127,.55);transform-origin:right top;transform:rotate(45deg) translate(0,0);right:-1px}
-.train .sh{color:var(--mag)}
+.train .sh,.train .sh .jp{color:var(--mag)}
 .train .sh .rl{background:linear-gradient(90deg,rgba(255,61,127,.35),transparent)}
 .tline{display:flex;align-items:center;gap:10px;white-space:nowrap}
 .smark{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#e5609a;color:#fff;font-family:var(--num);font-size:12px;font-weight:800}
@@ -84,7 +84,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .status.normal{color:var(--ok)} .status.delay{color:var(--yel);background:rgba(249,240,2,.1)} .status.stop{color:#fff;background:var(--stop);border-color:var(--stop)}
 #statusDetail{font-size:13px;color:var(--yel);margin-top:6px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cd{display:flex;align-items:flex-end;gap:18px;margin-top:10px;white-space:nowrap}
-.cd .lab{font-family:var(--mono);font-size:12px;color:var(--sub);letter-spacing:.14em;margin-bottom:6px}
+.cd .lab{font-size:13px;font-weight:700;color:var(--sub);margin-bottom:6px;min-height:18px}
 #nextIn{font-family:var(--num);font-weight:800;font-size:92px;line-height:.9;color:var(--mag);text-shadow:0 0 16px rgba(255,61,127,.45)}
 #nextIn.soon{color:var(--yel);text-shadow:0 0 16px rgba(249,240,2,.5)}
 #nextIn.txt{font-family:var(--jp);font-weight:900;font-size:44px;color:var(--text);text-shadow:none}
@@ -102,7 +102,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 /* ---- 星座占い（枠なし・4列） ---- */
 .fortune{grid-area:fortune;display:flex;flex-direction:column;min-height:0;min-width:0}
 #fCols{flex:1;display:grid;grid-template-columns:repeat(4,1fr);min-height:0}
-.fc4{position:relative;padding:4px 14px 0;display:flex;flex-direction:column;min-width:0}
+.fc4{position:relative;padding:4px 10px 0 12px;display:flex;flex-direction:column;min-width:0}
 .fc4+.fc4{border-left:1px solid var(--rule)}
 .fc4 .gl{font-size:34px;line-height:1;color:var(--cyan);font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp)}
 .fc4 .nm{font-size:17px;font-weight:900;margin-top:6px;white-space:nowrap}
@@ -115,8 +115,8 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .fc4 .mt i{height:6px;background:rgba(255,255,255,.08)}
 .fc4 .mt i.on{background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.6)}
 .fc4.top .mt i.on{background:var(--yel);box-shadow:0 0 6px rgba(249,240,2,.6)}
-.fc4 .k{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.14em;margin-top:14px}
-.fc4 .it{font-size:17px;font-weight:700;line-height:1.3;margin-top:3px;white-space:nowrap;overflow:hidden}
+.fc4 .k{font-size:11px;font-weight:700;color:var(--faint);margin-top:12px}
+.fc4 .it{font-size:17px;font-weight:700;line-height:1.3;margin-top:3px;white-space:nowrap;overflow:hidden;letter-spacing:-.02em}
 .fc4 .co{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;margin-top:3px;white-space:nowrap}
 .fc4 .co i{width:13px;height:13px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:none}
 .fc4 .sub3{margin-top:auto;padding-top:10px;display:grid;gap:5px}
@@ -163,7 +163,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
   </section>
 
   <section class="now">
-    <div class="sh"><span class="no">01</span><span>WEATHER</span><span class="jp">いまの天気</span><span class="rl"></span><span class="aux" id="placeLabel"></span></div>
+    <div class="sh"><span class="jp">いまの天気</span><span class="rl"></span><span class="aux" id="placeLabel"></span></div>
     <div class="nrow">
       <div id="nowIcon">⏳</div>
       <div id="nowTemp">--</div>
@@ -177,28 +177,28 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
   </section>
 
   <section class="train">
-    <div class="sh"><span class="no">02</span><span>TRAIN</span><span class="jp">次の電車</span><span class="rl"></span><span class="aux" id="diaLabel"></span></div>
+    <div class="sh"><span class="jp">次の電車</span><span class="rl"></span><span class="aux" id="diaLabel"></span></div>
     <div class="tline"><span class="smark">S17</span><span id="trainTitle"></span><span class="status" id="status">確認中</span></div>
     <div id="statusDetail"></div>
     <div class="cd">
-      <div><div class="lab" id="cdLab">DEPARTS IN</div><div id="nextIn">--:--</div></div>
+      <div><div class="lab" id="cdLab">発車まで</div><div id="nextIn">--:--</div></div>
       <div id="nextAt"></div>
     </div>
     <div id="tBoard"></div>
   </section>
 
   <section class="fortune">
-    <div class="sh"><span class="no">03</span><span>HOROSCOPE</span><span class="jp">今日の星座占い</span><span class="rl"></span><span class="aux">ボード独自・遊び　<span id="fDate"></span></span></div>
+    <div class="sh"><span class="jp">今日の星座占い</span><span class="rl"></span><span class="aux" id="fDate"></span></div>
     <div id="fCols"><div class="fmsg">読み込み中…</div></div>
   </section>
 
   <section class="fc">
     <div>
-      <div class="sh"><span class="no">04</span><span>FORECAST</span><span class="jp">これから12時間</span><span class="rl"></span><span class="aux">降水確率</span></div>
+      <div class="sh"><span class="jp">これから12時間の天気と降水確率</span><span class="rl"></span></div>
       <div id="hours"></div>
     </div>
     <div class="daysbox">
-      <div class="sh"><span>4 DAYS</span><span class="jp">4日間</span><span class="rl"></span></div>
+      <div class="sh"><span class="jp">4日間</span><span class="rl"></span></div>
       <div id="days"></div>
     </div>
   </section>
@@ -352,7 +352,7 @@ function renderWeather(w) {
   $("nowIcon").textContent = icon;
   $("nowTemp").innerHTML = `${Math.round(c.temperature_2m)}<sup>°C</sup>`;
   $("nowDesc").textContent = desc;
-  $("nowHL").textContent = `HI ${Math.round(D.temperature_2m_max[0])}°  LO ${Math.round(D.temperature_2m_min[0])}°`;
+  $("nowHL").textContent = `最高 ${Math.round(D.temperature_2m_max[0])}°　最低 ${Math.round(D.temperature_2m_min[0])}°`;
   $("feels").textContent = `${Math.round(c.apparent_temperature)}°`;
   $("hum").textContent = `${Math.round(c.relative_humidity_2m)}%`;
   let start = H.time.findIndex((t) => new Date(t).getTime() + 3600e3 > now); if (start < 0) start = 0;
@@ -416,15 +416,15 @@ function renderTrain() {
   const { base } = serviceDay(new Date()), first = list[0], gap = (first.at - Date.now()) / 3600e3, el = $("nextIn");
   if (gap > 2) {
     $("diaLabel").textContent = `始発は${first.holiday ? "土休日" : "平日"}ダイヤ`;
-    $("cdLab").textContent = "SERVICE ENDED";
+    $("cdLab").textContent = "";
     el.className = "txt"; el.textContent = "本日の運行は終了";
     $("nextAt").innerHTML = `始発 <b>${hm(first.at)}</b>`;
-    $("tBoard").innerHTML = `<div class="r"><span class="dst" style="grid-column:1/-1;font-family:var(--mono);letter-spacing:.14em;color:var(--faint);font-size:12px">FIRST TRAINS ／ 始発から</span></div>` +
+    $("tBoard").innerHTML = `<div class="r"><span class="dst" style="grid-column:1/-1;font-family:var(--mono);color:var(--faint);font-size:13px">始発から</span></div>` +
       list.slice(0, 3).map((x) => `<div class="r"><span class="tm">${hm(x.at)}</span><span class="dst">野田阪神 行</span><span class="rm">${remain(x.at)}</span></div>`).join("");
     return;
   }
   $("diaLabel").textContent = `${isHolidayDia(base) ? "土休日" : "平日"}ダイヤ`;
-  $("cdLab").textContent = "DEPARTS IN ／ 発車まで";
+  $("cdLab").textContent = "発車まで";
   const isLast = (x) => { const n = list[list.indexOf(x) + 1]; return !n || n.at - x.at > 2 * 3600e3; };
   el.className = (first.at - Date.now()) < 60e3 ? "soon" : "";
   el.textContent = remain(first.at);
@@ -502,8 +502,8 @@ function renderFortune() {
       <div class="gl">${s.glyph}</div><div class="nm">${s.name}</div>
       <div class="rk"><b>${pad(f.rank)}</b><span>/12</span></div>
       <div class="mt">${Array.from({ length: 12 }, (_, i) => `<i class="${i < on ? "on" : ""}"></i>`).join("")}</div>
-      <div class="k">LUCKY ITEM</div><div class="it">${esc(f.item)}</div>
-      <div class="k">LUCKY COLOR</div><div class="co">${sw ? `<i style="background:${sw}"></i>` : ""}${esc(f.color)}</div>
+      <div class="k">ラッキーアイテム</div><div class="it">${esc(f.item)}</div>
+      <div class="k">ラッキーカラー</div><div class="co">${sw ? `<i style="background:${sw}"></i>` : ""}${esc(f.color)}</div>
       <div class="sub3">${[["恋愛", f.love], ["金運", f.money], ["仕事", f.job]].map(([k, v]) =>
         `<div>${k}<span>${Array.from({ length: 5 }, (_, i) => `<i class="${i < v ? "on" : ""}"></i>`).join("")}</span></div>`).join("")}</div>
     </div>`;
@@ -511,10 +511,15 @@ function renderFortune() {
   shrinkToFit(".fc4 .it", 11);
 }
 
-/* 長い文字は改行せず、枠に収まるまで文字を小さくする */
+/* 長い文字は改行せず、枠に収まる大きさにする。
+   まず文字数から大きさを決め（書体の読み込みに左右されない）、念のため実寸でも確認して縮める */
 function shrinkToFit(sel, min) {
   document.querySelectorAll(sel).forEach((el) => {
-    let fs = parseFloat(getComputedStyle(el).fontSize);
+    const w = el.clientWidth;
+    if (!w) return;
+    const units = [...el.textContent].reduce((n, c) => n + (/[\u0000-\u00ff]/.test(c) ? 0.6 : 1.04), 0);
+    let fs = Math.max(min, Math.min(17, Math.floor((w / units) * 2) / 2));
+    el.style.fontSize = fs + "px";
     while (el.scrollWidth > el.clientWidth + 1 && fs > min) { fs -= 0.5; el.style.fontSize = fs + "px"; }
   });
 }
@@ -534,9 +539,8 @@ function renderAlerts() {
 
 /* ---------- 出典・更新時刻 ---------- */
 function renderFoot() {
-  const parts = [`WEATHER <a href="https://open-meteo.com/">Open-Meteo.com</a> ${weatherAt}`];
+  const parts = [`天気 <a href="https://open-meteo.com/">Open-Meteo.com</a> ${weatherAt}`];
   if (statusAt) parts.push(`運行情報 Osaka Metro公式 ${statusAt}現在（発車時刻は時刻表上の予定）`);
-  parts.push("占い ボード独自の自動生成（遊び）");
   $("foot").innerHTML = parts.join("　／　");
 }
 
@@ -556,6 +560,7 @@ loadWeather(); setInterval(loadWeather, CONFIG.weatherRefreshMin * 60e3);
 keepAwake();
 window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); });
 if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .it", 11); });
+[1500, 5000].forEach((ms) => setTimeout(() => shrinkToFit(".fc4 .it", 11), ms));
 setTimeout(() => location.reload(), CONFIG.fullReloadHours * 3600e3);
 </script>
 </body>
