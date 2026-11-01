@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="喫煙所ボード">
+<title>喫煙所ボード</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Share+Tech+Mono&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<style>
+/* =========================================================
+   喫煙所ボード（iPad常時表示用）— NEON
+   画面は決まったサイズの1枚として作り、端末に合わせて丸ごと拡大縮小する
+   ========================================================= */
+:root{
+  --bg:#07040f; --text:#eef9ff; --sub:#97abc4; --faint:#55658a; --rule:rgba(5,217,232,.28);
+  --cyan:#05d9e8; --mag:#ff3d7f; --yel:#f9f002; --ok:#2ee6f2; --stop:#ff3d7f;
+  --mono:"Share Tech Mono",ui-monospace,monospace; --num:"Orbitron",sans-serif; --jp:"Noto Sans JP","Hiragino Sans",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-webkit-user-select:none;user-select:none;-webkit-text-size-adjust:100%;
+  background:
+    radial-gradient(900px 520px at 100% -8%,rgba(255,61,127,.15),transparent 62%),
+    radial-gradient(900px 520px at -6% 108%,rgba(5,217,232,.13),transparent 62%),
+    linear-gradient(rgba(5,217,232,.04) 1px,transparent 1px) 0 0/100% 32px,
+    linear-gradient(90deg,rgba(5,217,232,.04) 1px,transparent 1px) 0 0/32px 100%,#07040f}
+#fit{position:fixed;inset:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#stage{position:absolute;left:0;top:0;transform-origin:0 0;padding:22px 26px 14px;display:grid}
+#stage.land{width:1180px;height:780px;grid-template-columns:600px 1fr;column-gap:34px;
+  grid-template-rows:188px 1fr 152px 16px;grid-template-areas:"clock now" "train fortune" "fc fc" "foot foot";row-gap:18px}
+#stage.port{width:820px;height:1420px;grid-template-columns:1fr;row-gap:22px;
+  grid-template-rows:180px 170px 330px 330px 150px 1fr;grid-template-areas:"clock" "now" "train" "fortune" "fc" "foot"}
+.num{font-family:var(--num);font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono)}
+
+/* セクション見出し：番号＋英字＋日本語＋細い罫線 */
+.sh{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;letter-spacing:.12em;color:var(--cyan);white-space:nowrap;margin-bottom:10px}
+.sh .no{color:var(--faint)}
+.sh .jp{font-family:var(--jp);font-weight:700;letter-spacing:.04em;color:var(--sub);font-size:13px}
+.sh .rl{flex:1;height:1px;background:linear-gradient(90deg,var(--rule),transparent)}
+.sh .aux{color:var(--sub);font-family:var(--jp);font-size:12px;letter-spacing:.02em}
+
+/* ---- 時計（枠なし） ---- */
+.clock{grid-area:clock;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+#time{font-family:var(--num);font-weight:800;font-size:116px;line-height:.9;letter-spacing:.01em;text-shadow:0 0 18px rgba(5,217,232,.45)}
+#time .sec{font-size:34px;color:var(--mag);margin-left:10px;text-shadow:0 0 10px rgba(255,61,127,.6);vertical-align:.1em}
+.dline{display:flex;align-items:baseline;gap:14px;margin-top:12px;white-space:nowrap}
+#date{font-size:24px;font-weight:900;letter-spacing:.04em}
+#dateEn{font-family:var(--mono);font-size:15px;color:var(--sub);letter-spacing:.2em}
+#alerts{margin-top:8px;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;min-height:24px;color:var(--cyan)}
+#alerts .a{margin-right:18px}
+#alerts .a::before{content:"▲ ";font-size:12px}
+#alerts .w{color:var(--yel)} #alerts .s{color:var(--mag)}
+
+/* ---- 天気（枠なし） ---- */
+.now{grid-area:now;display:flex;flex-direction:column;justify-content:space-between;padding-top:14px;min-width:0}
+.nrow{display:flex;align-items:center;gap:16px}
+#nowIcon{font-size:56px;line-height:1}
+#nowTemp{font-family:var(--num);font-weight:800;font-size:78px;line-height:1}
+#nowTemp sup{font-size:.45em;vertical-align:.9em;margin-left:2px}
+.ndesc b{display:block;font-size:22px;font-weight:900}
+.ndesc span{display:block;font-family:var(--mono);font-size:15px;color:var(--sub);margin-top:2px;letter-spacing:.06em}
+.nstats{display:flex;gap:26px;margin-top:12px;padding-top:10px;border-top:1px solid var(--rule);white-space:nowrap}
+.nstats div{font-size:13px;color:var(--sub);font-weight:700}
+.nstats b{font-family:var(--num);font-size:20px;color:var(--text);margin-left:8px;font-weight:600}
+
+/* ---- 電車（唯一の枠付きパネル＝主役） ---- */
+.train{grid-area:train;position:relative;padding:16px 22px 14px;background:rgba(18,8,30,.82);min-height:0;display:flex;flex-direction:column;
+  clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,0 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,61,127,.55)}
+.train::after{content:"";position:absolute;right:0;top:0;width:37px;height:1px;background:rgba(255,61,127,.55);transform-origin:right top;transform:rotate(45deg) translate(0,0);right:-1px}
+.train .sh{color:var(--mag)}
+.train .sh .rl{background:linear-gradient(90deg,rgba(255,61,127,.35),transparent)}
+.tline{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.smark{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#e5609a;color:#fff;font-family:var(--num);font-size:12px;font-weight:800}
+#trainTitle{font-size:18px;font-weight:900}
+#trainTitle small{font-size:14px;color:var(--sub);font-weight:700;margin-left:6px}
+.status{margin-left:auto;font-size:15px;font-weight:700;padding:3px 12px;border:1px solid currentColor;color:var(--sub);white-space:nowrap}
+.status::before{content:"● "}
+.status.normal{color:var(--ok)} .status.delay{color:var(--yel);background:rgba(249,240,2,.1)} .status.stop{color:#fff;background:var(--stop);border-color:var(--stop)}
+#statusDetail{font-size:13px;color:var(--yel);margin-top:6px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd{display:flex;align-items:flex-end;gap:18px;margin-top:10px;white-space:nowrap}
+.cd .lab{font-family:var(--mono);font-size:12px;color:var(--sub);letter-spacing:.14em;margin-bottom:6px}
+#nextIn{font-family:var(--num);font-weight:800;font-size:92px;line-height:.9;color:var(--mag);text-shadow:0 0 16px rgba(255,61,127,.45)}
+#nextIn.soon{color:var(--yel);text-shadow:0 0 16px rgba(249,240,2,.5)}
+#nextIn.txt{font-family:var(--jp);font-weight:900;font-size:44px;color:var(--text);text-shadow:none}
+#nextAt{font-size:18px;color:var(--sub);font-weight:700;padding-bottom:6px}
+#nextAt b{font-family:var(--num);font-size:30px;color:var(--text);font-weight:600;margin-right:4px}
+#tBoard{margin-top:auto;border-top:1px solid rgba(255,61,127,.3)}
+#tBoard .r{display:grid;grid-template-columns:110px 1fr auto;align-items:center;height:34px;border-bottom:1px dashed rgba(255,61,127,.18);font-size:20px}
+#tBoard .r:last-child{border-bottom:none}
+#tBoard .tm{font-family:var(--num);font-weight:600}
+#tBoard .dst{font-size:15px;color:var(--sub);font-weight:700}
+#tBoard .rm{font-family:var(--mono);font-size:20px;color:var(--cyan);letter-spacing:.06em}
+#tBoard .rm::before{content:"T−";color:var(--faint);font-size:14px;margin-right:4px}
+#tBoard .last .dst::after{content:"　終電";color:var(--yel)}
+
+/* ---- 星座占い（枠なし・4列） ---- */
+.fortune{grid-area:fortune;display:flex;flex-direction:column;min-height:0;min-width:0}
+#fCols{flex:1;display:grid;grid-template-columns:repeat(4,1fr);min-height:0}
+.fc4{position:relative;padding:4px 14px 0;display:flex;flex-direction:column;min-width:0}
+.fc4+.fc4{border-left:1px solid var(--rule)}
+.fc4 .gl{font-size:34px;line-height:1;color:var(--cyan);font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp)}
+.fc4 .nm{font-size:17px;font-weight:900;margin-top:6px;white-space:nowrap}
+.fc4 .rk{display:flex;align-items:baseline;gap:4px;margin-top:10px}
+.fc4 .rk b{font-family:var(--num);font-weight:800;font-size:44px;line-height:1;color:var(--text)}
+.fc4 .rk span{font-family:var(--mono);font-size:14px;color:var(--faint)}
+.fc4.top .rk b{color:var(--yel);text-shadow:0 0 12px rgba(249,240,2,.45)}
+.fc4.top .gl{color:var(--yel)}
+.fc4 .mt{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:8px}
+.fc4 .mt i{height:6px;background:rgba(255,255,255,.08)}
+.fc4 .mt i.on{background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.6)}
+.fc4.top .mt i.on{background:var(--yel);box-shadow:0 0 6px rgba(249,240,2,.6)}
+.fc4 .k{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.14em;margin-top:14px}
+.fc4 .it{font-size:17px;font-weight:700;line-height:1.3;margin-top:3px;white-space:nowrap;overflow:hidden}
+.fc4 .co{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;margin-top:3px;white-space:nowrap}
+.fc4 .co i{width:13px;height:13px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:none}
+.fc4 .sub3{margin-top:auto;padding-top:10px;display:grid;gap:5px}
+.fc4 .sub3 div{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--sub);font-weight:700}
+.fc4 .sub3 span{display:flex;gap:3px}
+.fc4 .sub3 span i{width:7px;height:7px;transform:rotate(45deg);background:rgba(255,255,255,.12)}
+.fc4 .sub3 span i.on{background:var(--mag);box-shadow:0 0 5px rgba(255,61,127,.7)}
+.fc4{padding-bottom:4px}
+.fmsg{grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:15px;text-align:center;line-height:1.7}
+
+/* ---- 予報（枠なしの帯） ---- */
+.fc{grid-area:fc;display:grid;grid-template-columns:1fr 330px;column-gap:30px;min-height:0}
+#stage.port .fc{grid-template-columns:1fr}
+#stage.port .daysbox{display:none}
+#hours{display:grid;grid-template-columns:repeat(12,1fr)}
+.h{text-align:center;font-size:15px}
+.h .t{font-family:var(--mono);color:var(--sub);font-size:13px}
+.h .i{font-size:22px;line-height:1.35}
+.h .v{font-family:var(--num);font-size:15px;font-weight:600}
+.h .bar{height:22px;display:flex;align-items:flex-end;justify-content:center;margin-top:4px}
+.h .bar i{display:block;width:46%;background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.5)}
+.h .p{font-family:var(--mono);font-size:12px;color:var(--cyan)}
+#days{display:grid;grid-template-columns:repeat(4,1fr)}
+.day{text-align:center;font-size:14px;font-weight:700}
+.day+.day{border-left:1px solid var(--rule)}
+.day .i{font-size:24px;line-height:1.35}
+.day .v{font-family:var(--num);font-size:14px;font-weight:600}
+.day .hi{color:#ff7aa5} .day .lo{color:#6fe6f2}
+.day .p{font-family:var(--mono);color:var(--cyan);font-size:12px;margin-top:2px}
+
+.foot{grid-area:foot;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-align:right;align-self:end}
+.foot a{color:inherit}
+#stage.port .foot{white-space:normal;line-height:1.6;align-self:start}
+#offline{display:none;color:var(--yel)}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage" class="land">
+
+  <section class="clock">
+    <div id="time">--:--</div>
+    <div class="dline"><span id="date"></span><span id="dateEn"></span></div>
+    <div id="alerts"></div>
+  </section>
+
+  <section class="now">
+    <div class="sh"><span class="no">01</span><span>WEATHER</span><span class="jp">いまの天気</span><span class="rl"></span><span class="aux" id="placeLabel"></span></div>
+    <div class="nrow">
+      <div id="nowIcon">⏳</div>
+      <div id="nowTemp">--</div>
+      <div class="ndesc"><b id="nowDesc">読み込み中</b><span id="nowHL"></span></div>
+    </div>
+    <div class="nstats">
+      <div>体感<b id="feels">--</b></div>
+      <div>湿度<b id="hum">--</b></div>
+      <div>この1時間の降水<b id="popNow">--</b></div>
+    </div>
+  </section>
+
+  <section class="train">
+    <div class="sh"><span class="no">02</span><span>TRAIN</span><span class="jp">次の電車</span><span class="rl"></span><span class="aux" id="diaLabel"></span></div>
+    <div class="tline"><span class="smark">S17</span><span id="trainTitle"></span><span class="status" id="status">確認中</span></div>
+    <div id="statusDetail"></div>
+    <div class="cd">
+      <div><div class="lab" id="cdLab">DEPARTS IN</div><div id="nextIn">--:--</div></div>
+      <div id="nextAt"></div>
+    </div>
+    <div id="tBoard"></div>
+  </section>
+
+  <section class="fortune">
+    <div class="sh"><span class="no">03</span><span>HOROSCOPE</span><span class="jp">今日の星座占い</span><span class="rl"></span><span class="aux">ボード独自・遊び　<span id="fDate"></span></span></div>
+    <div id="fCols"><div class="fmsg">読み込み中…</div></div>
+  </section>
+
+  <section class="fc">
+    <div>
+      <div class="sh"><span class="no">04</span><span>FORECAST</span><span class="jp">これから12時間</span><span class="rl"></span><span class="aux">降水確率</span></div>
+      <div id="hours"></div>
+    </div>
+    <div class="daysbox">
+      <div class="sh"><span>4 DAYS</span><span class="jp">4日間</span><span class="rl"></span></div>
+      <div id="days"></div>
+    </div>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</div></div>
+
+<script>
+/* =========================================================
+   ★ 設定はここだけ書き換えてください ★
+   ========================================================= */
+const CONFIG = {
+  placeName: "大阪・日本橋",
+  latitude: 34.663,
+  longitude: 135.506,
+
+  // 中継スクリプト（Google Apps Script のウェブアプリURL）。千日前線の運行情報に使う
+  relayUrl: "https://script.google.com/macros/s/AKfycbykwPMLBqrUnyEa9uF4fgPqhqtpmNYWfHf_7IX-w8crTcT1iM8blUbcAoEWfoN5iHjF/exec",
+
+  // ---- 星座占い（左から表示する順） ----
+  fortune: {
+    signs: [
+      { key: "山羊座", name: "やぎ座",     glyph: "♑︎" },  // 1/3
+      { key: "双子座", name: "ふたご座",   glyph: "♊︎" },  // 5/29
+      { key: "天秤座", name: "てんびん座", glyph: "♎︎" },  // 10/14
+      { key: "蠍座",   name: "さそり座",   glyph: "♏︎" },
+    ],
+    // 占いはボード内で自動生成（日付と星座から毎日決まる。同じ日は何度開いても同じ結果）
+    // ラッキーアイテム・カラーの候補は自由に書き換え・追加できます（アイテムは8文字以内がおすすめ）
+    items: ["ハンカチ", "文庫本", "ボールペン", "腕時計", "イヤホン", "マグカップ", "スニーカー", "キーホルダー",
+      "折りたたみ傘", "リップクリーム", "ミントタブレット", "手帳", "ホットコーヒー", "ライター", "サングラス",
+      "キャップ", "モバイル充電器", "レシート", "小銭入れ", "ガム", "缶コーヒー", "パーカー", "白いシャツ",
+      "リング", "ネックレス", "香水", "ポストカード", "観葉植物", "音楽プレイリスト", "おにぎり", "炭酸水", "チョコレート",
+      "メガネ", "カメラ", "トートバッグ", "靴下", "付箋", "電車の一番前", "階段", "コインランドリー"],
+    colors: ["赤", "ワインレッド", "ピンク", "オレンジ", "ゴールド", "黄色", "ベージュ", "ミントグリーン", "緑", "黄緑",
+      "水色", "ターコイズ", "青", "ネイビー", "ラベンダー", "紫", "ブラウン", "シルバー", "グレー", "白", "黒"],
+  },
+
+  // ---- 電車 ----
+  train: {
+    title: "千日前線 日本橋",
+    dest: "なんば・野田阪神方面",
+    statusRefreshMin: 3,
+    // 時刻表：Osaka Metro公式（2025年10月14日現在の表示）とNAVITIMEで一致を確認（2026年11月2日）
+    weekday: {
+      5: [23,33,43,53], 6: [3,13,23,33,43,53],
+      7: [3,11,15,23,32,38,43,48,53,58],
+      8: [2,6,10,14,18,23,27,32,37,42,47,51,56],
+      9: [0,4,9,15,21,27,34,39,44,50,55],
+      10: [0,7,14,22,29,37,44,52,59],
+      11: [7,14,22,29,37,44,52,59], 12: [7,14,22,29,37,44,52,59], 13: [7,14,22,29,37,44,52,59],
+      14: [7,14,22,29,37,44,52,59], 15: [7,14,22,29,37,44,52,59],
+      16: [7,14,22,28,35,40,45,50,55],
+      17: [0,5,10,15,20,25,30,35,40,45,50,55], 18: [0,5,10,15,20,25,30,35,40,45,50,55],
+      19: [0,4,9,14,18,24,30,34,39,45,51,56],
+      20: [0,6,13,20,27,34,41,48,55],
+      21: [2,9,15,23,31,41,51],
+      22: [1,11,21,31,41,51], 23: [1,11,21,31,41,51], 24: [1],
+    },
+    holiday: { // 土曜・日曜・祝日
+      5: [23,33,43,53], 6: [3,13,23,33,43,53],
+      7: [3,8,13,23,31,39,46,53],
+      8: [0,5,10,15,20,26,33,39,46,53],
+      9: [0,7,14,22,29,37,44,52,59],
+      10: [7,14,22,29,37,44,52,59], 11: [7,14,22,29,37,44,52,59], 12: [7,14,22,29,37,44,52,59],
+      13: [7,14,22,29,37,44,52,59], 14: [7,14,22,29,37,44,52,59], 15: [7,14,22,29,37,44,52,59],
+      16: [7,14,22,29,37,44,52,59], 17: [7,14,22,29,37,44,52,59], 18: [7,14,22,29,37,44,52,59],
+      19: [7,14,22,29,37,44,52,59],
+      20: [7,14,22,29,37,44,52],
+      21: [1,7,15,22,29,35,43,51],
+      22: [1,11,21,31,41,51], 23: [1,11,21,31,41,51], 24: [1],
+    },
+    extraHolidayDates: [],
+  },
+
+  umbrellaThreshold: 50,
+  weatherRefreshMin: 15,
+  fullReloadHours: 6,
+};
+/* ========================================================= */
+
+const $ = (id) => document.getElementById(id);
+const WEEK = ["日", "月", "火", "水", "木", "金", "土"], WEEK_EN = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+const pad = (n) => String(n).padStart(2, "0");
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const hm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+/* ---------- 画面サイズに合わせて丸ごと拡大縮小 ---------- */
+function fit() {
+  const box = $("fit"), st = $("stage"), cs = getComputedStyle(box);
+  const pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight), pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
+  const aw = box.clientWidth - pl - pr, ah = box.clientHeight - pt - pb, port = ah > aw;
+  st.className = port ? "port" : "land";
+  const W = port ? 820 : 1180, H = port ? 1420 : 780, s = Math.min(aw / W, ah / H);
+  st.style.transform = `translate(${pl + (aw - W * s) / 2}px, ${pt + (ah - H * s) / 2}px) scale(${s})`;
+}
+window.addEventListener("resize", fit);
+window.addEventListener("orientationchange", () => setTimeout(fit, 300));
+
+function jsonp(url, onData) {
+  const cb = "cb" + Date.now() + Math.floor(Math.random() * 1e4), s = document.createElement("script");
+  const timer = setTimeout(cleanup, 20000);
+  function cleanup() { clearTimeout(timer); delete window[cb]; s.remove(); }
+  window[cb] = (data) => { cleanup(); try { onData(data); } catch (e) {} };
+  s.onerror = cleanup;
+  s.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb + "&_=" + Date.now();
+  document.body.appendChild(s);
+}
+
+/* ---------- 時計 ---------- */
+function tick() {
+  const d = new Date();
+  $("time").innerHTML = `${pad(d.getHours())}:${pad(d.getMinutes())}<span class="sec">${pad(d.getSeconds())}</span>`;
+  $("date").textContent = `${d.getMonth() + 1}月${d.getDate()}日（${WEEK[d.getDay()]}）`;
+  $("dateEn").textContent = `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${WEEK_EN[d.getDay()]}`;
+  renderTrain();
+}
+
+/* ---------- 天気 ---------- */
+const WMO = {
+  0: ["☀️", "快晴"], 1: ["🌤", "晴れ"], 2: ["⛅️", "晴れ時々くもり"], 3: ["☁️", "くもり"], 45: ["🌫", "霧"], 48: ["🌫", "霧"],
+  51: ["🌦", "弱い霧雨"], 53: ["🌦", "霧雨"], 55: ["🌧", "強い霧雨"], 56: ["🌧", "霧雨"], 57: ["🌧", "霧雨"],
+  61: ["🌦", "小雨"], 63: ["🌧", "雨"], 65: ["🌧", "強い雨"], 66: ["🌧", "冷たい雨"], 67: ["🌧", "冷たい強い雨"],
+  71: ["🌨", "小雪"], 73: ["🌨", "雪"], 75: ["❄️", "大雪"], 77: ["🌨", "霧雪"], 80: ["🌦", "にわか雨"], 81: ["🌧", "にわか雨"],
+  82: ["⛈", "激しいにわか雨"], 85: ["🌨", "にわか雪"], 86: ["❄️", "強いにわか雪"], 95: ["⛈", "雷雨"], 96: ["⛈", "雷雨"], 99: ["⛈", "激しい雷雨"],
+};
+const wmo = (c) => WMO[c] || ["❔", "不明"];
+let lastWeather = null, maxRain = 0, statusAt = "";
+
+async function loadWeather() {
+  const p = new URLSearchParams({
+    latitude: CONFIG.latitude, longitude: CONFIG.longitude, timezone: "Asia/Tokyo",
+    current: "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code",
+    hourly: "temperature_2m,precipitation_probability,weather_code",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max", forecast_days: "4",
+  });
+  try {
+    const r = await fetch("https://api.open-meteo.com/v1/forecast?" + p, { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    lastWeather = await r.json(); renderWeather(lastWeather); $("offline") && ($("offline").style.display = "none");
+  } catch (e) {
+    if (!lastWeather) $("nowDesc").textContent = "取得できません";
+  }
+  renderFoot();
+}
+let weatherAt = "";
+function renderWeather(w) {
+  const c = w.current, [icon, desc] = wmo(c.weather_code), D = w.daily, H = w.hourly, now = Date.now();
+  $("placeLabel").textContent = CONFIG.placeName;
+  $("nowIcon").textContent = icon;
+  $("nowTemp").innerHTML = `${Math.round(c.temperature_2m)}<sup>°C</sup>`;
+  $("nowDesc").textContent = desc;
+  $("nowHL").textContent = `HI ${Math.round(D.temperature_2m_max[0])}°  LO ${Math.round(D.temperature_2m_min[0])}°`;
+  $("feels").textContent = `${Math.round(c.apparent_temperature)}°`;
+  $("hum").textContent = `${Math.round(c.relative_humidity_2m)}%`;
+  let start = H.time.findIndex((t) => new Date(t).getTime() + 3600e3 > now); if (start < 0) start = 0;
+  $("popNow").textContent = `${H.precipitation_probability[start] ?? "-"}%`;
+  let html = ""; maxRain = 0;
+  for (let i = start; i < start + 12 && i < H.time.length; i++) {
+    const pr = H.precipitation_probability[i] ?? 0; maxRain = Math.max(maxRain, pr);
+    html += `<div class="h"><div class="t">${pad(new Date(H.time[i]).getHours())}:00</div><div class="i">${wmo(H.weather_code[i])[0]}</div>
+      <div class="v">${Math.round(H.temperature_2m[i])}°</div><div class="bar"><i style="height:${Math.max(1, pr * 0.22)}px"></i></div><div class="p">${pr}%</div></div>`;
+  }
+  $("hours").innerHTML = html;
+  $("days").innerHTML = D.time.map((t, i) => {
+    const d = new Date(t + "T00:00:00"), name = i === 0 ? "今日" : i === 1 ? "明日" : `${d.getMonth() + 1}/${d.getDate()}`;
+    return `<div class="day"><div>${name}</div><div class="i">${wmo(D.weather_code[i])[0]}</div>
+      <div class="v"><span class="hi">${Math.round(D.temperature_2m_max[i])}</span>/<span class="lo">${Math.round(D.temperature_2m_min[i])}</span></div>
+      <div class="p">${D.precipitation_probability_max[i] ?? "-"}%</div></div>`;
+  }).join("");
+  weatherAt = hm(new Date());
+  renderAlerts();
+}
+
+/* ---------- 祝日 ---------- */
+let holidays = {}, holidaysLoadedOn = "";
+async function loadHolidays() {
+  try { const r = await fetch("https://holidays-jp.github.io/api/v1/date.json", { cache: "no-store" });
+    if (r.ok) { holidays = await r.json(); holidaysLoadedOn = ymd(new Date()); } } catch (e) {}
+}
+function isHolidayDia(d) {
+  if (d.getDay() === 0 || d.getDay() === 6) return true;
+  if (holidays[ymd(d)]) return true;
+  return CONFIG.train.extraHolidayDates.includes(`${pad(d.getMonth() + 1)}-${pad(d.getDate())}`);
+}
+
+/* ---------- 電車 ---------- */
+function serviceDay(now) {
+  const d = new Date(now); let minsNow = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+  if (d.getHours() < 3) { d.setDate(d.getDate() - 1); minsNow += 1440; }
+  d.setHours(0, 0, 0, 0); return { base: d, minsNow };
+}
+function departuresOf(day) {
+  const t = isHolidayDia(day) ? CONFIG.train.holiday : CONFIG.train.weekday, list = [];
+  Object.keys(t).map(Number).sort((a, b) => a - b).forEach((h) => t[h].forEach((m) => list.push(h * 60 + m)));
+  return list;
+}
+function upcoming() {
+  const { base, minsNow } = serviceDay(new Date()), out = []; let day = new Date(base), off = 0;
+  for (let k = 0; k < 2; k++) {
+    for (const m of departuresOf(day)) if (m + off >= minsNow) out.push({ at: new Date(base.getTime() + (m + off) * 60e3), holiday: isHolidayDia(day) });
+    day = new Date(day.getTime() + 864e5); off += 1440;
+  }
+  return out;
+}
+function remain(d) {
+  const s = Math.max(0, Math.floor((d - Date.now()) / 1000)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
+  return h ? `${h}:${pad(m)}:${pad(x)}` : `${pad(m)}:${pad(x)}`;
+}
+function renderTrain() {
+  const list = upcoming();
+  $("trainTitle").innerHTML = `${CONFIG.train.title}<small>→ ${CONFIG.train.dest}</small>`;
+  if (!list.length) return;
+  const { base } = serviceDay(new Date()), first = list[0], gap = (first.at - Date.now()) / 3600e3, el = $("nextIn");
+  if (gap > 2) {
+    $("diaLabel").textContent = `始発は${first.holiday ? "土休日" : "平日"}ダイヤ`;
+    $("cdLab").textContent = "SERVICE ENDED";
+    el.className = "txt"; el.textContent = "本日の運行は終了";
+    $("nextAt").innerHTML = `始発 <b>${hm(first.at)}</b>`;
+    $("tBoard").innerHTML = `<div class="r"><span class="dst" style="grid-column:1/-1;font-family:var(--mono);letter-spacing:.14em;color:var(--faint);font-size:12px">FIRST TRAINS ／ 始発から</span></div>` +
+      list.slice(0, 3).map((x) => `<div class="r"><span class="tm">${hm(x.at)}</span><span class="dst">野田阪神 行</span><span class="rm">${remain(x.at)}</span></div>`).join("");
+    return;
+  }
+  $("diaLabel").textContent = `${isHolidayDia(base) ? "土休日" : "平日"}ダイヤ`;
+  $("cdLab").textContent = "DEPARTS IN ／ 発車まで";
+  const isLast = (x) => { const n = list[list.indexOf(x) + 1]; return !n || n.at - x.at > 2 * 3600e3; };
+  el.className = (first.at - Date.now()) < 60e3 ? "soon" : "";
+  el.textContent = remain(first.at);
+  $("nextAt").innerHTML = `<b>${hm(first.at)}</b>発 野田阪神行${isLast(first) ? "（終電）" : ""}`;
+  const rows = [];
+  for (let i = 1; i < list.length && rows.length < 3; i++) {
+    if (list[i].at - list[i - 1].at > 2 * 3600e3) break;
+    rows.push(list[i]);
+  }
+  $("tBoard").innerHTML = rows.map((x) => `<div class="r${isLast(x) ? " last" : ""}"><span class="tm">${hm(x.at)}</span>` +
+    `<span class="dst">野田阪神 行</span><span class="rm">${remain(x.at)}</span></div>`).join("");
+}
+
+/* ---------- 運行情報 ---------- */
+let trainStatus = null;
+function loadTrainStatus() {
+  if (!CONFIG.relayUrl) { setStatus({ level: "unset" }); return; }
+  jsonp(CONFIG.relayUrl, (d) => { trainStatus = d; setStatus(d); renderAlerts(); renderFoot(); });
+}
+function setStatus(d) {
+  const el = $("status"), det = $("statusDetail");
+  el.className = "status"; det.style.display = "none";
+  if (d.level === "unset") el.textContent = "運行情報 未設定";
+  else if (!d.ok) el.textContent = "運行情報 取得失敗";
+  else {
+    el.classList.add({ normal: "normal", stop: "stop", delay: "delay" }[d.level] || "x");
+    el.textContent = d.status; statusAt = (d.at || "").replace(/^\d{4}\//, "");
+    if (d.level !== "normal" && d.detail) { det.textContent = d.detail; det.style.display = "block"; }
+  }
+}
+
+/* ---------- 星座占い ---------- */
+const COLOR_MAP = [
+  ["ワイン", "#8a1538"], ["ミントグリーン", "#7fe0c3"], ["ピンク", "#ff7eb6"], ["赤", "#e5322d"], ["レッド", "#e5322d"], ["オレンジ", "#ff8a1f"],
+  ["ゴールド", "#d4af37"], ["金", "#d4af37"], ["黄", "#ffd400"], ["イエロー", "#ffd400"], ["ベージュ", "#d9c3a0"],
+  ["エメラルド", "#2bb673"], ["ミント", "#7fe0c3"], ["黄緑", "#9ad13b"], ["緑", "#2bb673"], ["グリーン", "#2bb673"],
+  ["水色", "#7cd3ff"], ["スカイ", "#7cd3ff"], ["ターコイズ", "#2ec4c4"], ["ネイビー", "#1f2f6e"], ["紺", "#1f2f6e"],
+  ["青", "#2f6fe0"], ["ブルー", "#2f6fe0"], ["ラベンダー", "#b9a2e8"], ["紫", "#8e44ad"], ["パープル", "#8e44ad"],
+  ["茶", "#8b5a2b"], ["ブラウン", "#8b5a2b"], ["シルバー", "#c0c6cc"], ["銀", "#c0c6cc"], ["グレー", "#8a8f96"], ["灰", "#8a8f96"],
+  ["白", "#ffffff"], ["ホワイト", "#ffffff"], ["黒", "#111111"], ["ブラック", "#111111"],
+];
+const swatch = (name) => { const hit = COLOR_MAP.find(([k]) => String(name).includes(k)); return hit ? hit[1] : null; };
+/* 日付の文字列から、毎回同じ並びになる乱数を作る */
+function seeded(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+  let a = h >>> 0;
+  return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const ALL_SIGNS = ["牡羊座", "牡牛座", "双子座", "蟹座", "獅子座", "乙女座", "天秤座", "蠍座", "射手座", "山羊座", "水瓶座", "魚座"];
+function makeFortune(dateStr) {
+  const r = seeded("smoke-board|" + dateStr);
+  const order = ALL_SIGNS.slice();
+  for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  const pick = (arr) => arr[Math.floor(r() * arr.length)];
+  const clamp = (v) => Math.max(1, Math.min(5, v));
+  return order.map((sign, idx) => {
+    const rank = idx + 1, base = rank <= 2 ? 5 : rank <= 5 ? 4 : rank <= 8 ? 3 : rank <= 11 ? 2 : 1;
+    const v = () => clamp(base + Math.floor(r() * 3) - 1);
+    return { sign, rank, total: base, love: v(), money: v(), job: v(), item: pick(CONFIG.fortune.items), color: pick(CONFIG.fortune.colors) };
+  });
+}
+let fortuneDate = "";
+function renderFortune() {
+  const d = new Date(), key = ymd(d);
+  if (key === fortuneDate) return;
+  fortuneDate = key;
+  const items = makeFortune(key);
+  $("fDate").textContent = `${d.getMonth() + 1}/${d.getDate()}`;
+  $("fCols").innerHTML = CONFIG.fortune.signs.map((s) => {
+    const f = items.find((x) => x.sign === s.key);
+    const on = 13 - f.rank, sw = swatch(f.color);
+    return `<div class="fc4${f.rank <= 3 ? " top" : ""}">
+      <div class="gl">${s.glyph}</div><div class="nm">${s.name}</div>
+      <div class="rk"><b>${pad(f.rank)}</b><span>/12</span></div>
+      <div class="mt">${Array.from({ length: 12 }, (_, i) => `<i class="${i < on ? "on" : ""}"></i>`).join("")}</div>
+      <div class="k">LUCKY ITEM</div><div class="it">${esc(f.item)}</div>
+      <div class="k">LUCKY COLOR</div><div class="co">${sw ? `<i style="background:${sw}"></i>` : ""}${esc(f.color)}</div>
+      <div class="sub3">${[["恋愛", f.love], ["金運", f.money], ["仕事", f.job]].map(([k, v]) =>
+        `<div>${k}<span>${Array.from({ length: 5 }, (_, i) => `<i class="${i < v ? "on" : ""}"></i>`).join("")}</span></div>`).join("")}</div>
+    </div>`;
+  }).join("");
+  shrinkToFit(".fc4 .it", 11);
+}
+
+/* 長い文字は改行せず、枠に収まるまで文字を小さくする */
+function shrinkToFit(sel, min) {
+  document.querySelectorAll(sel).forEach((el) => {
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && fs > min) { fs -= 0.5; el.style.fontSize = fs + "px"; }
+  });
+}
+
+/* ---------- 注意表示 ---------- */
+function renderAlerts() {
+  const a = [];
+  if (trainStatus && trainStatus.ok && trainStatus.level !== "normal") a.push(`<span class="a ${trainStatus.level === "stop" ? "s" : "w"}">千日前線 ${esc(trainStatus.status)}</span>`);
+  if (maxRain >= CONFIG.umbrellaThreshold) a.push(`<span class="a">傘を持っていこう　最大${maxRain}%</span>`);
+  if (lastWeather) {
+    const t = lastWeather.current.apparent_temperature;
+    if (t >= 31) a.push(`<span class="a w">体感${Math.round(t)}°　水分補給を</span>`);
+    if (t <= 3) a.push(`<span class="a">体感${Math.round(t)}°　上着を</span>`);
+  }
+  $("alerts").innerHTML = a.join("");
+}
+
+/* ---------- 出典・更新時刻 ---------- */
+function renderFoot() {
+  const parts = [`WEATHER <a href="https://open-meteo.com/">Open-Meteo.com</a> ${weatherAt}`];
+  if (statusAt) parts.push(`運行情報 Osaka Metro公式 ${statusAt}現在（発車時刻は時刻表上の予定）`);
+  parts.push("占い ボード独自の自動生成（遊び）");
+  $("foot").innerHTML = parts.join("　／　");
+}
+
+/* ---------- 画面を消さない ---------- */
+async function keepAwake() { try { if ("wakeLock" in navigator && document.visibilityState === "visible") await navigator.wakeLock.request("screen"); } catch (e) {} }
+document.addEventListener("visibilitychange", keepAwake);
+document.addEventListener("click", keepAwake);
+
+/* ---------- 起動 ---------- */
+fit();
+tick(); setInterval(tick, 1000);
+loadHolidays().then(renderTrain);
+setInterval(() => { if (holidaysLoadedOn !== ymd(new Date())) loadHolidays(); }, 10 * 60e3);
+loadTrainStatus(); setInterval(loadTrainStatus, CONFIG.train.statusRefreshMin * 60e3);
+renderFortune(); setInterval(renderFortune, 60e3);
+loadWeather(); setInterval(loadWeather, CONFIG.weatherRefreshMin * 60e3);
+keepAwake();
+window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); });
+if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .it", 11); });
+setTimeout(() => location.reload(), CONFIG.fullReloadHours * 3600e3);
+</script>
+</body>
+</html>
