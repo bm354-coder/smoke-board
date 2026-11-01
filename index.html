@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="ja" data-theme="B1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="喫煙所ボード">
+<meta name="theme-color" content="#000000">
+<title>喫煙所ボード</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+/* =========================================================
+   喫煙所ボード（iPad常時表示用）
+   デザイン：NEON（B1）
+   ========================================================= */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-jp);
+  -webkit-user-select:none;user-select:none;overflow:hidden}
+body{padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right))
+  max(26px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.grid{position:relative;z-index:1;display:grid;gap:14px;height:100%;
+  grid-template-columns:1.1fr 1fr;grid-template-rows:auto 1fr auto;
+  grid-template-areas:"clock train" "now train" "hourly hourly"}
+@media (orientation:portrait){
+  html,body{overflow:auto}
+  .grid{height:auto;grid-template-columns:1fr;grid-template-rows:auto;
+    grid-template-areas:"clock" "train" "now" "hourly"}
+}
+.card{position:relative;min-width:0;min-height:0;padding:16px 18px;background:var(--card);border:1px solid var(--line)}
+.label{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--sub);margin-bottom:10px;letter-spacing:.06em}
+.label b{font-family:var(--font-num);font-weight:700;font-size:13px;letter-spacing:.14em;color:var(--accent)}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+
+/* 時計 */
+.clock{grid-area:clock;display:flex;flex-direction:column;justify-content:center}
+#time{font-family:var(--font-num);font-size:clamp(64px,10vw,124px);font-weight:700;line-height:.95;color:var(--clock);letter-spacing:.01em}
+#time .sec{font-size:.32em;margin-left:.15em;color:var(--sub);vertical-align:.15em}
+#date{font-size:clamp(18px,2.4vw,26px);color:var(--text);margin-top:10px;letter-spacing:.08em}
+#date .en{font-family:var(--font-num);color:var(--sub);margin-left:10px;letter-spacing:.2em;font-size:.8em}
+#banner{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:clamp(15px,1.8vw,19px);padding:6px 14px;font-weight:700;background:var(--chip-bg);color:var(--text);border:1px solid var(--line)}
+.chip.rain{color:var(--rain);border-color:var(--rain)}
+.chip.warn{color:var(--warn);border-color:var(--warn)}
+.chip.stop{color:var(--stop);border-color:var(--stop)}
+
+/* 天気 */
+.now{grid-area:now;display:flex;flex-direction:column;justify-content:center}
+.nowrow{display:flex;align-items:center;gap:16px}
+#nowIcon{font-size:clamp(48px,6vw,72px);line-height:1}
+#nowTemp{font-family:var(--font-num);font-size:clamp(48px,6.4vw,78px);font-weight:700;line-height:1;color:var(--text)}
+#nowDesc{font-size:clamp(17px,2.1vw,22px);color:var(--sub);margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--inner);padding:8px 10px;border-left:2px solid var(--accent)}
+.stat b{display:block;font-family:var(--font-num);font-size:clamp(18px,2.1vw,24px)}
+.stat span{font-size:11px;color:var(--sub)}
+
+.hourly{grid-area:hourly}
+.hw{display:grid;grid-template-columns:1.7fr 1fr;gap:18px}
+@media (orientation:portrait){.hw{grid-template-columns:1fr}}
+#hours{display:grid;grid-template-columns:repeat(12,1fr);gap:6px}
+.h{text-align:center;font-size:15px;font-family:var(--font-num)}
+.h .t{color:var(--sub);font-size:12px}
+.h .i{font-size:22px;line-height:1.35}
+.h .bar{height:24px;display:flex;align-items:flex-end;justify-content:center;margin-top:4px}
+.h .bar i{display:block;width:62%;background:var(--rain);opacity:.9}
+.h .p{font-size:11px;color:var(--rain)}
+.days{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.day{text-align:center;background:var(--inner);padding:6px 4px;font-size:13px}
+.day .i{font-size:21px;line-height:1.25}
+.day .t2{font-family:var(--font-num);font-size:14px}
+.day .hi{color:var(--hot)} .day .lo{color:var(--cold)} .day .p{color:var(--rain);font-size:12px;font-family:var(--font-num)}
+
+/* 電車 */
+.train{grid-area:train;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.thead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.thead .label{margin:0}
+.status{font-size:clamp(14px,1.6vw,17px);font-weight:700;padding:4px 14px;white-space:nowrap;border:1px solid var(--line);color:var(--sub);background:var(--chip-bg)}
+.status.normal{color:var(--ok);border-color:var(--ok)}
+.status.delay{color:var(--warn);border-color:var(--warn)}
+.status.stop{color:var(--stop);border-color:var(--stop)}
+#trainTitle{font-size:clamp(15px,1.7vw,18px);font-weight:700;margin-bottom:4px}
+#statusDetail{font-size:13px;color:var(--warn);line-height:1.5;margin-bottom:6px;display:none}
+.cd{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:4px}
+.cd .in{font-family:var(--font-num);font-size:clamp(64px,9vw,112px);font-weight:700;line-height:.95;color:var(--count)}
+.cd .in.soon{color:var(--stop)}
+.cd .in.txt{font-family:var(--font-jp);font-size:clamp(34px,4.4vw,52px)}
+.cd .at{font-size:clamp(17px,2vw,22px);color:var(--sub)}
+.cd .at b{font-family:var(--font-num);color:var(--text);font-size:1.15em}
+.later{display:flex;gap:8px;margin-top:14px}
+.later div{flex:1;background:var(--inner);padding:8px 12px;font-size:clamp(17px,2vw,22px)}
+.later div b{font-family:var(--font-num)}
+.later div span{color:var(--sub);font-size:12px;display:block;font-family:var(--font-num)}
+#trainNote{margin-top:18px;padding-top:6px;font-size:11px;color:var(--faint);line-height:1.4}
+.fill{display:none}
+.train[data-style]:not([data-ended]){justify-content:flex-start}
+.train[data-style]:not([data-ended]) #trainNote{margin-top:10px}
+
+/* 案1：発車標（次の5本を駅の案内表示のように並べる） */
+.train[data-style="board"]:not([data-ended]) #tBoard{display:flex}
+.train[data-style="board"] .later,.train[data-style="timetable"] .later{display:none}
+#tBoard{flex:1;flex-direction:column;margin-top:14px;border-top:1px solid var(--line)}
+#tBoard .hd,#tBoard .r{display:grid;grid-template-columns:1fr 1.4fr 1fr;align-items:center;gap:12px;padding:0 8px}
+#tBoard .hd{font-size:11px;color:var(--sub);letter-spacing:.12em;padding-top:6px;padding-bottom:6px}
+#tBoard .r{flex:1;min-height:0;border-bottom:1px dashed rgba(5,217,232,.18);font-size:clamp(19px,2.3vw,27px)}
+#tBoard .r:nth-child(odd){background:rgba(5,217,232,.035)}
+#tBoard .tm{font-family:var(--font-num);font-weight:700}
+#tBoard .dst{color:var(--sub);font-size:.8em}
+#tBoard .dst em{font-style:normal;color:var(--text)}
+#tBoard .rm{font-family:var(--font-num);text-align:right;color:var(--accent)}
+#tBoard .r.last .dst::after{content:" 終電";color:var(--warn);font-size:.85em}
+
+/* 案2：ゲージ＋路線図 */
+.train[data-style="gauge"]:not([data-ended]) #tGauge{display:block}
+.train[data-style="gauge"] #tRoute{display:block}
+#tGauge{margin-top:16px}
+#tGauge .bar{display:grid;grid-template-columns:repeat(30,1fr);gap:3px;height:18px}
+#tGauge .bar i{background:rgba(255,255,255,.07)}
+#tGauge .bar i.on{background:var(--count);box-shadow:0 0 8px var(--count)}
+#tGauge .bar i.on.soon{background:var(--stop);box-shadow:0 0 8px var(--stop)}
+#tGauge .cap{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-top:5px;font-family:var(--font-num)}
+#tRoute{margin-top:auto;padding-top:18px}
+#tRoute .ln{position:relative;display:grid;grid-template-columns:repeat(7,1fr)}
+#tRoute .ln::before{content:"";position:absolute;left:7%;right:7%;top:27px;height:4px;background:#e5609a;box-shadow:0 0 10px rgba(229,96,154,.7)}
+#tRoute .st{position:relative;text-align:center}
+#tRoute .no{font-family:var(--font-num);font-size:10px;color:var(--sub);height:16px}
+#tRoute .dot{width:14px;height:14px;margin:2px auto 6px;border-radius:50%;background:var(--bg);border:3px solid #e5609a;position:relative;z-index:1}
+#tRoute .nm{font-size:clamp(11px,1.25vw,14px);color:var(--sub);white-space:nowrap}
+#tRoute .st.here .dot{width:20px;height:20px;margin:-1px auto 3px;background:#fff;border-color:#fff;box-shadow:0 0 0 4px rgba(229,96,154,.6),0 0 16px #e5609a;animation:pulse 2s infinite}
+#tRoute .st.here .nm{color:var(--text);font-weight:700}
+#tRoute .st.dest .nm{color:var(--text)}
+#tRoute .dir{font-size:11px;color:var(--sub);margin-top:8px;text-align:right;letter-spacing:.08em}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(229,96,154,.15),0 0 22px #e5609a}}
+
+/* 案3：時刻表（いまの時間帯から3時間分。過ぎた電車は暗く、次の電車を強調） */
+.train[data-style="timetable"]:not([data-ended]) #tTable{display:flex}
+#tTable{flex:1;flex-direction:column;justify-content:space-evenly;margin-top:14px;border-top:1px solid var(--line);padding-top:6px}
+#tTable .tr{display:grid;grid-template-columns:48px 1fr;align-items:center;gap:10px;padding:4px 0;border-bottom:1px dashed rgba(5,217,232,.15)}
+#tTable .hh{font-family:var(--font-num);font-weight:700;font-size:clamp(20px,2.4vw,28px);color:var(--accent)}
+#tTable .mm{display:flex;flex-wrap:wrap;gap:4px 6px}
+#tTable .mm span{font-family:var(--font-num);font-size:clamp(17px,2vw,23px);padding:1px 6px;min-width:2.2em;text-align:center}
+#tTable .mm span.past{color:var(--faint)}
+#tTable .mm span.next{background:var(--count);color:#fff;box-shadow:0 0 12px var(--count)}
+
+.foot{position:fixed;z-index:2;right:18px;bottom:max(6px,env(safe-area-inset-bottom));font-size:11px;color:var(--faint);font-family:var(--font-num);letter-spacing:.05em}
+.foot a{color:var(--faint)}
+#offline{display:none;color:var(--warn)}
+#dim{position:fixed;inset:0;z-index:9;background:#000;pointer-events:none;opacity:0;transition:opacity 2s}
+
+/* =========================================================
+   共通：B系（NEON）の土台
+   ========================================================= */
+html[data-theme^="B"] body::after{content:"";position:fixed;inset:0;z-index:3;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,var(--scan,.12)) 0 1px,transparent 1px 3px)}
+html[data-theme^="B"] .label b{text-shadow:0 0 8px currentColor}
+
+/* =========================================================
+   B1：NEON（原案。シアン×マゼンタ、方眼＋走査線）
+   ========================================================= */
+html[data-theme="B1"]{
+  --bg:#06030f; --card:rgba(14,8,32,.78); --inner:rgba(255,255,255,.04); --line:#05d9e8; --chip-bg:rgba(5,217,232,.08);
+  --text:#e9f8ff; --sub:#8aa3c2; --faint:#4d5d7a;
+  --accent:#05d9e8; --accent2:#ff2a6d; --clock:#e9f8ff; --count:#ff2a6d;
+  --rain:#05d9e8; --warn:#f9f002; --stop:#ff2a6d; --ok:#05d9e8; --hot:#ff2a6d; --cold:#05d9e8;
+  --font-num:"Orbitron",sans-serif; --font-jp:"M PLUS 1 Code","Hiragino Sans",sans-serif; --scan:.12;
+}
+html[data-theme="B1"] body{background:
+  radial-gradient(1200px 600px at 85% -10%,rgba(255,42,109,.18),transparent 60%),
+  radial-gradient(900px 500px at -10% 110%,rgba(5,217,232,.16),transparent 60%),
+  linear-gradient(rgba(5,217,232,.05) 1px,transparent 1px) 0 0/100% 40px,
+  linear-gradient(90deg,rgba(5,217,232,.05) 1px,transparent 1px) 0 0/40px 100%, var(--bg)}
+html[data-theme="B1"] .card{border:none;border-radius:4px;box-shadow:0 0 0 1px rgba(5,217,232,.45),0 0 18px rgba(5,217,232,.18),inset 0 0 24px rgba(5,217,232,.06)}
+html[data-theme="B1"] .train{box-shadow:0 0 0 1px rgba(255,42,109,.6),0 0 20px rgba(255,42,109,.22),inset 0 0 24px rgba(255,42,109,.07)}
+html[data-theme="B1"] .train .label b{color:var(--accent2)}
+html[data-theme="B1"] #time{font-weight:900;text-shadow:0 0 6px rgba(5,217,232,.9),0 0 22px rgba(5,217,232,.55)}
+html[data-theme="B1"] .cd .in{text-shadow:0 0 8px rgba(255,42,109,.9),0 0 26px rgba(255,42,109,.5)}
+html[data-theme="B1"] .chip,html[data-theme="B1"] .status{border-radius:3px;box-shadow:0 0 10px currentColor inset}
+html[data-theme="B1"] .stat{border-left-color:var(--accent2)}
+
+</style>
+</head>
+<body>
+<div class="grid">
+  <section class="card clock">
+    <div id="time" class="num">--:--</div>
+    <div id="date"></div>
+    <div id="banner"></div>
+  </section>
+
+  <section class="card now">
+    <div class="label"><b>WEATHER</b><span id="placeLabel">現在の天気</span></div>
+    <div class="nowrow">
+      <div id="nowIcon">⏳</div>
+      <div>
+        <div id="nowTemp">--°</div>
+        <div id="nowDesc">読み込み中…</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="feels">--</b><span>体感</span></div>
+      <div class="stat"><b id="hum">--</b><span>湿度</span></div>
+      <div class="stat"><b id="popNow">--</b><span>この1時間の降水確率</span></div>
+    </div>
+    <div class="label" style="margin-top:14px"><b>4 DAYS</b>4日間</div>
+    <div class="days" id="days"></div>
+  </section>
+
+  <section class="card hourly">
+    <div class="label"><b>FORECAST</b>これから12時間（降水確率）</div>
+    <div id="hours"></div>
+  </section>
+
+  <section class="card train">
+    <div class="thead">
+      <div class="label"><b>TRAIN</b><span id="nextLabel">次の電車</span></div>
+      <div class="status" id="status">運行情報 確認中</div>
+    </div>
+    <div id="trainTitle"></div>
+    <div id="statusDetail"></div>
+    <div class="cd"><div class="in" id="nextIn">--:--</div><div class="at" id="nextAt"></div></div>
+    <div class="later" id="later"></div>
+    <div class="fill" id="tBoard"></div>
+    <div class="fill" id="tGauge"><div class="bar" id="gBar"></div><div class="cap"><span id="gPrev"></span><span id="gNext"></span></div></div>
+    <div class="fill" id="tTable"></div>
+    <div class="fill" id="tRoute"></div>
+    <div id="trainNote"></div>
+  </section>
+</div>
+
+<div class="foot"><span id="offline">⚠ OFFLINE ・ </span>UPDATED <span id="updated">--:--</span> ・ Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a></div>
+<div id="dim"></div>
+
+<script>
+/* =========================================================
+   ★ 設定はここだけ書き換えてください ★
+   ========================================================= */
+const CONFIG = {
+  // デザイン（現在は "B1"＝NEON のみ）
+  theme: "B1",
+
+  // 天気を表示する場所（緯度・経度はGoogleマップで建物を長押しすると出ます）
+  placeName: "大阪市（日本橋付近）",
+  latitude: 34.663,
+  longitude: 135.506,
+
+  // ---- 電車 ----
+  train: {
+    title: "千日前線 日本橋 → なんば・野田阪神方面",
+    // 下半分の表示："board"（発車標）/ "gauge"（ゲージ＋路線図）/ "timetable"（時刻表）
+    style: "board",
+    // 運行情報の中継URL（Google Apps Script の「ウェブアプリURL」 …/exec を貼る）
+    statusUrl: "https://script.google.com/macros/s/AKfycbykwPMLBqrUnyEa9uF4fgPqhqtpmNYWfHf_7IX-w8crTcT1iM8blUbcAoEWfoN5iHjF/exec",
+    statusRefreshMin: 3,
+    // 時刻表：Osaka Metro公式（2025年10月14日現在の表示）とNAVITIMEで一致を確認（2026年11月2日）
+    // ダイヤ改正があったら、公式の時刻表検索の数字に差し替えてください。24時台＝深夜0時台
+    weekday: {
+      5: [23,33,43,53], 6: [3,13,23,33,43,53],
+      7: [3,11,15,23,32,38,43,48,53,58],
+      8: [2,6,10,14,18,23,27,32,37,42,47,51,56],
+      9: [0,4,9,15,21,27,34,39,44,50,55],
+      10: [0,7,14,22,29,37,44,52,59],
+      11: [7,14,22,29,37,44,52,59], 12: [7,14,22,29,37,44,52,59], 13: [7,14,22,29,37,44,52,59],
+      14: [7,14,22,29,37,44,52,59], 15: [7,14,22,29,37,44,52,59],
+      16: [7,14,22,28,35,40,45,50,55],
+      17: [0,5,10,15,20,25,30,35,40,45,50,55], 18: [0,5,10,15,20,25,30,35,40,45,50,55],
+      19: [0,4,9,14,18,24,30,34,39,45,51,56],
+      20: [0,6,13,20,27,34,41,48,55],
+      21: [2,9,15,23,31,41,51],
+      22: [1,11,21,31,41,51], 23: [1,11,21,31,41,51], 24: [1],
+    },
+    holiday: { // 土曜・日曜・祝日
+      5: [23,33,43,53], 6: [3,13,23,33,43,53],
+      7: [3,8,13,23,31,39,46,53],
+      8: [0,5,10,15,20,26,33,39,46,53],
+      9: [0,7,14,22,29,37,44,52,59],
+      10: [7,14,22,29,37,44,52,59], 11: [7,14,22,29,37,44,52,59], 12: [7,14,22,29,37,44,52,59],
+      13: [7,14,22,29,37,44,52,59], 14: [7,14,22,29,37,44,52,59], 15: [7,14,22,29,37,44,52,59],
+      16: [7,14,22,29,37,44,52,59], 17: [7,14,22,29,37,44,52,59], 18: [7,14,22,29,37,44,52,59],
+      19: [7,14,22,29,37,44,52,59],
+      20: [7,14,22,29,37,44,52],
+      21: [1,7,15,22,29,35,43,51],
+      22: [1,11,21,31,41,51], 23: [1,11,21,31,41,51], 24: [1],
+    },
+    // 祝日以外で「土休日ダイヤ」になる日があれば "MM-DD" で追加（例：年末年始）
+    extraHolidayDates: [],
+  },
+
+  // 夜間に画面を暗くする機能。false＝24時間ずっと通常の明るさで表示
+  //   使う場合は enabled を true にし、時間帯と暗さ（0〜1）を指定
+  nightDim: { enabled: false, startHour: 1, endHour: 6, opacity: 0.65 },
+  umbrellaThreshold: 50,
+  weatherRefreshMin: 15,
+  fullReloadHours: 6,
+};
+/* ========================================================= */
+
+/* ---------- テーマとフォント ---------- */
+const FONTS = {
+  B1: "family=Orbitron:wght@500;700;900&family=M+PLUS+1+Code:wght@400;700",
+};
+(function applyTheme() {
+  const th = (new URLSearchParams(location.search).get("theme") || CONFIG.theme).toUpperCase();
+  document.documentElement.dataset.theme = FONTS[th] ? th : "B1";
+  const l = document.createElement("link");
+  l.rel = "stylesheet";
+  l.href = "https://fonts.googleapis.com/css2?" + FONTS[document.documentElement.dataset.theme] + "&display=swap";
+  document.head.appendChild(l);
+})();
+
+const $ = (id) => document.getElementById(id);
+const WEEK = ["日", "月", "火", "水", "木", "金", "土"];
+const WEEK_EN = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+const pad = (n) => String(n).padStart(2, "0");
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+/* JSONP（scriptタグ読み込み）：CORSの制限を受けずに外部データを読む */
+function jsonp(url, cbParam, onData) {
+  const cb = "cb" + Date.now() + Math.floor(Math.random() * 1e4);
+  const s = document.createElement("script");
+  const timer = setTimeout(cleanup, 20000);
+  function cleanup() { clearTimeout(timer); delete window[cb]; s.remove(); }
+  window[cb] = (data) => { cleanup(); try { onData(data); } catch (e) {} };
+  s.onerror = cleanup;
+  s.src = url + cbParam(cb);
+  document.body.appendChild(s);
+}
+
+/* ---------- 時計（毎秒） ---------- */
+function tick() {
+  const d = new Date();
+  $("time").innerHTML = `${pad(d.getHours())}:${pad(d.getMinutes())}<span class="sec">${pad(d.getSeconds())}</span>`;
+  $("date").innerHTML = `${d.getMonth() + 1}月${d.getDate()}日（${WEEK[d.getDay()]}）<span class="en">${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${WEEK_EN[d.getDay()]}</span>`;
+  const h = d.getHours(), n = CONFIG.nightDim;
+  const night = n.startHour < n.endHour ? (h >= n.startHour && h < n.endHour) : (h >= n.startHour || h < n.endHour);
+  $("dim").style.opacity = n.enabled && night ? n.opacity : 0;
+  renderTrain();
+}
+
+/* ---------- 天気 ---------- */
+const WMO = {
+  0: ["☀️", "快晴"], 1: ["🌤", "晴れ"], 2: ["⛅️", "晴れ時々くもり"], 3: ["☁️", "くもり"],
+  45: ["🌫", "霧"], 48: ["🌫", "霧（着氷）"],
+  51: ["🌦", "弱い霧雨"], 53: ["🌦", "霧雨"], 55: ["🌧", "強い霧雨"],
+  56: ["🌧", "着氷性の霧雨"], 57: ["🌧", "着氷性の霧雨"],
+  61: ["🌦", "小雨"], 63: ["🌧", "雨"], 65: ["🌧", "強い雨"],
+  66: ["🌧", "着氷性の雨"], 67: ["🌧", "着氷性の強い雨"],
+  71: ["🌨", "小雪"], 73: ["🌨", "雪"], 75: ["❄️", "大雪"], 77: ["🌨", "霧雪"],
+  80: ["🌦", "にわか雨"], 81: ["🌧", "にわか雨（強め）"], 82: ["⛈", "激しいにわか雨"],
+  85: ["🌨", "にわか雪"], 86: ["❄️", "強いにわか雪"],
+  95: ["⛈", "雷雨"], 96: ["⛈", "雷雨（ひょう）"], 99: ["⛈", "激しい雷雨（ひょう）"],
+};
+const wmo = (c) => WMO[c] || ["❔", "不明"];
+let lastWeather = null, maxRain = 0;
+
+async function loadWeather() {
+  const p = new URLSearchParams({
+    latitude: CONFIG.latitude, longitude: CONFIG.longitude, timezone: "Asia/Tokyo",
+    current: "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code",
+    hourly: "temperature_2m,precipitation_probability,weather_code",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+    forecast_days: "4",
+  });
+  try {
+    const r = await fetch("https://api.open-meteo.com/v1/forecast?" + p, { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    lastWeather = await r.json();
+    renderWeather(lastWeather);
+    setOnline(true);
+  } catch (e) {
+    setOnline(false);
+    if (!lastWeather) $("nowDesc").textContent = "天気を取得できません（通信を確認）";
+  }
+}
+
+function renderWeather(w) {
+  const c = w.current;
+  const [icon, desc] = wmo(c.weather_code);
+  $("placeLabel").textContent = CONFIG.placeName;
+  $("nowIcon").textContent = icon;
+  $("nowTemp").textContent = `${Math.round(c.temperature_2m)}°`;
+  $("nowDesc").textContent = desc;
+  $("feels").textContent = `${Math.round(c.apparent_temperature)}°`;
+  $("hum").textContent = `${Math.round(c.relative_humidity_2m)}%`;
+
+  const now = Date.now(), H = w.hourly;
+  let start = H.time.findIndex((t) => new Date(t).getTime() + 3600e3 > now);
+  if (start < 0) start = 0;
+  $("popNow").textContent = `${H.precipitation_probability[start] ?? "-"}%`;
+  let html = ""; maxRain = 0;
+  for (let i = start; i < start + 12 && i < H.time.length; i++) {
+    const t = new Date(H.time[i]);
+    const pr = H.precipitation_probability[i] ?? 0;
+    maxRain = Math.max(maxRain, pr);
+    html += `<div class="h"><div class="t">${pad(t.getHours())}h</div><div class="i">${wmo(H.weather_code[i])[0]}</div>
+      <div>${Math.round(H.temperature_2m[i])}°</div>
+      <div class="bar"><i style="height:${Math.max(2, pr * 0.24)}px"></i></div><div class="p">${pr}%</div></div>`;
+  }
+  $("hours").innerHTML = html;
+
+  const D = w.daily;
+  $("days").innerHTML = D.time.map((t, i) => {
+    const d = new Date(t + "T00:00:00");
+    const name = i === 0 ? "今日" : i === 1 ? "明日" : `${d.getMonth() + 1}/${d.getDate()}(${WEEK[d.getDay()]})`;
+    return `<div class="day"><div>${name}</div><div class="i">${wmo(D.weather_code[i])[0]}</div>
+      <div class="t2"><span class="hi">${Math.round(D.temperature_2m_max[i])}°</span> / <span class="lo">${Math.round(D.temperature_2m_min[i])}°</span></div>
+      <div class="p">${D.precipitation_probability_max[i] ?? "-"}%</div></div>`;
+  }).join("");
+
+  renderBanner();
+  const u = new Date();
+  $("updated").textContent = `${pad(u.getHours())}:${pad(u.getMinutes())}`;
+}
+function setOnline(ok) { $("offline").style.display = ok ? "none" : "inline"; }
+
+/* ---------- 電車：祝日判定 ---------- */
+let holidays = {}, holidaysLoadedOn = "";
+async function loadHolidays() {
+  try {
+    const r = await fetch("https://holidays-jp.github.io/api/v1/date.json", { cache: "no-store" });
+    if (r.ok) { holidays = await r.json(); holidaysLoadedOn = ymd(new Date()); }
+  } catch (e) { /* 取れなければ土日だけで判定 */ }
+}
+function isHolidayDia(d) {
+  if (d.getDay() === 0 || d.getDay() === 6) return true;
+  if (holidays[ymd(d)]) return true;
+  return CONFIG.train.extraHolidayDates.includes(`${pad(d.getMonth() + 1)}-${pad(d.getDate())}`);
+}
+
+/* ---------- 電車：次の発車（深夜0〜2時台は前日ダイヤの24時台として扱う） ---------- */
+function serviceDay(now) {
+  const d = new Date(now);
+  let minsNow = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+  if (d.getHours() < 3) { d.setDate(d.getDate() - 1); minsNow += 1440; }
+  d.setHours(0, 0, 0, 0);
+  return { base: d, minsNow };
+}
+function departuresOf(day) {
+  const table = isHolidayDia(day) ? CONFIG.train.holiday : CONFIG.train.weekday;
+  const list = [];
+  Object.keys(table).map(Number).sort((a, b) => a - b).forEach((h) => table[h].forEach((m) => list.push(h * 60 + m)));
+  return list;
+}
+function upcoming(count) {
+  const { base, minsNow } = serviceDay(new Date());
+  const out = [];
+  let day = new Date(base), offset = 0;
+  for (let k = 0; k < 2 && out.length < count; k++) {
+    for (const m of departuresOf(day)) {
+      if (m + offset >= minsNow) out.push({ at: new Date(base.getTime() + (m + offset) * 60e3), holiday: isHolidayDia(day) });
+    }
+    day = new Date(day.getTime() + 864e5); offset += 1440;
+  }
+  return out;
+}
+const hm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+// 残り時間を「分:秒」（1時間以上は「時:分:秒」）で
+function remain(d) {
+  const s = Math.max(0, Math.floor((d.getTime() - Date.now()) / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+  return h ? `${h}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+}
+
+const ROUTE = [ // 日本橋から野田阪神方面（Osaka Metro千日前線）
+  ["S17", "日本橋"], ["S16", "なんば"], ["S15", "桜川"], ["S14", "西長堀"],
+  ["S13", "阿波座"], ["S12", "玉川"], ["S11", "野田阪神"],
+];
+const trainStyle = (new URLSearchParams(location.search).get("train") || CONFIG.train.style || "").toLowerCase();
+function renderRoute() {
+  $("tRoute").innerHTML = `<div class="ln">${ROUTE.map(([no, nm], i) =>
+    `<div class="st${i === 0 ? " here" : ""}${i === ROUTE.length - 1 ? " dest" : ""}"><div class="no">${no}</div><div class="dot"></div><div class="nm">${nm}</div></div>`).join("")}</div>
+    <div class="dir">YOU ARE HERE ▸ 野田阪神方面</div>`;
+}
+// 直前に出た電車（ゲージの起点）
+function prevDeparture() {
+  const { base, minsNow } = serviceDay(new Date());
+  const past = departuresOf(base).filter((m) => m <= minsNow);
+  return past.length ? new Date(base.getTime() + past[past.length - 1] * 60e3) : null;
+}
+
+function renderTrain() {
+  const list = upcoming(30);
+  const card = document.querySelector(".train");
+  if (trainStyle) card.dataset.style = trainStyle;
+  $("trainTitle").textContent = CONFIG.train.title;
+  if (!list.length) return;
+  const { base, minsNow } = serviceDay(new Date());
+  const first = list[0];
+  const gapHours = (first.at.getTime() - Date.now()) / 3600e3;
+  const inEl = $("nextIn");
+  if (gapHours > 2) card.dataset.ended = "1"; else delete card.dataset.ended;
+
+  if (gapHours > 2) {
+    $("nextLabel").textContent = `始発（${first.holiday ? "土休日" : "平日"}ダイヤ）`;
+    inEl.className = "in txt"; inEl.textContent = "本日の運行終了";
+    $("nextAt").innerHTML = `始発 <b>${hm(first.at)}</b>`;
+    $("later").innerHTML = "";
+    return;
+  }
+  $("nextLabel").textContent = `次の電車まで（${isHolidayDia(base) ? "土休日" : "平日"}ダイヤ）`;
+  // 2時間以上あく電車は「翌日の始発」なので、今夜の分だけに絞る
+  const tonight = [first];
+  for (let i = 1; i < list.length && tonight.length < 4; i++) {
+    if (list[i].at - list[i - 1].at > 2 * 3600e3) break;
+    tonight.push(list[i]);
+  }
+  const isLast = (x) => { const n = list[list.indexOf(x) + 1]; return !n || n.at - x.at > 2 * 3600e3; };
+  const secs = (first.at.getTime() - Date.now()) / 1000;
+  inEl.className = "in" + (secs < 60 ? " soon" : "");
+  inEl.textContent = remain(first.at);
+  $("nextAt").innerHTML = `<b>${hm(first.at)}</b> 発${isLast(first) ? "（終電）" : ""}`;
+  $("later").innerHTML = tonight.slice(1).map((x) =>
+    `<div><b>${hm(x.at)}</b> 発${isLast(x) ? "（終電）" : ""}<span>あと ${remain(x.at)}</span></div>`).join("");
+
+  if (trainStyle === "board") {
+    const rows = [first];
+    for (let i = 1; i < list.length && rows.length < 5; i++) {
+      if (list[i].at - list[i - 1].at > 2 * 3600e3) break;
+      rows.push(list[i]);
+    }
+    $("tBoard").innerHTML = `<div class="hd"><span>DEPART 発車</span><span>DEST 行先</span><span style="text-align:right">REMAIN 発車まで</span></div>` +
+      rows.map((x) => `<div class="r${isLast(x) ? " last" : ""}"><span class="tm">${hm(x.at)}</span>` +
+        `<span class="dst"><em>野田阪神</em> 行</span><span class="rm">${remain(x.at)}</span></div>`).join("");
+  }
+  if (trainStyle === "gauge") {
+    const prev = prevDeparture();
+    const span = prev ? first.at - prev : 10 * 60e3;
+    const ratio = Math.min(1, Math.max(0, 1 - (first.at - Date.now()) / span));
+    const n = 30, on = Math.round(ratio * n), soon = secs < 60;
+    $("gBar").innerHTML = Array.from({ length: n }, (_, i) => `<i class="${i < on ? "on" + (soon ? " soon" : "") : ""}"></i>`).join("");
+    $("gPrev").textContent = prev ? `前の電車 ${hm(prev)}` : "";
+    $("gNext").textContent = `${hm(first.at)} 発車`;
+  }
+  if (trainStyle === "timetable") {
+    const t = isHolidayDia(base) ? CONFIG.train.holiday : CONFIG.train.weekday;
+    const h0 = Math.floor(minsNow / 60);
+    const hours = Object.keys(t).map(Number).filter((h) => h >= h0).sort((a, b) => a - b).slice(0, 3);
+    const nextAbs = Math.round((first.at - base) / 60e3);
+    $("tTable").innerHTML = hours.map((h) => `<div class="tr"><div class="hh">${pad(h % 24)}</div><div class="mm">` +
+      t[h].map((m) => { const abs = h * 60 + m; const c = abs === nextAbs ? "next" : abs < minsNow ? "past" : "";
+        return `<span class="${c}">${pad(m)}</span>`; }).join("") + `</div></div>`).join("");
+  }
+}
+
+/* ---------- 電車：運行情報（Apps Script経由） ---------- */
+let trainStatus = null;
+function loadTrainStatus() {
+  if (!CONFIG.train.statusUrl) { setStatus({ level: "unset" }); return; }
+  const sep = CONFIG.train.statusUrl.includes("?") ? "&" : "?";
+  jsonp(CONFIG.train.statusUrl + sep + "_=" + Date.now(), (cb) => "&callback=" + cb, (d) => { trainStatus = d; setStatus(d); renderBanner(); });
+}
+function setStatus(d) {
+  const el = $("status"), det = $("statusDetail");
+  el.className = "status";
+  det.style.display = "none";
+  if (d.level === "unset") { el.textContent = "運行情報：未設定"; }
+  else if (!d.ok) { el.textContent = "運行情報：取得失敗"; }
+  else {
+    el.classList.add(d.level === "normal" ? "normal" : d.level === "stop" ? "stop" : d.level === "delay" ? "delay" : "x");
+    el.textContent = d.status;
+    if (d.level !== "normal" && d.detail) { det.textContent = d.detail; det.style.display = "block"; }
+  }
+  $("trainNote").textContent = d.ok
+    ? `運行情報：Osaka Metro公式（${(d.at || "時刻不明").replace(/^\d{4}\//, "")}現在）・発車時刻は時刻表上の予定`
+    : "発車時刻は時刻表上の予定（遅れは反映されません）";
+}
+
+/* ---------- 上部の注意チップ ---------- */
+function renderBanner() {
+  const chips = [];
+  if (trainStatus && trainStatus.ok && trainStatus.level !== "normal")
+    chips.push(`<span class="chip ${trainStatus.level === "stop" ? "stop" : "warn"}">千日前線：${esc(trainStatus.status)}</span>`);
+  if (maxRain >= CONFIG.umbrellaThreshold) chips.push(`<span class="chip rain">☂ 傘を持っていこう（最大${maxRain}%）</span>`);
+  if (lastWeather) {
+    const t = lastWeather.current.apparent_temperature;
+    if (t >= 31) chips.push(`<span class="chip warn">体感${Math.round(t)}°・水分補給を</span>`);
+    if (t <= 3) chips.push(`<span class="chip">体感${Math.round(t)}°・上着を</span>`);
+  }
+  $("banner").innerHTML = chips.join("");
+}
+
+/* ---------- 画面を消さない（対応ブラウザのみ） ---------- */
+async function keepAwake() {
+  try { if ("wakeLock" in navigator && document.visibilityState === "visible") await navigator.wakeLock.request("screen"); } catch (e) {}
+}
+document.addEventListener("visibilitychange", keepAwake);
+document.addEventListener("click", keepAwake);
+
+/* ---------- 起動 ---------- */
+renderRoute();
+tick(); setInterval(tick, 1000);
+loadHolidays().then(renderTrain);
+setInterval(() => { if (holidaysLoadedOn !== ymd(new Date())) loadHolidays(); }, 3600e3);
+loadTrainStatus(); setInterval(loadTrainStatus, CONFIG.train.statusRefreshMin * 60e3);
+loadWeather(); setInterval(loadWeather, CONFIG.weatherRefreshMin * 60e3);
+keepAwake();
+window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); });
+setTimeout(() => location.reload(), CONFIG.fullReloadHours * 3600e3);
+</script>
+</body>
+</html>
