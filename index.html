@@ -10,7 +10,7 @@
 <title>喫煙所ボード</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Share+Tech+Mono&family=Noto+Sans+JP:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Share+Tech+Mono&display=swap">
 <style>
 /* =========================================================
    喫煙所ボード（iPad常時表示用）— NEON
@@ -19,7 +19,7 @@
 :root{
   --bg:#07040f; --text:#eef9ff; --sub:#97abc4; --faint:#55658a; --rule:rgba(5,217,232,.28);
   --cyan:#05d9e8; --mag:#ff3d7f; --yel:#f9f002; --ok:#2ee6f2; --stop:#ff3d7f;
-  --mono:"Share Tech Mono",ui-monospace,monospace; --num:"Orbitron",sans-serif; --jp:"Noto Sans JP","Hiragino Sans",sans-serif;
+  --mono:"Share Tech Mono",ui-monospace,monospace; --num:"Orbitron",sans-serif; --jp:"Noto Sans JP","Hiragino Sans",sans-serif; --jph:var(--jp);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-webkit-user-select:none;user-select:none;-webkit-text-size-adjust:100%;
@@ -30,23 +30,27 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
     linear-gradient(90deg,rgba(5,217,232,.04) 1px,transparent 1px) 0 0/32px 100%,#07040f}
 #fit{position:fixed;inset:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 #stage{position:absolute;left:0;top:0;transform-origin:0 0;padding:22px 26px 14px;display:grid}
-#stage.land{width:1180px;height:780px;grid-template-columns:600px 1fr;column-gap:34px;
-  grid-template-rows:188px 1fr 152px 16px;grid-template-areas:"clock now" "train fortune" "fc fc" "foot foot";row-gap:18px}
-#stage.port{width:820px;height:1420px;grid-template-columns:1fr;row-gap:22px;
-  grid-template-rows:180px 170px 330px 330px 150px 1fr;grid-template-areas:"clock" "now" "train" "fortune" "fc" "foot"}
+#stage.land{width:1180px;height:780px;grid-template-columns:590px 1fr;column-gap:36px;grid-template-rows:1fr 14px;row-gap:8px;
+  grid-template-areas:"L R" "foot foot"}
+#stage.port{width:820px;height:1500px;grid-template-columns:1fr;grid-template-rows:auto auto 1fr;row-gap:24px;
+  grid-template-areas:"L" "R" "foot"}
+.colL{grid-area:L;display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0}
+.colR{grid-area:R;display:flex;flex-direction:column;gap:18px;min-height:0;min-width:0}
+#stage.port .train{height:340px;flex:none}
+#stage.port .fortune{height:400px;flex:none}
 .num{font-family:var(--num);font-variant-numeric:tabular-nums}
 .mono{font-family:var(--mono)}
 
 /* セクション見出し：番号＋英字＋日本語＋細い罫線 */
 .sh{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;letter-spacing:.12em;color:var(--cyan);white-space:nowrap;margin-bottom:10px}
 .sh .no{color:var(--faint)}
-.sh .jp{font-family:var(--jp);font-weight:900;letter-spacing:.06em;color:var(--cyan);font-size:15px}
+.sh .jp{font-family:var(--jph);font-weight:900;letter-spacing:.06em;color:var(--cyan);font-size:15px}
 .sh .rl{flex:1;height:1px;background:linear-gradient(90deg,var(--rule),transparent)}
 .sh .aux{color:var(--sub);font-family:var(--jp);font-size:12px;letter-spacing:.02em}
 
 /* ---- 時計（枠なし） ---- */
-.clock{grid-area:clock;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
-#time{font-family:var(--num);font-weight:800;font-size:116px;line-height:.9;letter-spacing:.01em;text-shadow:0 0 18px rgba(5,217,232,.45)}
+.clock{display:flex;flex-direction:column;justify-content:flex-end;min-width:0;flex:none}
+#time{font-family:var(--num);font-weight:800;font-size:108px;line-height:.9;letter-spacing:.01em;text-shadow:0 0 18px rgba(5,217,232,.45)}
 #time .sec{font-size:34px;color:var(--mag);margin-left:10px;text-shadow:0 0 10px rgba(255,61,127,.6);vertical-align:.1em}
 .dline{display:flex;align-items:baseline;gap:14px;margin-top:12px;white-space:nowrap}
 #date{font-size:24px;font-weight:900;letter-spacing:.04em}
@@ -56,20 +60,39 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 #alerts .a::before{content:"▲ ";font-size:12px}
 #alerts .w{color:var(--yel)} #alerts .s{color:var(--mag)}
 
-/* ---- 天気（枠なし） ---- */
-.now{grid-area:now;display:flex;flex-direction:column;justify-content:space-between;padding-top:14px;min-width:0}
-.nrow{display:flex;align-items:center;gap:16px}
-#nowIcon{font-size:56px;line-height:1}
-#nowTemp{font-family:var(--num);font-weight:800;font-size:78px;line-height:1}
-#nowTemp sup{font-size:.45em;vertical-align:.9em;margin-left:2px}
-.ndesc b{display:block;font-size:22px;font-weight:900}
-.ndesc span{display:block;font-size:15px;font-weight:700;color:var(--sub);margin-top:2px}
-.nstats{display:flex;gap:26px;margin-top:12px;padding-top:10px;border-top:1px solid var(--rule);white-space:nowrap}
+/* ---- 天気（いま・4日間・12時間をひとまとめ） ---- */
+.wx{flex:none;display:flex;flex-direction:column;min-width:0}
+.wtop{display:grid;grid-template-columns:1fr 268px;column-gap:14px;align-items:center}
+.nrow{display:flex;align-items:center;gap:12px;min-width:0}
+#nowIcon{font-size:52px;line-height:1}
+#nowTemp{font-family:var(--num);font-weight:800;font-size:62px;line-height:1}
+#nowTemp sup{font-size:.42em;vertical-align:.95em;margin-left:2px}
+.ndesc{min-width:0}
+.ndesc b{display:block;font-size:17px;font-weight:900;white-space:nowrap;margin-top:6px}
+.ndesc span{display:block;font-size:13px;font-weight:700;color:var(--sub);margin-top:3px;white-space:nowrap}
+.nstats{display:flex;justify-content:space-between;margin-top:10px;padding:7px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);white-space:nowrap}
 .nstats div{font-size:13px;color:var(--sub);font-weight:700}
-.nstats b{font-family:var(--num);font-size:20px;color:var(--text);margin-left:8px;font-weight:600}
+.nstats b{font-family:var(--num);font-size:18px;color:var(--text);margin-left:7px;font-weight:600}
+.nstats b.hi{color:#ff7aa5} .nstats b.lo{color:#6fe6f2}
+#days{display:grid;grid-template-columns:repeat(4,1fr)}
+.day{text-align:center;font-size:13px;font-weight:700}
+.day+.day{border-left:1px solid var(--rule)}
+.day .i{font-size:22px;line-height:1.3}
+.day .v{font-family:var(--num);font-size:13px;font-weight:600}
+.day .hi{color:#ff7aa5} .day .lo{color:#6fe6f2}
+.day .p{font-family:var(--mono);color:var(--cyan);font-size:12px;margin-top:1px}
+.hlab{font-size:12px;font-weight:700;color:var(--sub);margin:10px 0 4px}
+#hours{display:grid;grid-template-columns:repeat(12,1fr)}
+.h{text-align:center}
+.h .t{font-family:var(--mono);color:var(--sub);font-size:12px}
+.h .i{font-size:19px;line-height:1.35}
+.h .v{font-family:var(--num);font-size:13px;font-weight:600}
+.h .bar{height:18px;display:flex;align-items:flex-end;justify-content:center;margin-top:3px}
+.h .bar i{display:block;width:50%;background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.5)}
+.h .p{font-family:var(--mono);font-size:11px;color:var(--cyan)}
 
 /* ---- 電車（唯一の枠付きパネル＝主役） ---- */
-.train{grid-area:train;position:relative;padding:16px 22px 14px;background:rgba(18,8,30,.82);min-height:0;display:flex;flex-direction:column;
+.train{flex:1;position:relative;padding:14px 22px 12px;background:rgba(18,8,30,.82);min-height:0;display:flex;flex-direction:column;
   clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,0 100%);
   box-shadow:inset 0 0 0 1px rgba(255,61,127,.55)}
 .train::after{content:"";position:absolute;right:0;top:0;width:37px;height:1px;background:rgba(255,61,127,.55);transform-origin:right top;transform:rotate(45deg) translate(0,0);right:-1px}
@@ -82,16 +105,18 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .status{margin-left:auto;font-size:15px;font-weight:700;padding:3px 12px;border:1px solid currentColor;color:var(--sub);white-space:nowrap}
 .status::before{content:"● "}
 .status.normal{color:var(--ok)} .status.delay{color:var(--yel);background:rgba(249,240,2,.1)} .status.stop{color:#fff;background:var(--stop);border-color:var(--stop)}
-#statusDetail{font-size:13px;color:var(--yel);margin-top:6px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cd{display:flex;align-items:flex-end;gap:18px;margin-top:10px;white-space:nowrap}
+#statusDetail{font-size:13px;color:var(--yel);margin-top:5px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd{display:flex;align-items:flex-end;gap:18px;margin-top:8px;white-space:nowrap}
 .cd .lab{font-size:13px;font-weight:700;color:var(--sub);margin-bottom:6px;min-height:18px}
-#nextIn{font-family:var(--num);font-weight:800;font-size:92px;line-height:.9;color:var(--mag);text-shadow:0 0 16px rgba(255,61,127,.45)}
+#nextIn{font-family:var(--num);font-weight:800;font-size:96px;line-height:.9;color:var(--mag);text-shadow:0 0 16px rgba(255,61,127,.45)}
+.train.has-detail #nextIn{font-size:78px}
+.train.has-detail .cd{margin-top:4px}
 #nextIn.soon{color:var(--yel);text-shadow:0 0 16px rgba(249,240,2,.5)}
-#nextIn.txt{font-family:var(--jp);font-weight:900;font-size:44px;color:var(--text);text-shadow:none}
+#nextIn.txt{font-family:var(--jph);font-weight:900;font-size:44px;color:var(--text);text-shadow:none}
 #nextAt{font-size:18px;color:var(--sub);font-weight:700;padding-bottom:6px}
 #nextAt b{font-family:var(--num);font-size:30px;color:var(--text);font-weight:600;margin-right:4px}
-#tBoard{margin-top:auto;border-top:1px solid rgba(255,61,127,.3)}
-#tBoard .r{display:grid;grid-template-columns:110px 1fr auto;align-items:center;height:34px;border-bottom:1px dashed rgba(255,61,127,.18);font-size:20px}
+#tBoard{margin-top:auto;padding-top:2px;border-top:1px solid rgba(255,61,127,.3)}
+#tBoard .r{display:grid;grid-template-columns:110px 1fr auto;align-items:center;height:31px;border-bottom:1px dashed rgba(255,61,127,.18);font-size:20px}
 #tBoard .r:last-child{border-bottom:none}
 #tBoard .tm{font-family:var(--num);font-weight:600}
 #tBoard .dst{font-size:15px;color:var(--sub);font-weight:700}
@@ -100,110 +125,232 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 #tBoard .last .dst::after{content:"　終電";color:var(--yel)}
 
 /* ---- 星座占い（枠なし・4列） ---- */
-.fortune{grid-area:fortune;display:flex;flex-direction:column;min-height:0;min-width:0}
+.fortune{flex:1;display:flex;flex-direction:column;min-height:0;min-width:0}
 #fCols{flex:1;display:grid;grid-template-columns:repeat(4,1fr);min-height:0}
 .fc4{position:relative;padding:4px 10px 0 12px;display:flex;flex-direction:column;min-width:0}
 .fc4+.fc4{border-left:1px solid var(--rule)}
-.fc4 .gl{font-size:34px;line-height:1;color:var(--cyan);font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp)}
-.fc4 .nm{font-size:17px;font-weight:900;margin-top:6px;white-space:nowrap}
-.fc4 .rk{display:flex;align-items:baseline;gap:4px;margin-top:10px}
-.fc4 .rk b{font-family:var(--num);font-weight:800;font-size:44px;line-height:1;color:var(--text)}
-.fc4 .rk span{font-family:var(--mono);font-size:14px;color:var(--faint)}
+.fc4 .gl{font-size:40px;line-height:1;color:var(--cyan);font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp)}
+.fc4 .nm{font-size:19px;font-weight:900;margin-top:8px;white-space:nowrap}
+.fc4 .rk{display:flex;align-items:baseline;gap:4px;margin-top:12px}
+.fc4 .rk b{font-family:var(--num);font-weight:800;font-size:46px;line-height:1;color:var(--text)}
+.fc4 .rk span{font-family:var(--mono);font-size:13px;color:var(--faint)}
 .fc4.top .rk b{color:var(--yel);text-shadow:0 0 12px rgba(249,240,2,.45)}
 .fc4.top .gl{color:var(--yel)}
-.fc4 .mt{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:8px}
-.fc4 .mt i{height:6px;background:rgba(255,255,255,.08)}
+.fc4 .mt{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:10px}
+.fc4 .mt i{height:8px;background:rgba(255,255,255,.08)}
 .fc4 .mt i.on{background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.6)}
 .fc4.top .mt i.on{background:var(--yel);box-shadow:0 0 6px rgba(249,240,2,.6)}
-.fc4 .k{font-size:11px;font-weight:700;color:var(--faint);margin-top:12px}
+.fc4 .k{font-size:12px;font-weight:700;color:var(--faint);margin-top:18px}
 .fc4 .it{font-size:17px;font-weight:700;line-height:1.3;margin-top:3px;white-space:nowrap;overflow:hidden;letter-spacing:-.02em}
-.fc4 .co{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;margin-top:3px;white-space:nowrap}
-.fc4 .co i{width:13px;height:13px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:none}
-.fc4 .sub3{margin-top:auto;padding-top:10px;display:grid;gap:5px}
-.fc4 .sub3 div{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--sub);font-weight:700}
-.fc4 .sub3 span{display:flex;gap:3px}
-.fc4 .sub3 span i{width:7px;height:7px;transform:rotate(45deg);background:rgba(255,255,255,.12)}
+.fc4 .co{display:flex;align-items:center;gap:7px;font-size:17px;font-weight:700;margin-top:3px;white-space:nowrap}
+.fc4 .co i{width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:none}
+.fc4 .sub3{margin-top:auto;padding:14px 0 2px;display:grid;gap:8px}
+.fc4 .sub3 div{display:flex;align-items:center;justify-content:space-between;font-size:14px;color:var(--sub);font-weight:700}
+.fc4 .sub3 span{display:flex;gap:4px}
+.fc4 .sub3 span i{width:9px;height:9px;transform:rotate(45deg);background:rgba(255,255,255,.12)}
 .fc4 .sub3 span i.on{background:var(--mag);box-shadow:0 0 5px rgba(255,61,127,.7)}
 .fc4{padding-bottom:4px}
 .fmsg{grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:15px;text-align:center;line-height:1.7}
 
-/* ---- 予報（枠なしの帯） ---- */
-.fc{grid-area:fc;display:grid;grid-template-columns:1fr 330px;column-gap:30px;min-height:0}
-#stage.port .fc{grid-template-columns:1fr}
-#stage.port .daysbox{display:none}
-#hours{display:grid;grid-template-columns:repeat(12,1fr)}
-.h{text-align:center;font-size:15px}
-.h .t{font-family:var(--mono);color:var(--sub);font-size:13px}
-.h .i{font-size:22px;line-height:1.35}
-.h .v{font-family:var(--num);font-size:15px;font-weight:600}
-.h .bar{height:22px;display:flex;align-items:flex-end;justify-content:center;margin-top:4px}
-.h .bar i{display:block;width:46%;background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.5)}
-.h .p{font-family:var(--mono);font-size:12px;color:var(--cyan)}
-#days{display:grid;grid-template-columns:repeat(4,1fr)}
-.day{text-align:center;font-size:14px;font-weight:700}
-.day+.day{border-left:1px solid var(--rule)}
-.day .i{font-size:24px;line-height:1.35}
-.day .v{font-family:var(--num);font-size:14px;font-weight:600}
-.day .hi{color:#ff7aa5} .day .lo{color:#6fe6f2}
-.day .p{font-family:var(--mono);color:var(--cyan);font-size:12px;margin-top:2px}
+/* ---- ニュース ---- */
+.news{flex:none;height:178px;display:flex;flex-direction:column;min-width:0}
+#newsList{display:flex;flex-direction:column}
+.nw{display:grid;grid-template-columns:82px 72px 1fr;align-items:center;height:27px;border-bottom:1px dashed rgba(5,217,232,.16)}
+.nw:last-child{border-bottom:none}
+.nw .tm{font-family:var(--mono);font-size:13px;color:var(--cyan)}
+.nw .tg{justify-self:start;white-space:nowrap;font-size:11px;font-weight:700;color:var(--sub);border:1px solid var(--rule);padding:1px 6px;line-height:1.4}
+.nw .tt{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nw.new .tm{color:var(--mag)}
+.nmsg{color:var(--sub);font-size:14px;padding-top:8px}
 
 .foot{grid-area:foot;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-align:right;align-self:end}
 .foot a{color:inherit}
 #stage.port .foot{white-space:normal;line-height:1.6;align-self:start}
 #offline{display:none;color:var(--yel)}
+
+/* ---- タップできる場所 ---- */
+.fc4,.nw{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fc4:active,.nw:active{background:rgba(5,217,232,.08)}
+.sh .tap{font-family:var(--jp);font-size:11px;color:var(--faint);letter-spacing:.02em}
+
+/* ---- 詳細ウィンドウ ---- */
+.modal{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(4,2,10,.8)}
+.modal[hidden]{display:none}
+.mbox{position:relative;width:860px;max-width:calc(100% - 60px);background:#120a22;padding:64px 34px 24px;
+  clip-path:polygon(0 0,calc(100% - 30px) 0,100% 30px,100% 100%,30px 100%,0 calc(100% - 30px));
+  box-shadow:inset 0 0 0 1px rgba(5,217,232,.6),0 0 40px rgba(5,217,232,.18)}
+.mbox.mag{box-shadow:inset 0 0 0 1px rgba(255,61,127,.6),0 0 40px rgba(255,61,127,.18)}
+.mx{position:absolute;right:40px;top:18px;font-size:14px;font-weight:700;color:var(--sub);border:1px solid var(--rule);padding:4px 12px;background:none;font-family:var(--jp)}
+.mtimer{position:absolute;left:0;bottom:0;height:3px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.mlab{font-size:12px;font-weight:700;color:var(--faint);margin-bottom:4px}
+/* ニュース詳細 */
+.nd{display:grid;grid-template-columns:1fr 200px;column-gap:28px}
+.nd .meta{display:flex;gap:12px;align-items:center;font-size:14px;color:var(--sub);font-weight:700;margin-bottom:12px}
+.nd .meta .tg{font-size:12px;border:1px solid var(--rule);padding:1px 8px}
+.nd h2{font-size:28px;font-weight:900;line-height:1.4;margin-bottom:14px}
+.nd .img{width:100%;height:240px;object-fit:cover;margin-bottom:14px;background:#000}
+.nd .sum{font-size:19px;line-height:1.75;color:#d8e6f3}
+.nd .by{font-size:13px;color:var(--faint);margin-top:12px}
+.qrbox{align-self:end;text-align:center}
+.qrbox .qr{background:#fff;padding:10px;width:200px;height:200px}
+.qrbox .qr svg{width:100%;height:100%;display:block}
+.qrbox p{font-size:13px;color:var(--sub);margin-top:8px;line-height:1.5}
+/* 占い詳細 */
+.fd{display:grid;grid-template-columns:1fr 250px;column-gap:30px}
+.fd .hd{display:flex;align-items:center;gap:18px}
+.fd .gl{font-size:64px;line-height:1;color:var(--yel);font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp)}
+.fd .nm{font-size:30px;font-weight:900}
+.fd .rk{margin-left:auto;font-family:var(--num);font-weight:800;font-size:72px;line-height:1}
+.fd .rk span{font-family:var(--mono);font-size:18px;color:var(--faint);margin-left:4px}
+.fd .rk.top{color:var(--yel);text-shadow:0 0 14px rgba(249,240,2,.45)}
+.fd .msg{font-size:22px;font-weight:900;line-height:1.6;margin:18px 0 16px;padding:12px 16px;border-left:3px solid var(--mag);background:rgba(255,61,127,.06)}
+.fd .rows{display:grid;gap:10px}
+.fd .row{display:grid;grid-template-columns:60px 120px 1fr;align-items:center;font-size:16px}
+.fd .row b{font-weight:900}
+.fd .row .dm{display:flex;gap:5px}
+.fd .row .dm i{width:12px;height:12px;transform:rotate(45deg);background:rgba(255,255,255,.12)}
+.fd .row .dm i.on{background:var(--mag);box-shadow:0 0 6px rgba(255,61,127,.7)}
+.fd .row span{color:#d8e6f3}
+.fd .lucky{display:flex;gap:30px;margin-top:16px;font-size:18px;font-weight:900}
+.fd .lucky .co{display:flex;align-items:center;gap:8px}
+.fd .lucky .co i{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35)}
+.fd{grid-template-columns:1fr 300px}
+.fd .side{border-left:1px solid var(--rule);padding-left:24px;min-width:0}
+.fd .side .mlab{margin-bottom:8px}
+.fd .side .hint{font-size:11px;color:var(--faint);margin-top:8px}
+.rs{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.rs:active{background:rgba(5,217,232,.12)}
+/* 案A：ランキング＋総合運バー */
+.sa .rs{display:grid;grid-template-columns:30px 22px 1fr 84px;align-items:center;height:30px;font-size:15px;color:var(--sub);border-bottom:1px dashed rgba(5,217,232,.1)}
+.sa .rs b{font-family:var(--num);font-weight:600;color:var(--faint);font-size:14px}
+.sa .rs .g{font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp);color:var(--cyan);font-size:16px}
+.sa .rs .bar{height:6px;background:rgba(255,255,255,.07);position:relative}
+.sa .rs .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.5)}
+.sa .rs.mine{color:var(--text);font-weight:700}
+.sa .rs.me{color:var(--yel);font-weight:900;background:rgba(249,240,2,.07)}
+.sa .rs.me b,.sa .rs.me .g{color:var(--yel)}
+.sa .rs.me .bar i{background:var(--yel);box-shadow:0 0 6px rgba(249,240,2,.6)}
+/* 案B：12星座タイル */
+.sb{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sb .rs{position:relative;text-align:center;padding:8px 2px 7px;background:rgba(255,255,255,.035);border:1px solid rgba(5,217,232,.14)}
+.sb .rs .g{display:block;font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp);font-size:24px;line-height:1.1;color:var(--cyan)}
+.sb .rs .n{display:block;font-size:11px;font-weight:700;color:var(--sub);margin-top:3px;white-space:nowrap}
+.sb .rs b{position:absolute;right:4px;top:3px;font-family:var(--num);font-size:11px;color:var(--faint)}
+.sb .rs.top3 b{color:var(--yel)}
+.sb .rs.mine{border-color:rgba(255,255,255,.35)}
+.sb .rs.mine .n{color:var(--text)}
+.sb .rs.me{border-color:var(--yel);background:rgba(249,240,2,.1);box-shadow:0 0 12px rgba(249,240,2,.25)}
+.sb .rs.me .g,.sb .rs.me .n{color:var(--yel)}
+/* タイルの追加要素（案ごとに出し分け） */
+.sb .rs .m,.sb .rs .big,.sb .rs .cd{display:none}
+/* P2：タイル＋順位メーター */
+.sb.v-meter .rs{padding-bottom:9px}
+.sb.v-meter .rs .m{display:block;height:4px;margin:6px 8px 0;background:rgba(255,255,255,.08);position:relative}
+.sb.v-meter .rs .m i{position:absolute;left:0;top:0;bottom:0;background:var(--cyan);box-shadow:0 0 5px rgba(5,217,232,.6)}
+.sb.v-meter .rs.top3 .m i,.sb.v-meter .rs.me .m i{background:var(--yel);box-shadow:0 0 5px rgba(249,240,2,.6)}
+/* P3：ヒートマップ（順位が高いほど明るい） */
+.sb.v-heat .rs{background:rgba(5,217,232,var(--h));border-color:rgba(5,217,232,calc(var(--h) + .1))}
+.sb.v-heat .rs.top3{background:rgba(249,240,2,calc(var(--h) * .9));border-color:rgba(249,240,2,.55)}
+.sb.v-heat .rs.top3 .g{color:var(--yel)}
+.sb.v-heat .rs.top3 .n{color:var(--text)}
+.sb.v-heat .rs.me{box-shadow:0 0 0 2px var(--yel),0 0 14px rgba(249,240,2,.35)}
+/* P4：順位を主役に（記号と名前は小さく、ラッキーカラーの点つき） */
+.sb.v-rank .rs{padding:6px 4px 7px}
+.sb.v-rank .rs > b{display:none}
+.sb.v-rank .rs .big{display:block;font-family:var(--num);font-weight:800;font-size:26px;line-height:1.1;color:var(--text)}
+.sb.v-rank .rs.top3 .big{color:var(--yel);text-shadow:0 0 10px rgba(249,240,2,.45)}
+.sb.v-rank .rs .g{display:inline;font-size:13px}
+.sb.v-rank .rs .n{display:inline;font-size:11px;margin-left:3px}
+.sb.v-rank .rs .cd{display:block;position:absolute;right:6px;top:6px;width:9px;height:9px;border-radius:50%;border:1px solid rgba(255,255,255,.35)}
+
+/* 案C：表彰台＋4位以下 */
+.sc .pod{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:6px;margin-bottom:10px}
+.sc .pod .rs{text-align:center;padding:6px 2px 0}
+.sc .pod .g{display:block;font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp);font-size:26px;color:var(--yel);line-height:1.1}
+.sc .pod .n{display:block;font-size:12px;font-weight:700;white-space:nowrap;margin:3px 0 4px}
+.sc .pod .st{display:grid;place-items:center;font-family:var(--num);font-weight:800;color:#000;background:var(--yel);box-shadow:0 0 12px rgba(249,240,2,.4)}
+.sc .pod .p1 .st{height:62px;font-size:26px} .sc .pod .p2 .st{height:44px;font-size:20px;opacity:.85} .sc .pod .p3 .st{height:32px;font-size:18px;opacity:.7}
+.sc .pod .rs.me .n{color:var(--yel)}
+.sc .rest{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}
+.sc .rest .rs{display:grid;grid-template-columns:24px 18px 1fr;align-items:center;height:27px;font-size:13px;color:var(--sub);border-bottom:1px dashed rgba(5,217,232,.1);white-space:nowrap}
+.sc .rest b{font-family:var(--num);font-weight:600;font-size:12px;color:var(--faint)}
+.sc .rest .g{font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp);color:var(--cyan);font-size:14px}
+.sc .rest .rs.mine{color:var(--text);font-weight:700}
+.sc .rest .rs.me{color:var(--yel);font-weight:900;background:rgba(249,240,2,.07)}
+.sc .rest .rs.me b,.sc .rest .rs.me .g{color:var(--yel)}
+#stage.port .nd,#stage.port .fd{grid-template-columns:1fr}
+#stage.port .qrbox,#stage.port .fd .rank12{margin-top:18px}
+
+/* 見出し用の書体（案Dのみ別書体） */
+#date,.fc4 .nm,.fd .nm,.nd h2,#trainTitle{font-family:var(--jph)}
+.jp-dela #date,.jp-dela .fc4 .nm,.jp-dela .fd .nm,.jp-dela .nd h2,.jp-dela #nextIn.txt{font-weight:400;letter-spacing:.02em}
+.jp-dela .sh .jp,.jp-dela #trainTitle{font-family:var(--jp)}  /* 極太書体は小さい文字では潰れるので使わない */
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 </head>
 <body>
 <div id="fit"><div id="stage" class="land">
 
-  <section class="clock">
-    <div id="time">--:--</div>
-    <div class="dline"><span id="date"></span><span id="dateEn"></span></div>
-    <div id="alerts"></div>
-  </section>
+  <div class="colL">
+    <section class="clock">
+      <div id="time">--:--</div>
+      <div class="dline"><span id="date"></span><span id="dateEn"></span></div>
+      <div id="alerts"></div>
+    </section>
 
-  <section class="now">
-    <div class="sh"><span class="jp">いまの天気</span><span class="rl"></span><span class="aux" id="placeLabel"></span></div>
-    <div class="nrow">
-      <div id="nowIcon">⏳</div>
-      <div id="nowTemp">--</div>
-      <div class="ndesc"><b id="nowDesc">読み込み中</b><span id="nowHL"></span></div>
-    </div>
-    <div class="nstats">
-      <div>体感<b id="feels">--</b></div>
-      <div>湿度<b id="hum">--</b></div>
-      <div>この1時間の降水<b id="popNow">--</b></div>
-    </div>
-  </section>
+    <section class="train">
+      <div class="sh"><span class="jp">次の電車</span><span class="rl"></span><span class="aux" id="diaLabel"></span></div>
+      <div class="tline"><span class="smark">S17</span><span id="trainTitle"></span><span class="status" id="status">確認中</span></div>
+      <div id="statusDetail"></div>
+      <div class="cd">
+        <div><div class="lab" id="cdLab">発車まで</div><div id="nextIn">--:--</div></div>
+        <div id="nextAt"></div>
+      </div>
+      <div id="tBoard"></div>
+    </section>
 
-  <section class="train">
-    <div class="sh"><span class="jp">次の電車</span><span class="rl"></span><span class="aux" id="diaLabel"></span></div>
-    <div class="tline"><span class="smark">S17</span><span id="trainTitle"></span><span class="status" id="status">確認中</span></div>
-    <div id="statusDetail"></div>
-    <div class="cd">
-      <div><div class="lab" id="cdLab">発車まで</div><div id="nextIn">--:--</div></div>
-      <div id="nextAt"></div>
-    </div>
-    <div id="tBoard"></div>
-  </section>
+    <section class="news">
+      <div class="sh"><span class="jp">ニュース</span><span class="tap">タップで詳細</span><span class="rl"></span><span class="aux" id="newsAt"></span></div>
+      <div id="newsList"><div class="nmsg">読み込み中…</div></div>
+    </section>
+  </div>
 
-  <section class="fortune">
-    <div class="sh"><span class="jp">今日の星座占い</span><span class="rl"></span><span class="aux" id="fDate"></span></div>
-    <div id="fCols"><div class="fmsg">読み込み中…</div></div>
-  </section>
-
-  <section class="fc">
-    <div>
-      <div class="sh"><span class="jp">これから12時間の天気と降水確率</span><span class="rl"></span></div>
+  <div class="colR">
+    <section class="wx">
+      <div class="sh"><span class="jp">天気</span><span class="rl"></span><span class="aux" id="placeLabel"></span></div>
+      <div class="wtop">
+        <div class="nrow">
+          <div id="nowIcon">⏳</div>
+          <div class="ndesc"><div id="nowTemp">--</div><b id="nowDesc">読み込み中</b></div>
+        </div>
+        <div id="days"></div>
+      </div>
+      <div class="nstats">
+        <div>最高<b id="hiT" class="hi">--</b></div>
+        <div>最低<b id="loT" class="lo">--</b></div>
+        <div>体感<b id="feels">--</b></div>
+        <div>湿度<b id="hum">--</b></div>
+        <div>1時間降水<b id="popNow">--</b></div>
+      </div>
+      <div class="hlab">これから12時間（気温・降水確率）</div>
       <div id="hours"></div>
-    </div>
-    <div class="daysbox">
-      <div class="sh"><span class="jp">4日間</span><span class="rl"></span></div>
-      <div id="days"></div>
-    </div>
-  </section>
+    </section>
+
+    <section class="fortune">
+      <div class="sh"><span class="jp">今日の星座占い</span><span class="tap">タップで詳細</span><span class="rl"></span><span class="aux" id="fDate"></span></div>
+      <div id="fCols"><div class="fmsg">読み込み中…</div></div>
+    </section>
+  </div>
 
   <div class="foot" id="foot"></div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="mbox" id="mbox">
+      <button class="mx" id="mclose">閉じる ✕</button>
+      <div id="mbody"></div>
+      <div class="mtimer" id="mtimer"></div>
+    </div>
+  </div>
 </div></div>
 
 <script>
@@ -215,7 +362,7 @@ const CONFIG = {
   latitude: 34.663,
   longitude: 135.506,
 
-  // 中継スクリプト（Google Apps Script のウェブアプリURL）。千日前線の運行情報に使う
+  // 中継スクリプト（Google Apps Script のウェブアプリURL）。運行情報とニュースに使う
   relayUrl: "https://script.google.com/macros/s/AKfycbykwPMLBqrUnyEa9uF4fgPqhqtpmNYWfHf_7IX-w8crTcT1iM8blUbcAoEWfoN5iHjF/exec",
 
   // ---- 星座占い（左から表示する順） ----
@@ -274,6 +421,20 @@ const CONFIG = {
     extraHolidayDates: [],
   },
 
+  // ---- ニュース（WSJ日本版のRSSを中継スクリプト経由で取得） ----
+  news: { count: 5, refreshMin: 15, newWithinMin: 60 },
+
+  // 日本語の書体："murecho"（シャープ）/ "plex"（IBM Plex・計器風）/ "zenkaku"（端正）/ "dela"（見出しだけ極太）/ "noto"（従来）
+  jpFont: "plex",
+
+  // 占い詳細の右側（12星座パネル）：
+  //   "grid"（基本）/ "grid-meter"（順位メーター付き）/ "grid-heat"（順位で明るさが変わる）/ "grid-rank"（順位が主役）
+  //   ほかに "list"（ランキング一覧）/ "podium"（表彰台）も選べます
+  fortuneSide: "grid-rank",
+
+  // 詳細ウィンドウは、触らなければこの秒数で自動で閉じる
+  detailCloseSec: 40,
+
   umbrellaThreshold: 50,
   weatherRefreshMin: 15,
   fullReloadHours: 6,
@@ -281,6 +442,26 @@ const CONFIG = {
 /* ========================================================= */
 
 const $ = (id) => document.getElementById(id);
+
+/* ---------- 日本語の書体 ---------- */
+(function applyJpFont() {
+  const JP = {
+    noto:    { css: "Noto+Sans+JP:wght@500;700;900",          body: '"Noto Sans JP"' },
+    murecho: { css: "Murecho:wght@500;700;900",               body: '"Murecho"' },
+    plex:    { css: "IBM+Plex+Sans+JP:wght@500;700",          body: '"IBM Plex Sans JP"' },
+    zenkaku: { css: "Zen+Kaku+Gothic+New:wght@500;700;900",   body: '"Zen Kaku Gothic New"' },
+    dela:    { css: "Zen+Kaku+Gothic+New:wght@500;700;900&family=Dela+Gothic+One", body: '"Zen Kaku Gothic New"', head: '"Dela Gothic One"' },
+  };
+  const key = (new URLSearchParams(location.search).get("jp") || CONFIG.jpFont || "noto").toLowerCase();
+  const f = JP[key] || JP.noto;
+  const l = document.createElement("link");
+  l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=" + f.css + "&display=swap";
+  document.head.appendChild(l);
+  const root = document.documentElement.style;
+  root.setProperty("--jp", `${f.body},"Hiragino Sans",sans-serif`);
+  root.setProperty("--jph", `${f.head || f.body},"Hiragino Sans",sans-serif`);
+  if (f.head) document.documentElement.classList.add("jp-dela");
+})();
 const WEEK = ["日", "月", "火", "水", "木", "金", "土"], WEEK_EN = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 const pad = (n) => String(n).padStart(2, "0");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -293,7 +474,7 @@ function fit() {
   const pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight), pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
   const aw = box.clientWidth - pl - pr, ah = box.clientHeight - pt - pb, port = ah > aw;
   st.className = port ? "port" : "land";
-  const W = port ? 820 : 1180, H = port ? 1420 : 780, s = Math.min(aw / W, ah / H);
+  const W = port ? 820 : 1180, H = port ? 1500 : 780, s = Math.min(aw / W, ah / H);
   st.style.transform = `translate(${pl + (aw - W * s) / 2}px, ${pt + (ah - H * s) / 2}px) scale(${s})`;
 }
 window.addEventListener("resize", fit);
@@ -352,7 +533,8 @@ function renderWeather(w) {
   $("nowIcon").textContent = icon;
   $("nowTemp").innerHTML = `${Math.round(c.temperature_2m)}<sup>°C</sup>`;
   $("nowDesc").textContent = desc;
-  $("nowHL").textContent = `最高 ${Math.round(D.temperature_2m_max[0])}°　最低 ${Math.round(D.temperature_2m_min[0])}°`;
+  $("hiT").textContent = `${Math.round(D.temperature_2m_max[0])}°`;
+  $("loT").textContent = `${Math.round(D.temperature_2m_min[0])}°`;
   $("feels").textContent = `${Math.round(c.apparent_temperature)}°`;
   $("hum").textContent = `${Math.round(c.relative_humidity_2m)}%`;
   let start = H.time.findIndex((t) => new Date(t).getTime() + 3600e3 > now); if (start < 0) start = 0;
@@ -360,8 +542,8 @@ function renderWeather(w) {
   let html = ""; maxRain = 0;
   for (let i = start; i < start + 12 && i < H.time.length; i++) {
     const pr = H.precipitation_probability[i] ?? 0; maxRain = Math.max(maxRain, pr);
-    html += `<div class="h"><div class="t">${pad(new Date(H.time[i]).getHours())}:00</div><div class="i">${wmo(H.weather_code[i])[0]}</div>
-      <div class="v">${Math.round(H.temperature_2m[i])}°</div><div class="bar"><i style="height:${Math.max(1, pr * 0.22)}px"></i></div><div class="p">${pr}%</div></div>`;
+    html += `<div class="h"><div class="t">${new Date(H.time[i]).getHours()}時</div><div class="i">${wmo(H.weather_code[i])[0]}</div>
+      <div class="v">${Math.round(H.temperature_2m[i])}°</div><div class="bar"><i style="height:${Math.max(1, pr * 0.18)}px"></i></div><div class="p">${pr}%</div></div>`;
   }
   $("hours").innerHTML = html;
   $("days").innerHTML = D.time.map((t, i) => {
@@ -430,7 +612,8 @@ function renderTrain() {
   el.textContent = remain(first.at);
   $("nextAt").innerHTML = `<b>${hm(first.at)}</b>発 野田阪神行${isLast(first) ? "（終電）" : ""}`;
   const rows = [];
-  for (let i = 1; i < list.length && rows.length < 3; i++) {
+  const maxRows = document.querySelector(".train").classList.contains("has-detail") ? 3 : 4;
+  for (let i = 1; i < list.length && rows.length < maxRows; i++) {
     if (list[i].at - list[i - 1].at > 2 * 3600e3) break;
     rows.push(list[i]);
   }
@@ -454,6 +637,7 @@ function setStatus(d) {
     el.textContent = d.status; statusAt = (d.at || "").replace(/^\d{4}\//, "");
     if (d.level !== "normal" && d.detail) { det.textContent = d.detail; det.style.display = "block"; }
   }
+  document.querySelector(".train").classList.toggle("has-detail", det.style.display === "block");
 }
 
 /* ---------- 星座占い ---------- */
@@ -488,17 +672,18 @@ function makeFortune(dateStr) {
     return { sign, rank, total: base, love: v(), money: v(), job: v(), item: pick(CONFIG.fortune.items), color: pick(CONFIG.fortune.colors) };
   });
 }
-let fortuneDate = "";
+let fortuneDate = "", todayFortune = [];
 function renderFortune() {
   const d = new Date(), key = ymd(d);
   if (key === fortuneDate) return;
   fortuneDate = key;
   const items = makeFortune(key);
+  todayFortune = items;
   $("fDate").textContent = `${d.getMonth() + 1}/${d.getDate()}`;
   $("fCols").innerHTML = CONFIG.fortune.signs.map((s) => {
     const f = items.find((x) => x.sign === s.key);
     const on = 13 - f.rank, sw = swatch(f.color);
-    return `<div class="fc4${f.rank <= 3 ? " top" : ""}">
+    return `<div class="fc4${f.rank <= 3 ? " top" : ""}" data-sign="${s.key}">
       <div class="gl">${s.glyph}</div><div class="nm">${s.name}</div>
       <div class="rk"><b>${pad(f.rank)}</b><span>/12</span></div>
       <div class="mt">${Array.from({ length: 12 }, (_, i) => `<i class="${i < on ? "on" : ""}"></i>`).join("")}</div>
@@ -518,11 +703,151 @@ function shrinkToFit(sel, min) {
     const w = el.clientWidth;
     if (!w) return;
     const units = [...el.textContent].reduce((n, c) => n + (/[\u0000-\u00ff]/.test(c) ? 0.6 : 1.04), 0);
-    let fs = Math.max(min, Math.min(17, Math.floor((w / units) * 2) / 2));
+    let fs = Math.max(min, Math.min(19, Math.floor((w / units) * 2) / 2));
     el.style.fontSize = fs + "px";
     while (el.scrollWidth > el.clientWidth + 1 && fs > min) { fs -= 0.5; el.style.fontSize = fs + "px"; }
   });
 }
+
+/* ---------- ニュース ---------- */
+// 配信からの経過時間（「25分前」「3時間前」「2日前」）
+function ago(t) {
+  const m = Math.max(0, Math.floor((Date.now() - t) / 60e3));
+  return m < 60 ? `${m}分前` : m < 1440 ? `${Math.floor(m / 60)}時間前` : `${Math.floor(m / 1440)}日前`;
+}
+let newsAt = "", newsItems = [];
+function loadNews() {
+  if (!CONFIG.relayUrl) return;
+  jsonp(CONFIG.relayUrl + "?type=news", (d) => {
+    if (!d || !d.ok || !d.items) {
+      if (!newsAt) $("newsList").innerHTML = `<div class="nmsg">${d && d.items === undefined && d.line
+        ? "ニュースを表示するには、中継スクリプトの更新が必要です" : "ニュースを取得できませんでした（自動で再取得します）"}</div>`;
+      return;
+    }
+    const now = Date.now();
+    newsItems = d.items.slice(0, CONFIG.news.count);
+    $("newsList").innerHTML = newsItems.map((n, idx) => {
+      const t = new Date(n.pubDate), fresh = now - t < CONFIG.news.newWithinMin * 60e3;
+      return `<div class="nw${fresh ? " new" : ""}" data-i="${idx}"><span class="tm">${isNaN(t) ? "" : ago(t)}</span><span class="tg">${esc(n.tag || "")}</span><span class="tt">${esc(n.title)}</span></div>`;
+    }).join("");
+    newsAt = hm(new Date());
+    $("newsAt").textContent = `WSJ日本版 ・ ${newsAt} 更新`;
+    renderFoot();
+  });
+}
+
+/* ---------- 詳細ウィンドウ ---------- */
+let closeTimer = null, timerAnim = null;
+function openModal(html, accent) {
+  $("mbody").innerHTML = html;
+  $("mbox").className = "mbox" + (accent === "mag" ? " mag" : "");
+  $("modal").hidden = false;
+  clearTimeout(closeTimer); if (timerAnim) timerAnim.cancel();
+  const ms = CONFIG.detailCloseSec * 1000;
+  closeTimer = setTimeout(closeModal, ms);
+  const bar = $("mtimer");
+  if (bar.animate) timerAnim = bar.animate([{ width: "100%" }, { width: "0%" }], { duration: ms, easing: "linear", fill: "forwards" });
+}
+function closeModal() { $("modal").hidden = true; clearTimeout(closeTimer); if (timerAnim) timerAnim.cancel(); }
+$("modal").addEventListener("click", (e) => { if (e.target.id === "modal" || e.target.closest("#mclose")) closeModal(); });
+
+// 記者名の区切りの乱れ（「,、」など）を整える
+function cleanAuthor(a) {
+  return String(a || "").split(/[、,，]/).map((x) => x.trim()).filter(Boolean).join("、");
+}
+function qrSvg(url) {
+  try { const q = qrcode(0, "M"); q.addData(url); q.make(); return q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); }
+  catch (e) { return ""; }
+}
+$("newsList").addEventListener("click", (e) => {
+  const row = e.target.closest(".nw"); if (!row) return;
+  const n = newsItems[+row.dataset.i]; if (!n) return;
+  const t = new Date(n.pubDate);
+  const when = isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()} ${hm(t)}（${ago(t)}）`;
+  const qr = n.link ? qrSvg(n.link) : "";
+  openModal(`<div class="nd"><div>
+      <div class="meta"><span class="tg">${esc(n.tag || "")}</span><span>${when}</span><span>WSJ日本版</span></div>
+      <h2>${esc(n.title)}</h2>
+      ${n.image ? `<img class="img" src="${esc(n.image)}" alt="" onerror="this.remove()">` : ""}
+      <div class="sum">${esc(n.description || "（要約はありません）")}</div>
+      ${cleanAuthor(n.author) ? `<div class="by">${esc(cleanAuthor(n.author))}</div>` : ""}
+    </div>
+    <div class="qrbox">${qr ? `<div class="qr">${qr}</div><p>スマホのカメラで読み取ると<br>記事の続きが開きます<br>（WSJの有料記事の場合あり）</p>` : ""}</div>
+  </div>`);
+});
+
+/* 占いのひとこと（日付と星座で毎日決まる） */
+const FORTUNE_MSG = {
+  5: ["思い切った一歩がそのまま追い風になる日。迷ったら前へ。", "いつもより頭が冴えています。後回しにしていたことを片づけるチャンス。", "人に会うほど運が開く日。誘いには乗ってみて。", "直感が当たりやすい一日。最初に浮かんだ答えを信じて。"],
+  4: ["小さな良いことが重なる日。気づいたらその場で感謝を伝えて。", "準備してきたことが形になりやすい日。仕上げは丁寧に。", "会話から良いヒントが見つかりそう。聞き役に回るのが吉。", "いつもと違う道を選ぶと、ちょっとした発見があるかも。"],
+  3: ["可もなく不可もない穏やかな日。ペースを守れば十分。", "無理をしなければ順調。休憩をこまめに取って。", "やることを3つに絞ると、一日がすっきり進みます。", "周りに合わせすぎず、自分のペースを大事に。"],
+  2: ["空回りしやすい日。急ぎの判断は一度持ち帰って。", "忘れ物に注意。出かける前にポケットを確認。", "言葉が強く伝わりやすい日。いつもより一呼吸おいて。", "予定がずれても気にしないこと。午後から持ち直します。"],
+  1: ["今日は守りの日。早めに帰ってゆっくり休むのが一番の開運。", "うまくいかなくても気にしない。明日はリセットされます。", "大きな決断は明日以降に。今日は身の回りの整理を。", "ラッキーアイテムを身につけて、気分だけでも上げていこう。"],
+};
+const SUB_MSG = {
+  love: { 5: "気持ちが素直に届く日", 4: "会話が弾みやすい", 3: "いつも通りが一番", 2: "言葉選びは丁寧に", 1: "一人の時間を楽しんで" },
+  money: { 5: "思わぬ臨時収入の予感", 4: "買い物の目利きが冴える", 3: "予算どおりで安定", 2: "衝動買いに注意", 1: "財布のひもは固めに" },
+  job: { 5: "評価につながる働きができる", 4: "段取りがうまくはまる", 3: "コツコツ進めれば順調", 2: "確認作業を丁寧に", 1: "無理せず早めに切り上げて" },
+};
+const SIGN_JP = { 牡羊座: "おひつじ座", 牡牛座: "おうし座", 双子座: "ふたご座", 蟹座: "かに座", 獅子座: "しし座", 乙女座: "おとめ座",
+  天秤座: "てんびん座", 蠍座: "さそり座", 射手座: "いて座", 山羊座: "やぎ座", 水瓶座: "みずがめ座", 魚座: "うお座" };
+const SIGN_GLYPH = { 牡羊座: "♈︎", 牡牛座: "♉︎", 双子座: "♊︎", 蟹座: "♋︎", 獅子座: "♌︎", 乙女座: "♍︎",
+  天秤座: "♎︎", 蠍座: "♏︎", 射手座: "♐︎", 山羊座: "♑︎", 水瓶座: "♒︎", 魚座: "♓︎" };
+const SIGN_DATES = { 牡羊座: "3/21〜4/19", 牡牛座: "4/20〜5/20", 双子座: "5/21〜6/21", 蟹座: "6/22〜7/22", 獅子座: "7/23〜8/22",
+  乙女座: "8/23〜9/22", 天秤座: "9/23〜10/23", 蠍座: "10/24〜11/22", 射手座: "11/23〜12/21", 山羊座: "12/22〜1/19",
+  水瓶座: "1/20〜2/18", 魚座: "2/19〜3/20" };
+const fortuneSide = (new URLSearchParams(location.search).get("fs") || CONFIG.fortuneSide || "list").toLowerCase();
+
+function sidePanel(cur) {
+  const mine = CONFIG.fortune.signs.map((x) => x.key);
+  const cls = (x) => `rs${x.sign === cur ? " me" : mine.includes(x.sign) ? " mine" : ""}`;
+  const g = (x) => SIGN_GLYPH[x.sign], n = (x) => SIGN_JP[x.sign];
+  let body = "";
+  if (fortuneSide.startsWith("grid")) {
+    const v = { grid: "", "grid-meter": " v-meter", "grid-heat": " v-heat", "grid-rank": " v-rank" }[fortuneSide] ?? "";
+    const order = ALL_SIGNS.map((k) => todayFortune.find((x) => x.sign === k));
+    body = `<div class="sb${v}">${order.map((x) => {
+      const h = (0.04 + (12 - x.rank) / 11 * 0.26).toFixed(3), sw = swatch(x.color);
+      return `<div class="${cls(x)}${x.rank <= 3 ? " top3" : ""}" data-s="${x.sign}" style="--h:${h}"><b>${x.rank}位</b>` +
+        `<span class="big">${pad(x.rank)}</span><span class="g">${g(x)}</span><span class="n">${n(x)}</span>` +
+        `<span class="m"><i style="width:${(13 - x.rank) / 12 * 100}%"></i></span>${sw ? `<i class="cd" style="background:${sw}"></i>` : ""}</div>`;
+    }).join("")}</div>`;
+  } else if (fortuneSide === "podium") {
+    const [a1, a2, a3] = todayFortune;
+    const pod = (x, k) => `<div class="${cls(x)} p${k}" data-s="${x.sign}"><span class="g">${g(x)}</span><span class="n">${n(x)}</span><div class="st">${k}</div></div>`;
+    body = `<div class="sc"><div class="pod">${pod(a2, 2)}${pod(a1, 1)}${pod(a3, 3)}</div>
+      <div class="rest">${todayFortune.slice(3).map((x) => `<div class="${cls(x)}" data-s="${x.sign}"><b>${pad(x.rank)}</b><span class="g">${g(x)}</span>${n(x)}</div>`).join("")}</div></div>`;
+  } else {
+    body = `<div class="sa">${todayFortune.map((x) => `<div class="${cls(x)}" data-s="${x.sign}"><b>${pad(x.rank)}</b><span class="g">${g(x)}</span><span>${n(x)}</span>
+      <span class="bar"><i style="width:${(13 - x.rank) / 12 * 100}%"></i></span></div>`).join("")}</div>`;
+  }
+  const legend = fortuneSide === "grid-rank" ? `<span style="margin-left:8px;color:var(--faint)">（●はラッキーカラー）</span>` : "";
+  return `<div class="side"><div class="mlab">今日の12星座ランキング${legend}</div>${body}<div class="hint">ほかの星座もタップで見られます</div></div>`;
+}
+
+function showFortune(signKey) {
+  const f = todayFortune.find((x) => x.sign === signKey); if (!f) return;
+  const sw = swatch(f.color);
+  const r = seeded("msg|" + fortuneDate + "|" + f.sign), pool = FORTUNE_MSG[f.total];
+  const msg = pool[Math.floor(r() * pool.length)];
+  const dm = (v) => `<span class="dm">${Array.from({ length: 5 }, (_, i) => `<i class="${i < v ? "on" : ""}"></i>`).join("")}</span>`;
+  openModal(`<div class="fd"><div>
+      <div class="hd"><div class="gl">${SIGN_GLYPH[f.sign]}</div><div><div class="nm">${SIGN_JP[f.sign]}</div><div class="mlab" style="margin:2px 0 0">${SIGN_DATES[f.sign]}</div></div>
+        <div class="rk${f.rank <= 3 ? " top" : ""}">${pad(f.rank)}<span>/12</span></div></div>
+      <div class="msg">${msg}</div>
+      <div class="rows">
+        <div class="row"><b>恋愛</b>${dm(f.love)}<span>${SUB_MSG.love[f.love]}</span></div>
+        <div class="row"><b>金運</b>${dm(f.money)}<span>${SUB_MSG.money[f.money]}</span></div>
+        <div class="row"><b>仕事</b>${dm(f.job)}<span>${SUB_MSG.job[f.job]}</span></div>
+      </div>
+      <div class="lucky"><div><div class="mlab">ラッキーアイテム</div>${esc(f.item)}</div>
+        <div><div class="mlab">ラッキーカラー</div><div class="co">${sw ? `<i style="background:${sw}"></i>` : ""}${esc(f.color)}</div></div></div>
+    </div>
+    ${sidePanel(f.sign)}
+  </div>`, "mag");
+}
+$("fCols").addEventListener("click", (e) => { const col = e.target.closest(".fc4"); if (col) showFortune(col.dataset.sign); });
+$("mbody").addEventListener("click", (e) => { const row = e.target.closest(".rs"); if (row) showFortune(row.dataset.s); });
 
 /* ---------- 注意表示 ---------- */
 function renderAlerts() {
@@ -541,6 +866,7 @@ function renderAlerts() {
 function renderFoot() {
   const parts = [`天気 <a href="https://open-meteo.com/">Open-Meteo.com</a> ${weatherAt}`];
   if (statusAt) parts.push(`運行情報 Osaka Metro公式 ${statusAt}現在（発車時刻は時刻表上の予定）`);
+  if (newsAt) parts.push(`ニュース WSJ日本版（Dow Jones）`);
   $("foot").innerHTML = parts.join("　／　");
 }
 
@@ -557,8 +883,9 @@ setInterval(() => { if (holidaysLoadedOn !== ymd(new Date())) loadHolidays(); },
 loadTrainStatus(); setInterval(loadTrainStatus, CONFIG.train.statusRefreshMin * 60e3);
 renderFortune(); setInterval(renderFortune, 60e3);
 loadWeather(); setInterval(loadWeather, CONFIG.weatherRefreshMin * 60e3);
+loadNews(); setInterval(loadNews, CONFIG.news.refreshMin * 60e3);
 keepAwake();
-window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); });
+window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); loadNews(); });
 if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .it", 11); });
 [1500, 5000].forEach((ms) => setTimeout(() => shrinkToFit(".fc4 .it", 11), ms));
 setTimeout(() => location.reload(), CONFIG.fullReloadHours * 3600e3);
