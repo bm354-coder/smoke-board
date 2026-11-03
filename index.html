@@ -120,8 +120,8 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 #tBoard .r:last-child{border-bottom:none}
 #tBoard .tm{font-family:var(--num);font-weight:600}
 #tBoard .dst{font-size:15px;color:var(--sub);font-weight:700}
-#tBoard .rm{font-family:var(--mono);font-size:20px;color:var(--cyan);letter-spacing:.06em}
-#tBoard .rm::before{content:"T−";color:var(--faint);font-size:14px;margin-right:4px}
+#tBoard .rm{font-family:var(--num);font-weight:600;font-size:20px;color:var(--cyan);letter-spacing:.02em}
+#tBoard .rm::before{content:"あと";font-family:var(--jp);font-weight:700;color:var(--faint);font-size:13px;margin-right:8px}
 #tBoard .last .dst::after{content:"　終電";color:var(--yel)}
 
 /* ---- 星座占い（枠なし・4列） ---- */
@@ -170,6 +170,84 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .foot a{color:inherit}
 #stage.port .foot{white-space:normal;line-height:1.6;align-self:start}
 #offline{display:none;color:var(--yel)}
+
+/* ---- 右下の欄：時間でスライド ---- */
+.slides{position:relative;flex:1;min-height:0;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;transform:translateX(40px);pointer-events:none;
+  transition:opacity .7s ease,transform .7s ease}
+.slide.on{opacity:1;transform:none;pointer-events:auto}
+.slide.out{transform:translateX(-40px)}
+.slide > div{flex:1;min-height:0;display:flex;flex-direction:column}
+#fCols{display:grid}
+.dots{display:flex;gap:6px;align-items:center;margin-right:10px}
+.dots i{width:18px;height:3px;background:rgba(255,255,255,.15)}
+.dots i.on{background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.7)}
+/* 月と太陽 */
+.sky{display:grid;grid-template-columns:200px 1fr;column-gap:26px;align-items:center;align-content:center;row-gap:6px;flex:1}
+.sky .moon{position:relative;width:180px;height:180px;margin:0 auto}
+.sky .moon svg{width:100%;height:100%;overflow:visible}
+.sky .mname{font-size:26px;font-weight:700;margin-bottom:4px}
+.sky .mage{font-size:15px;color:var(--sub);font-weight:700}
+.sky .mage b{font-family:var(--num);font-size:22px;color:var(--text);margin:0 4px;font-weight:600}
+.sky .nx{display:flex;gap:22px;margin-top:12px;font-size:14px;color:var(--sub);font-weight:700}
+.sky .nx b{display:block;font-family:var(--num);font-size:20px;color:var(--text);font-weight:600;margin-top:2px}
+.sky .sun{display:grid;grid-template-columns:repeat(3,1fr);margin-top:18px;padding-top:12px;border-top:1px solid var(--rule)}
+.sky .sun div{font-size:13px;color:var(--sub);font-weight:700}
+.sky .sun b{display:block;font-family:var(--num);font-size:24px;color:var(--text);font-weight:600;margin-top:2px}
+.sky .sun .rise b{color:#ffd166} .sky .sun .set b{color:#ff7aa5}
+.sky .daybar{grid-column:1/-1;margin-top:16px;position:relative;height:6px;background:rgba(255,255,255,.07)}
+.sky .daybar i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#ffd166,#ff7aa5);box-shadow:0 0 8px rgba(255,209,102,.4)}
+.sky .daybar em{position:absolute;top:-5px;width:2px;height:16px;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.sky .daylab{grid-column:1/-1;display:flex;justify-content:space-between;font-family:var(--num);font-size:11px;color:var(--faint);margin-top:5px}
+/* カウントダウン */
+.cnt{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;flex:1;align-content:start;padding-top:4px}
+.cnt .c{border-left:3px solid var(--cyan);padding:8px 14px;background:rgba(5,217,232,.04)}
+.cnt .c.mag{border-left-color:var(--mag);background:rgba(255,61,127,.05)}
+.cnt .c.yel{border-left-color:var(--yel);background:rgba(249,240,2,.04)}
+.cnt .c .l{font-size:13px;color:var(--sub);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cnt .c .v{font-family:var(--num);font-weight:800;font-size:40px;line-height:1.15;color:var(--text)}
+.cnt .c .v small{font-family:var(--jp);font-size:15px;font-weight:700;color:var(--sub);margin-left:4px}
+.cnt .c .s{font-size:12px;color:var(--faint);font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cnt .yr{grid-column:1/-1;margin-top:4px}
+.cnt .yr .bar{height:10px;background:rgba(255,255,255,.07);margin-top:8px;position:relative}
+.cnt .yr .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--cyan);box-shadow:0 0 8px rgba(5,217,232,.6)}
+
+/* アニメクイズ */
+.qz{flex:1;display:flex;flex-direction:column;min-height:0}
+.qz .qh{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--sub)}
+.qz .qh .qn{font-family:var(--num);font-size:13px;color:var(--mag);border:1px solid var(--mag);padding:1px 8px}
+.qz .qh .gen{border:1px solid var(--rule);padding:1px 8px}
+.qz .qq{font-size:24px;font-weight:700;line-height:1.5;margin:10px 0 12px;min-height:72px}
+.qz .qq b{color:var(--cyan)}
+.qz .ch{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qz .ch div{display:flex;align-items:center;gap:10px;padding:10px 12px;font-size:18px;font-weight:700;background:rgba(255,255,255,.04);border:1px solid var(--rule);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .4s,border-color .4s,opacity .4s}
+.qz .ch div span{font-family:var(--num);font-size:14px;color:var(--faint);flex:none}
+.qz .ch div.lg{font-size:15px;letter-spacing:-.02em}
+.qz .ch div.xl{font-size:13px;letter-spacing:-.04em}
+.qz .ch div.ok{background:rgba(249,240,2,.14);border-color:var(--yel);color:var(--yel);box-shadow:0 0 12px rgba(249,240,2,.25)}
+.qz .ch div.ok span{color:var(--yel)}
+.qz .ch div.ng{background:rgba(255,61,127,.12);border-color:var(--mag)}
+.qz.done .ch div:not(.ok){opacity:.35}
+.qz .tb{margin-top:auto;display:flex;align-items:center;gap:10px}
+.qz .tb .bar{flex:1;height:5px;background:rgba(255,255,255,.08);position:relative}
+.qz .tb .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--mag);box-shadow:0 0 8px rgba(255,61,127,.6)}
+.qz .tb .sec{font-family:var(--num);font-size:18px;font-weight:600;color:var(--text);min-width:34px;text-align:right}
+.qz .ans{margin-top:10px;font-size:15px;font-weight:700;color:var(--yel);min-height:22px}
+.qz .ans small{color:var(--sub);font-weight:700;margin-left:8px}
+.qz.tap .ch div{cursor:pointer}
+/* 伏せ字 */
+.qz .rv{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.qz .rv i{display:grid;place-items:center;font-style:normal;width:46px;height:52px;font-size:28px;font-weight:700;background:rgba(5,217,232,.06);border:1px solid var(--rule)}
+.qz .rv i.h{color:transparent;background:repeating-linear-gradient(-45deg,rgba(5,217,232,.12) 0 6px,rgba(5,217,232,.04) 6px 12px)}
+.qz .rv i.sp{width:16px;border:none;background:none}
+.qz.done .rv i{color:var(--yel);border-color:var(--yel)}
+/* ○× */
+.qz .ox{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.qz .ox div{display:grid;place-items:center;height:78px;font-size:52px;font-weight:900;border:1px solid var(--rule);background:rgba(255,255,255,.03);transition:all .4s}
+.qz .ox div.o{color:var(--cyan)} .qz .ox div.x{color:var(--mag)}
+.qz .ox div.ok{background:rgba(249,240,2,.12);border-color:var(--yel);box-shadow:0 0 14px rgba(249,240,2,.3)}
+.qz.done .ox div:not(.ok){opacity:.25}
 
 /* ---- タップできる場所 ---- */
 .fc4,.nw{cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -340,8 +418,13 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
     </section>
 
     <section class="fortune">
-      <div class="sh"><span class="jp">今日の星座占い</span><span class="tap">タップで詳細</span><span class="rl"></span><span class="aux" id="fDate"></span></div>
-      <div id="fCols"><div class="fmsg">読み込み中…</div></div>
+      <div class="sh"><span class="jp" id="slotTitle">今日の星座占い</span><span class="tap" id="slotTap">タップで詳細</span><span class="rl"></span><span class="dots" id="slotDots"></span><span class="aux" id="slotAux"></span></div><span id="fDate" hidden></span>
+      <div class="slides" id="slides">
+        <div class="slide" data-k="fortune"><div id="fCols"><div class="fmsg">読み込み中…</div></div></div>
+        <div class="slide" data-k="sky"><div id="skyBox"></div></div>
+        <div class="slide" data-k="quiz"><div id="quizBox"></div></div>
+        <div class="slide" data-k="count"><div id="countBox"></div></div>
+      </div>
     </section>
   </div>
 
@@ -427,6 +510,22 @@ const CONFIG = {
   // ---- ニュース（WSJ日本版のRSSを中継スクリプト経由で取得） ----
   news: { count: 5, refreshMin: 15, newWithinMin: 60 },
 
+  // 右下の欄を時間で切り替える："fortune"（星座占い）/ "sky"（月と太陽）/ "count"（カウントダウン）
+  //   並べた順に切り替わる。1つだけにすると切り替えなし
+  slides: { order: ["fortune", "quiz", "count"], seconds: 20, quizSeconds: 30 },
+
+  // アニメクイズの出し方："auto"（4択・時間で正解発表）/ "tap"（4択・タップで回答）
+  //   / "reveal"（答えの文字が少しずつ見える）/ "ox"（○×）
+  quizMode: "auto",
+  // 同じ問題を何分間出し続けるか（0＝毎回新しい問題）
+  quizSameMinutes: 0,
+
+  // カウントダウン欄に出す日付（"MM-DD"）。過ぎたら翌年分を表示
+  countdowns: [
+    { name: "クリスマスまで", date: "12-25", color: "mag" },
+    { name: "大晦日まで", date: "12-31", color: "" },
+  ],
+
   // 日本語の書体："murecho"（シャープ）/ "plex"（IBM Plex・計器風）/ "zenkaku"（端正）/ "dela"（見出しだけ極太）/ "noto"（従来）
   jpFont: "plex",
 
@@ -484,11 +583,11 @@ window.addEventListener("resize", () => { fit(); autoFit(); });
 
 /* 端末ごとの文字の大きさの差で、はみ出しそうなら自動で詰める */
 function autoFit() {
-  const fo = document.querySelector(".fortune");
-  if (fo) {
+  const fo = document.querySelector(".fortune"), fs0 = document.querySelector('.slide[data-k="fortune"] > div');
+  if (fo && fs0) {
     fo.classList.remove("t1", "t2", "t3");
     for (const lv of ["t1", "t2", "t3"]) {
-      if (fo.scrollHeight <= fo.clientHeight + 1) break;
+      if (fs0.scrollHeight <= fs0.clientHeight + 1) break;
       fo.classList.add(lv);
     }
   }
@@ -538,7 +637,7 @@ async function loadWeather() {
     latitude: CONFIG.latitude, longitude: CONFIG.longitude, timezone: "Asia/Tokyo",
     current: "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code",
     hourly: "temperature_2m,precipitation_probability,weather_code",
-    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max", forecast_days: "4",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max", forecast_days: "4",
   });
   try {
     const r = await fetch("https://api.open-meteo.com/v1/forecast?" + p, { cache: "no-store" });
@@ -872,6 +971,364 @@ function showFortune(signKey) {
 $("fCols").addEventListener("click", (e) => { const col = e.target.closest(".fc4"); if (col) showFortune(col.dataset.sign); });
 $("mbody").addEventListener("click", (e) => { const row = e.target.closest(".rs"); if (row) showFortune(row.dataset.s); });
 
+/* ---------- 右下の欄のスライド ---------- */
+const SLIDE_META = {
+  fortune: { title: "今日の星座占い", tap: "タップで詳細" },
+  sky: { title: "月と太陽", tap: "" },
+  count: { title: "カウントダウン", tap: "" },
+  quiz: { title: "アニメクイズ", tap: "" },
+};
+let slideIdx = 0, slideTimer = null;
+const slideOrder = () => (CONFIG.slides.order || ["fortune"]).filter((k) => SLIDE_META[k]);
+function showSlide(i) {
+  const order = slideOrder(); if (!order.length) return;
+  slideIdx = (i + order.length) % order.length;
+  const k = order[slideIdx];
+  document.querySelectorAll(".slide").forEach((el) => {
+    const on = el.dataset.k === k;
+    if (el.classList.contains("on") && !on) { el.classList.add("out"); setTimeout(() => el.classList.remove("out"), 800); }
+    el.classList.toggle("on", on);
+  });
+  $("slotTitle").textContent = SLIDE_META[k].title;
+  $("slotTap").textContent = SLIDE_META[k].tap;
+  $("slotAux").textContent = k === "fortune" ? $("fDate").textContent : k === "sky" ? CONFIG.placeName : "";
+  $("slotDots").innerHTML = order.length > 1 ? order.map((_, j) => `<i class="${j === slideIdx ? "on" : ""}"></i>`).join("") : "";
+  slideShownAt = Date.now(); quizHold = 0;
+  if (k === "sky") renderSky();
+  if (k === "count") renderCount();
+  if (k === "quiz") startQuiz();
+}
+let slideShownAt = Date.now(), quizHold = 0;
+function slideDuration(k) { return (k === "quiz" ? CONFIG.slides.quizSeconds || 30 : CONFIG.slides.seconds) * 1000; }
+function startSlides() {
+  clearInterval(slideTimer);
+  if (slideOrder().length > 1) slideTimer = setInterval(() => {
+    if (!$("modal").hidden) { slideShownAt = Date.now(); return; }
+    const k = slideOrder()[slideIdx];
+    if (Date.now() - slideShownAt >= slideDuration(k) + quizHold) showSlide(slideIdx + 1);
+  }, 500);
+}
+
+/* ---------- 月と太陽 ---------- */
+const SYNODIC = 29.530588853, NEW_MOON_REF = Date.UTC(2000, 0, 6, 18, 14);
+/* 新月・満月の正確な時刻（2026年10月〜2031年末、天文計算ライブラリで算出。UTCの分単位） */
+const NEW_MOONS = [29860790,29903462,29946292,29989224,30032156,30074969,30117591,30160019,30202300,30244502,30286685,30328901,30371196,30413616,30456204,30498972,30541872,30584797,30627631,30670307,30712816,30755187,30797462,30839684,30881904,30924177,30966558,31009086,31051764,31094551,31137379,31180180,31222902,31265510,31307991,31350356,31392644,31434914,31477224,31519612,31562089,31604647,31647275,31689962,31732692,31775421,31818094,31860671,31903147,31945555,31987937,32030326,32072732,32115151,32157589,32200069,32242617,32285237,32327905,32370580,32413232,32455847,32498421,32540949,32583426,32625847].map((m) => m * 60e3);
+const FULL_MOONS = [29883132,29925533,29967928,30010337,30052764,30095204,30137667,30180179,30222764,30265425,30308129,30350823,30393467,30436046,30478569,30521043,30563464,30605826,30648147,30690469,30732849,30775331,30817930,30860627,30903385,30946157,30988900,31031568,31074124,31116550,31158866,31201117,31243357,31285642,31328016,31370511,31413149,31455927,31498803,31541686,31584474,31627100,31669556,31711880,31754119,31796321,31838532,31880804,31923198,31965767,32008530,32051440,32094386,32137246,32179950,32222481,32264860,32307118,32349301,32391465,32433680,32476018,32518533,32561238,32604093,32647012].map((m) => m * 60e3);
+function moonAge(t = Date.now()) {
+  const prev = NEW_MOONS.filter((x) => x <= t).pop();
+  if (prev !== undefined && t < NEW_MOONS[NEW_MOONS.length - 1]) return (t - prev) / 864e5;
+  return (((t - NEW_MOON_REF) / 864e5) % SYNODIC + SYNODIC) % SYNODIC;  // 表の範囲外は平均値で近似
+}
+const nextOf = (arr, t) => arr.find((x) => x > t);
+function moonName(a) {
+  if (a < 1.5 || a > 28.0) return "新月";
+  if (a < 5.5) return "三日月";
+  if (a < 9.0) return "上弦の月";
+  if (a < 13.0) return "十三夜";
+  if (a < 16.5) return "満月";
+  if (a < 20.5) return "居待月";
+  if (a < 24.0) return "下弦の月";
+  return "有明月";
+}
+function moonSvg(age) {
+  const p = age / SYNODIC, r = 80, rx = Math.abs(Math.cos(2 * Math.PI * p)) * r, waxing = p < 0.5;
+  const crescent = p < 0.25 || p > 0.75;
+  const outer = waxing ? 1 : 0, inner = waxing ? (crescent ? 0 : 1) : (crescent ? 1 : 0);
+  const lit = `M0,${-r} A${r},${r} 0 0 ${outer} 0,${r} A${rx.toFixed(2)},${r} 0 0 ${inner} 0,${-r} Z`;
+  return `<svg viewBox="-90 -90 180 180"><defs><radialGradient id="mg" cx="45%" cy="40%" r="70%"><stop offset="0" stop-color="#fffbe6"/><stop offset="1" stop-color="#e8dca0"/></radialGradient></defs>
+    <circle r="${r}" fill="#1a1630" stroke="rgba(5,217,232,.35)" stroke-width="1.5"/>
+    <path d="${lit}" fill="url(#mg)" style="filter:drop-shadow(0 0 14px rgba(255,245,200,.55))"/></svg>`;
+}
+const fmtDate = (t) => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getDate()}`; };
+function renderSky() {
+  const now = Date.now(), age = moonAge(now);
+  const nf = nextOf(FULL_MOONS, now), nn = nextOf(NEW_MOONS, now);
+  const fullAt = nf || now + (((SYNODIC / 2 - age) + SYNODIC) % SYNODIC) * 864e5, newAt = nn || now + (SYNODIC - age) * 864e5;
+  const toFull = (fullAt - now) / 864e5;
+  let sun = "";
+  if (lastWeather && lastWeather.daily && lastWeather.daily.sunrise) {
+    const D = lastWeather.daily, rise = new Date(D.sunrise[0]), set = new Date(D.sunset[0]);
+    const len = (set - rise) / 60e3, pos = Math.min(1, Math.max(0, (now - rise) / (set - rise)));
+    const uv = D.uv_index_max ? Math.round(D.uv_index_max[0]) : null;
+    sun = `<div class="sun" style="grid-column:1/-1"><div class="rise">日の出<b>${hm(rise)}</b></div><div class="set">日の入り<b>${hm(set)}</b></div>
+      <div>${uv !== null ? `UV指数（最大）<b>${uv}</b>` : `日の長さ<b>${Math.floor(len / 60)}:${pad(Math.round(len % 60))}</b>`}</div></div>
+      <div class="daybar"><i style="left:0;width:${(pos * 100).toFixed(1)}%"></i><em style="left:calc(${(pos * 100).toFixed(1)}% - 1px)"></em></div>
+      <div class="daylab"><span>${hm(rise)}</span><span>昼の長さ ${Math.floor(len / 60)}時間${Math.round(len % 60)}分</span><span>${hm(set)}</span></div>`;
+  }
+  $("skyBox").innerHTML = `<div class="sky"><div class="moon">${moonSvg(age)}</div>
+    <div><div class="mname">${moonName(age)}</div><div class="mage">月齢<b>${age.toFixed(1)}</b>・輝き ${Math.round((1 - Math.cos(2 * Math.PI * age / SYNODIC)) / 2 * 100)}%</div>
+      <div class="nx"><div>次の満月<b>${daysUntil(fullAt) === 0 ? "今夜" : fmtDate(fullAt)}</b></div><div>次の新月<b>${fmtDate(newAt)}</b></div></div></div>
+    ${sun}</div>`;
+}
+
+/* ---------- カウントダウン ---------- */
+function daysUntil(t) { const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(t); b.setHours(0, 0, 0, 0); return Math.round((b - a) / 864e5); }
+function renderCount() {
+  const now = new Date(), cards = [];
+  // 次の祝日
+  const hk = Object.keys(holidays).sort().find((d) => d > ymd(now));
+  if (hk) cards.push({ cls: "", l: `次の祝日・${holidays[hk]}`, v: daysUntil(hk + "T00:00:00"), u: "日", s: `${fmtDate(hk + "T00:00:00")}（${WEEK[new Date(hk + "T00:00:00").getDay()]}）` });
+  // 週末まで
+  const sat = new Date(now); sat.setHours(0, 0, 0, 0); sat.setDate(sat.getDate() + ((6 - sat.getDay() + 7) % 7));
+  const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+  cards.push(isWeekend ? { cls: "yel", l: "週末まで", v: "週末", u: "", s: "今日は休日" }
+    : { cls: "yel", l: "週末（土曜）まで", v: Math.floor((sat - now) / 3600e3), u: "時間", s: `あと${daysUntil(sat)}日` });
+  // 年末・クリスマスなど（設定で追加可能）
+  (CONFIG.countdowns || []).forEach((c) => {
+    let t = new Date(`${now.getFullYear()}-${c.date}T00:00:00`);
+    if (daysUntil(t) < 0) t = new Date(`${now.getFullYear() + 1}-${c.date}T00:00:00`);
+    cards.push({ cls: c.color || "mag", l: c.name, v: daysUntil(t), u: "日", s: `${fmtDate(t)}（${WEEK[t.getDay()]}）` });
+  });
+  const y0 = new Date(now.getFullYear(), 0, 1), y1 = new Date(now.getFullYear() + 1, 0, 1), yp = (now - y0) / (y1 - y0) * 100;
+  $("countBox").innerHTML = `<div class="cnt">${cards.slice(0, 4).map((c) => `<div class="c ${c.cls}"><div class="l">${esc(c.l)}</div>
+      <div class="v">${c.v === 0 ? "今日" : c.v}<small>${c.v === 0 ? "" : c.u}</small></div><div class="s">${esc(c.s)}</div></div>`).join("")}
+    <div class="yr"><div class="l" style="font-size:13px;color:var(--sub);font-weight:700">${now.getFullYear()}年の経過 <b style="font-family:var(--num);color:var(--text);font-size:18px;margin-left:6px">${yp.toFixed(1)}%</b>
+      <span style="margin-left:12px;color:var(--faint)">残り ${daysUntil(y1)}日</span></div><div class="bar"><i style="width:${yp.toFixed(2)}%"></i></div></div></div>`;
+}
+
+/* ---------- アニメクイズ ----------
+   a[0] が正解。問題は自由に追加・修正できます */
+/* 1995〜2009年ごろのアニメ・ギャルゲ／エロゲ・ラノベから出題（a[0]が正解）。自由に追加・修正できます */
+const QUIZ = [
+  {"g": "アニメ", "q": "『新世紀エヴァンゲリオン』のTV放送が始まった年は？", "a": ["1995年", "1994年", "1996年", "1997年"]},
+  {"g": "アニメ", "q": "『エヴァ』TV版の監督は？", "a": ["庵野秀明", "押井守", "今敏", "渡辺信一郎"]},
+  {"g": "アニメ", "q": "『エヴァ』TV版の制作会社は？", "a": ["GAINAX", "プロダクションI.G", "サンライズ", "ボンズ"]},
+  {"g": "アニメ", "q": "『エヴァ』でネルフの総司令は？", "a": ["碇ゲンドウ", "冬月コウゾウ", "加持リョウジ", "日向マコト"]},
+  {"g": "アニメ", "q": "『エヴァ』で葛城ミサトが飼っているペンギンの名前は？", "a": ["ペンペン", "ペンタ", "ピングー", "ギン"]},
+  {"g": "アニメ", "q": "『エヴァ』の第3新東京市があるのは何県？", "a": ["神奈川県", "静岡県", "山梨県", "長野県"]},
+  {"g": "アニメ", "q": "TV版『エヴァ』第1話に現れた使徒は？", "a": ["サキエル", "ラミエル", "シャムシエル", "ゼルエル"]},
+  {"g": "アニメ", "q": "『カウボーイビバップ』で主人公たちが乗る宇宙船の名前は？", "a": ["ビバップ号", "ソードフィッシュII", "レッドテイル", "ハンマーヘッド"]},
+  {"g": "アニメ", "q": "『カウボーイビバップ』の監督は？", "a": ["渡辺信一郎", "今敏", "神山健治", "押井守"]},
+  {"g": "アニメ", "q": "『カウボーイビバップ』の音楽を手がけたのは？", "a": ["菅野よう子", "梶浦由記", "川井憲次", "大島ミチル"]},
+  {"g": "アニメ", "q": "『serial experiments lain』の主人公の名前は？", "a": ["岩倉玲音", "岩倉美香", "瑞城ありす", "四方田千砂"]},
+  {"g": "アニメ", "q": "『少女革命ウテナ』の主人公は？", "a": ["天上ウテナ", "姫宮アンシー", "桐生冬芽", "有栖川樹璃"]},
+  {"g": "アニメ", "q": "『機動戦艦ナデシコ』でコック兼パイロットの主人公は？", "a": ["テンカワ・アキト", "ミスマル・ユリカ", "ホシノ・ルリ", "ヤマダ・ジロウ"]},
+  {"g": "アニメ", "q": "『ナデシコ』ホシノ・ルリの有名な口癖は？", "a": ["バカばっか", "問題ない", "あんたバカぁ？", "にょ"]},
+  {"g": "アニメ", "q": "『ナデシコ』のクルーが熱中する劇中アニメは？", "a": ["ゲキ・ガンガー3", "ガンバスター", "ダイ・ガード", "ゴーダンナー"]},
+  {"g": "アニメ", "q": "『新機動戦記ガンダムW』の主人公は？", "a": ["ヒイロ・ユイ", "デュオ・マックスウェル", "トロワ・バートン", "カトル・ラバーバ・ウィナー"]},
+  {"g": "アニメ", "q": "『∀ガンダム』の主人公は？", "a": ["ロラン・セアック", "ガロード・ラン", "ジュドー・アーシタ", "ウッソ・エヴィン"]},
+  {"g": "アニメ", "q": "『機動戦士ガンダムSEED』の主人公は？", "a": ["キラ・ヤマト", "アスラン・ザラ", "シン・アスカ", "ムウ・ラ・フラガ"]},
+  {"g": "アニメ", "q": "『機動戦士ガンダム00』の主人公は？", "a": ["刹那・F・セイエイ", "ロックオン・ストラトス", "アレルヤ・ハプティズム", "ティエリア・アーデ"]},
+  {"g": "アニメ", "q": "『勇者王ガオガイガー』の必殺武器は？", "a": ["ゴルディオンハンマー", "ゲッタートマホーク", "ロケットパンチ", "ブレストファイヤー"]},
+  {"g": "アニメ", "q": "『天元突破グレンラガン』の制作会社は？", "a": ["GAINAX", "TRIGGER", "サンライズ", "ボンズ"]},
+  {"g": "アニメ", "q": "「俺を誰だと思ってやがる！」が口癖の『グレンラガン』のキャラは？", "a": ["カミナ", "ヨーコ", "ロシウ", "ヴィラル"]},
+  {"g": "アニメ", "q": "『コードギアス 反逆のルルーシュ』ルルーシュのギアスの力は？", "a": ["絶対遵守の命令", "未来予知", "時間を巻き戻す", "透明になる"]},
+  {"g": "アニメ", "q": "『スレイヤーズ』リナ＝インバースの代表的な攻撃呪文は？", "a": ["ドラグ・スレイブ", "メラゾーマ", "ディバインバスター", "ライトニングボルト"]},
+  {"g": "アニメ", "q": "『るろうに剣心』で緋村剣心が使う流派は？", "a": ["飛天御剣流", "北辰一刀流", "天然理心流", "無限一刀流"]},
+  {"g": "アニメ", "q": "『GTO』の主人公・鬼塚の下の名前は？", "a": ["英吉", "竜二", "冬月", "一郎"]},
+  {"g": "アニメ", "q": "『HELLSING』でアーカードが仕える組織の正式名称は？", "a": ["王立国教騎士団", "イスカリオテ", "ミレニアム", "円卓会議"]},
+  {"g": "アニメ", "q": "『攻殻機動隊 S.A.C.』で草薙素子が率いる部署は？", "a": ["公安9課", "公安6課", "特車2課", "内閣調査室"]},
+  {"g": "アニメ", "q": "『あずまんが大王』の「大阪」の本名は？", "a": ["春日歩", "滝野智", "水原暦", "美浜ちよ"]},
+  {"g": "アニメ", "q": "『あずまんが大王』の作者は？", "a": ["あずまきよひこ", "美水かがみ", "ばらスィー", "蒼樹うめ"]},
+  {"g": "アニメ", "q": "『デ・ジ・キャラット』でじこの語尾は？", "a": ["にょ", "にゅ", "ぴょ", "だっちゃ"]},
+  {"g": "アニメ", "q": "でじこが働いているお店は？", "a": ["ゲーマーズ", "アニメイト", "とらのあな", "メッセサンオー"]},
+  {"g": "アニメ", "q": "『ちょびっツ』で主人公が拾うパソコンの名前は？", "a": ["ちぃ", "ゆずき", "ディタ", "すもも"]},
+  {"g": "アニメ", "q": "『カードキャプターさくら』ケロちゃんの本当の名前は？", "a": ["ケルベロス", "ユエ", "スピネル・サン", "ルビー・ムーン"]},
+  {"g": "アニメ", "q": "『おジャ魔女どれみ』どれみのフルネームは？", "a": ["春風どれみ", "藤原はづき", "妹尾あいこ", "瀬川おんぷ"]},
+  {"g": "アニメ", "q": "初代『ふたりはプリキュア』の2人は？", "a": ["ブラックとホワイト", "ブルームとイーグレット", "ドリームとルージュ", "ピーチとベリー"]},
+  {"g": "アニメ", "q": "『魔法少女リリカルなのは』の主人公は？", "a": ["高町なのは", "フェイト・テスタロッサ", "八神はやて", "月村すずか"]},
+  {"g": "アニメ", "q": "『ローゼンメイデン』で水銀燈は第何ドール？", "a": ["第1ドール", "第3ドール", "第5ドール", "第7ドール"]},
+  {"g": "アニメ", "q": "アニメ『ポケットモンスター』の放送開始年は？", "a": ["1997年", "1995年", "1999年", "2000年"]},
+  {"g": "アニメ", "q": "「ポケモンショック」が起きた回のタイトルにあるポケモンは？", "a": ["ポリゴン", "ピカチュウ", "ミュウツー", "メタモン"]},
+  {"g": "アニメ", "q": "『デジモンアドベンチャー』八神太一のパートナーは？", "a": ["アグモン", "ガブモン", "パタモン", "テントモン"]},
+  {"g": "アニメ", "q": "『シスター・プリンセス』に登場する妹の人数は？", "a": ["12人", "9人", "13人", "24人"]},
+  {"g": "アニメ", "q": "『灼眼のシャナ』シャナの定番のセリフは？", "a": ["うるさいうるさいうるさい", "あんたバカぁ？", "問題ない", "バカばっか"]},
+  {"g": "アニメ", "q": "『涼宮ハルヒの憂鬱』の語り手の主人公のあだ名は？", "a": ["キョン", "谷口", "国木田", "古泉"]},
+  {"g": "アニメ", "q": "2006年版『涼宮ハルヒの憂鬱』のアニメ制作会社は？", "a": ["京都アニメーション", "シャフト", "J.C.STAFF", "サンライズ"]},
+  {"g": "アニメ", "q": "SOS団が部室を占拠しているのは何部？", "a": ["文芸部", "写真部", "コンピュータ研究部", "軽音楽部"]},
+  {"g": "アニメ", "q": "2009年に「エンドレスエイト」は何週連続で放送された？", "a": ["8週", "5週", "6週", "10週"]},
+  {"g": "アニメ", "q": "『らき☆すた』の主人公は？", "a": ["泉こなた", "柊かがみ", "柊つかさ", "高良みゆき"]},
+  {"g": "アニメ", "q": "『らき☆すた』で聖地になった鷲宮神社がある町（当時）は？", "a": ["鷲宮町", "春日部市", "秩父市", "川越市"]},
+  {"g": "アニメ", "q": "『らき☆すた』でこなたのアルバイト先は？", "a": ["コスプレ喫茶", "メイド喫茶", "コンビニ", "本屋"]},
+  {"g": "アニメ", "q": "『けいおん！』で平沢唯が愛用ギターにつけた名前は？", "a": ["ギー太", "むったん", "エリザベス", "ジャズマスター"]},
+  {"g": "アニメ", "q": "『とらドラ！』逢坂大河のあだ名は？", "a": ["手乗りタイガー", "失恋大明神", "まるお", "ばかちー"]},
+  {"g": "アニメ", "q": "『ひだまりスケッチ』の舞台の高校は？", "a": ["やまぶき高校", "桜ヶ丘高校", "陵桜学園", "北高"]},
+  {"g": "アニメ", "q": "『ARIA』の舞台の水の都の名前は？", "a": ["ネオ・ヴェネツィア", "ネオ・トーキョー", "アクアポリス", "マリンフォード"]},
+  {"g": "アニメ", "q": "『電脳コイル』で子どもたちが電脳空間を見るのに使う道具は？", "a": ["電脳メガネ", "デバイス腕時計", "ゴーグル型PDA", "携帯ゲーム機"]},
+  {"g": "アニメ", "q": "『NHKにようこそ！』の「NHK」は何の略とされる？", "a": ["日本ひきこもり協会", "日本放送協会", "日本変人会", "日本ヒーロー協会"]},
+  {"g": "アニメ", "q": "『げんしけん』の正式名称は？", "a": ["現代視覚文化研究会", "現代芸術研究会", "漫画文化研究会", "映像文化研究会"]},
+  {"g": "アニメ", "q": "『魔法先生ネギま！』ネギ・スプリングフィールドの年齢は？", "a": ["10歳", "8歳", "12歳", "14歳"]},
+  {"g": "アニメ", "q": "『ハヤテのごとく！』綾崎ハヤテの職業は？", "a": ["執事", "探偵", "家庭教師", "コック"]},
+  {"g": "アニメ", "q": "『化物語』の主人公は？", "a": ["阿良々木暦", "戦場ヶ原ひたぎ", "忍野メメ", "羽川翼"]},
+  {"g": "アニメ", "q": "『化物語』の原作者は？", "a": ["西尾維新", "奈須きのこ", "谷川流", "川原礫"]},
+  {"g": "アニメ", "q": "『ストライクウィッチーズ』の敵の名前は？", "a": ["ネウロイ", "BETA", "使徒", "ワーム"]},
+  {"g": "アニメ", "q": "『とある魔術の禁書目録』の主人公は？", "a": ["上条当麻", "一方通行", "御坂美琴", "土御門元春"]},
+  {"g": "アニメ", "q": "『ぱにぽにだっしゅ！』のアニメ制作会社は？", "a": ["シャフト", "京都アニメーション", "GONZO", "XEBEC"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』（1997）の開発ブランドは？", "a": ["Leaf", "Key", "エルフ", "アリスソフト"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』のメイドロボ・マルチの型番は？", "a": ["HMX-12", "HMX-13", "RX-78", "EVA-01"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』で主人公の幼なじみは？", "a": ["神岸あかり", "長岡志保", "来栖川芹香", "保科智子"]},
+  {"g": "ギャルゲ・エロゲ", "q": "Leafの「ビジュアルノベル」シリーズ第1弾は？", "a": ["雫", "痕", "To Heart", "WHITE ALBUM"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『下級生』（1996）の開発ブランドは？", "a": ["エルフ", "Leaf", "アリスソフト", "F&C"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『この世の果てで恋を唄う少女YU-NO』の開発ブランドは？", "a": ["エルフ", "Leaf", "KID", "âge"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『ランス』シリーズの開発ブランドは？", "a": ["アリスソフト", "エルフ", "Leaf", "ニトロプラス"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『ONE 〜輝く季節へ〜』の開発ブランドは？", "a": ["Tactics", "Key", "Leaf", "ねこねこソフト"]},
+  {"g": "ギャルゲ・エロゲ", "q": "Keyの『Kanon』が発売された年は？", "a": ["1999年", "1997年", "2000年", "2002年"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』の主人公は？", "a": ["相沢祐一", "岡崎朋也", "国崎往人", "折原浩平"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』月宮あゆの口癖は？", "a": ["うぐぅ", "あうー", "えぅー", "わふー"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』川澄舞の「はい」の言い方は？", "a": ["はちみつくまさん", "ぽんぽこたぬきさん", "にょ", "がお"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』で「あうー」が口癖のヒロインは？", "a": ["沢渡真琴", "美坂栞", "水瀬名雪", "倉田佐祐理"]},
+  {"g": "ギャルゲ・エロゲ", "q": "Keyの『AIR』が発売された年は？", "a": ["2000年", "1998年", "2002年", "2004年"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『AIR』の主人公は？", "a": ["国崎往人", "相沢祐一", "岡崎朋也", "直枝理樹"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『AIR』神尾観鈴の口癖は？", "a": ["が、がお", "うぐぅ", "わふー", "あうー"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『AIR』のOP曲「鳥の詩」を歌ったのは？", "a": ["Lia", "KOTOKO", "いとうかなこ", "茶太"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『AIR』『CLANNAD』のメインシナリオライターは？", "a": ["麻枝准", "奈須きのこ", "虚淵玄", "竜騎士07"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『CLANNAD』の主人公は？", "a": ["岡崎朋也", "春原陽平", "相沢祐一", "国崎往人"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『リトルバスターズ！』で「わふー」が口癖のヒロインは？", "a": ["能美クドリャフカ", "神北小毬", "三枝葉留佳", "西園美魚"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『月姫』は最初どんな形で発表された？", "a": ["同人ゲーム", "家庭用ゲーム", "商業PCゲーム", "携帯アプリ"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『月姫』の主人公は？", "a": ["遠野志貴", "衛宮士郎", "両儀式", "黒桐幹也"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『月姫』のヒロイン・アルクェイドの正体は？", "a": ["真祖の吸血鬼", "魔術師", "代行者", "人造人間"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』の開発ブランドは？", "a": ["TYPE-MOON", "ニトロプラス", "Key", "Leaf"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』で衛宮士郎のサーヴァントのクラスは？", "a": ["セイバー", "アーチャー", "ランサー", "ライダー"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』で遠坂凛のサーヴァントのクラスは？", "a": ["アーチャー", "セイバー", "キャスター", "アサシン"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『月姫』『Fate』のシナリオライターは？", "a": ["奈須きのこ", "虚淵玄", "麻枝准", "丸戸史明"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『空の境界』両儀式の持つ魔眼は？", "a": ["直死の魔眼", "写輪眼", "邪王真眼", "千里眼"]},
+  {"g": "ギャルゲ・エロゲ", "q": "ニトロプラスのデビュー作は？", "a": ["Phantom", "沙耶の唄", "斬魔大聖デモンベイン", "塵骸魔京"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『沙耶の唄』のシナリオライターは？", "a": ["虚淵玄", "奈須きのこ", "竜騎士07", "田中ロミオ"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『君が望む永遠』の開発ブランドは？", "a": ["âge", "ニトロプラス", "Key", "KID"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『マブラヴ オルタネイティヴ』で人類が戦う敵は？", "a": ["BETA", "使徒", "ネウロイ", "ワーム"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『D.C. 〜ダ・カーポ〜』の舞台の島の名前は？", "a": ["初音島", "六軒島", "島鉄島", "神咲島"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『D.C.』の舞台の島の名物は？", "a": ["一年中枯れない桜", "沈まない太陽", "鳴りやまない鐘", "枯れない向日葵"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『D.C. 〜ダ・カーポ〜』の開発ブランドは？", "a": ["CIRCUS", "Navel", "Key", "âge"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『SHUFFLE!』の開発ブランドは？", "a": ["Navel", "CIRCUS", "minori", "戯画"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『ef - a fairy tale of the two.』の開発ブランドは？", "a": ["minori", "Navel", "Key", "CIRCUS"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Ever17』の舞台は？", "a": ["海中テーマパーク", "宇宙ステーション", "孤島の洋館", "雪山の山荘"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『Piaキャロットへようこそ!!』の舞台は？", "a": ["ファミリーレストラン", "メイド喫茶", "コンビニ", "旅館"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『車輪の国、向日葵の少女』の開発ブランドは？", "a": ["あかべぇそふとつぅ", "ニトロプラス", "Key", "Navel"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『ときめきメモリアル』で告白すると結ばれる伝説がある場所は？", "a": ["伝説の樹の下", "伝説の鐘の前", "屋上", "校門の前"]},
+  {"g": "ギャルゲ・エロゲ", "q": "ゲーム・アニメ音楽で知られる「I've」の拠点がある都市は？", "a": ["札幌", "福岡", "大阪", "名古屋"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらしのなく頃に』の制作サークルは？", "a": ["07th Expansion", "上海アリス幻樂団", "TYPE-MOON", "黄昏フロンティア"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』竜宮レナの有名な叫びは？", "a": ["嘘だッ！！", "にぱー☆", "うぐぅ", "エル・プサイ・コングルゥ"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』の舞台の村は？", "a": ["雛見沢村", "六軒島", "初音島", "見滝原"]},
+  {"g": "ギャルゲ・エロゲ", "q": "雛見沢村で毎年行われるお祭りは？", "a": ["綿流し", "鬼祭り", "灯籠流し", "火渡り"]},
+  {"g": "ギャルゲ・エロゲ", "q": "『うみねこのなく頃に』の舞台の島は？", "a": ["六軒島", "初音島", "鬼ヶ島", "猫島"]},
+  {"g": "アニメ", "q": "『ハルヒ』ED曲で、多くの人がダンスをまねした曲は？", "a": ["ハレ晴レユカイ", "冒険でしょでしょ？", "God knows...", "もってけ!セーラーふく"]},
+  {"g": "アニメ", "q": "『らき☆すた』のOP曲は？", "a": ["もってけ!セーラーふく", "ハレ晴レユカイ", "Don't say \"lazy\"", "Cagayake!GIRLS"]},
+  {"g": "ラノベ", "q": "『ブギーポップは笑わない』の作者は？", "a": ["上遠野浩平", "秋山瑞人", "時雨沢恵一", "高橋弥七郎"]},
+  {"g": "ラノベ", "q": "『ブギーポップ』のイラストを担当したのは？", "a": ["緒方剛志", "いとうのいぢ", "黒星紅白", "竹"]},
+  {"g": "ラノベ", "q": "ブギーポップが「浮かび上がる」少女の名前は？", "a": ["宮下藤花", "霧間凪", "末真和子", "竹田啓司"]},
+  {"g": "ラノベ", "q": "『スレイヤーズ』の作者は？", "a": ["神坂一", "水野良", "秋田禎信", "賀東招二"]},
+  {"g": "ラノベ", "q": "『スレイヤーズ』『魔術士オーフェン』が出ていたレーベルは？", "a": ["富士見ファンタジア文庫", "電撃文庫", "角川スニーカー文庫", "MF文庫J"]},
+  {"g": "ラノベ", "q": "『魔術士オーフェン』オーフェンの本名は？", "a": ["キリランシェロ", "レキ", "マジク", "チャイルドマン"]},
+  {"g": "ラノベ", "q": "『フルメタル・パニック！』の作者は？", "a": ["賀東招二", "神坂一", "川上稔", "鎌池和馬"]},
+  {"g": "ラノベ", "q": "『フルメタ』相良宗介が所属する傭兵組織は？", "a": ["ミスリル", "アマルガム", "ネルフ", "ソレスタルビーイング"]},
+  {"g": "ラノベ", "q": "『フルメタ』で宗介が着るクマのような着ぐるみの名前は？", "a": ["ボン太くん", "ガン太くん", "ふもっふ", "ドン太くん"]},
+  {"g": "ラノベ", "q": "『フルメタ』のヒロインは？", "a": ["千鳥かなめ", "テレサ・テスタロッサ", "メリッサ・マオ", "常盤恭子"]},
+  {"g": "ラノベ", "q": "『涼宮ハルヒの憂鬱』の作者は？", "a": ["谷川流", "竹宮ゆゆこ", "高橋弥七郎", "平坂読"]},
+  {"g": "ラノベ", "q": "『涼宮ハルヒの憂鬱』が大賞を受賞した新人賞は？", "a": ["スニーカー大賞", "電撃小説大賞", "ファンタジア大賞", "MF文庫Jライトノベル新人賞"]},
+  {"g": "ラノベ", "q": "『ハルヒ』シリーズ第2巻のタイトルは？", "a": ["涼宮ハルヒの溜息", "涼宮ハルヒの退屈", "涼宮ハルヒの消失", "涼宮ハルヒの暴走"]},
+  {"g": "ラノベ", "q": "『ハルヒ』長門有希の正体は？", "a": ["情報統合思念体の端末", "未来人", "超能力者", "宇宙人のクローン"]},
+  {"g": "ラノベ", "q": "『ハルヒ』と『灼眼のシャナ』の両方のイラストを担当したのは？", "a": ["いとうのいぢ", "黒星紅白", "ヤス", "竹岡美穂"]},
+  {"g": "ラノベ", "q": "『灼眼のシャナ』の作者は？", "a": ["高橋弥七郎", "鎌池和馬", "上遠野浩平", "成田良悟"]},
+  {"g": "ラノベ", "q": "『シャナ』でシャナが振るう大太刀の名前は？", "a": ["贄殿遮那", "天叢雲", "村正", "斬月"]},
+  {"g": "ラノベ", "q": "『とある魔術の禁書目録』の作者は？", "a": ["鎌池和馬", "川原礫", "成田良悟", "高橋弥七郎"]},
+  {"g": "ラノベ", "q": "『禁書目録』インデックスが記憶している魔道書の数は？", "a": ["10万3000冊", "1万冊", "3万3000冊", "100万冊"]},
+  {"g": "ラノベ", "q": "『キノの旅』の作者は？", "a": ["時雨沢恵一", "秋山瑞人", "上遠野浩平", "支倉凍砂"]},
+  {"g": "ラノベ", "q": "『キノの旅』でキノの相棒のモトラド（二輪車）の名前は？", "a": ["エルメス", "アポロン", "ヘルメス", "ゼウス"]},
+  {"g": "ラノベ", "q": "『キノの旅』で銃のことを何と呼ぶ？", "a": ["パースエイダー", "ブラスター", "アームズ", "ガンブレード"]},
+  {"g": "ラノベ", "q": "『イリヤの空、UFOの夏』の作者は？", "a": ["秋山瑞人", "橋本紡", "時雨沢恵一", "乙一"]},
+  {"g": "ラノベ", "q": "『半分の月がのぼる空』の作者は？", "a": ["橋本紡", "秋山瑞人", "竹宮ゆゆこ", "野村美月"]},
+  {"g": "ラノベ", "q": "『マリア様がみてる』のレーベルは？", "a": ["コバルト文庫", "電撃文庫", "角川ビーンズ文庫", "講談社X文庫"]},
+  {"g": "ラノベ", "q": "『マリみて』で上級生と下級生が結ぶ姉妹関係の呼び名は？", "a": ["スール", "エス", "ソロリティ", "シスター"]},
+  {"g": "ラノベ", "q": "『マリみて』リリアン女学園の生徒の定番のあいさつは？", "a": ["ごきげんよう", "ごめんあそばせ", "ごきげんうるわしゅう", "おはようございます"]},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』の作者は？", "a": ["ヤマグチノボル", "平坂読", "鈴木大輔", "井上堅二"]},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』ルイズが使う魔法の系統は？", "a": ["虚無", "火", "水", "風"]},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』で召喚される主人公の名前は？", "a": ["平賀才人", "吉井明久", "上条当麻", "高坂京介"]},
+  {"g": "ラノベ", "q": "『とらドラ！』の作者は？", "a": ["竹宮ゆゆこ", "谷川流", "伏見つかさ", "野村美月"]},
+  {"g": "ラノベ", "q": "『狼と香辛料』の作者は？", "a": ["支倉凍砂", "川原礫", "時雨沢恵一", "成田良悟"]},
+  {"g": "ラノベ", "q": "『狼と香辛料』ホロの一人称は？", "a": ["わっち", "わらわ", "あちき", "おいら"]},
+  {"g": "ラノベ", "q": "『狼と香辛料』ロレンスの職業は？", "a": ["行商人", "騎士", "吟遊詩人", "両替商"]},
+  {"g": "ラノベ", "q": "『バカとテストと召喚獣』の作者は？", "a": ["井上堅二", "平坂読", "伏見つかさ", "アサウラ"]},
+  {"g": "ラノベ", "q": "『バカテス』主人公・吉井明久のクラスは？", "a": ["Fクラス", "Aクラス", "Dクラス", "Eクラス"]},
+  {"g": "ラノベ", "q": "『バカテス』で召喚獣の強さを決めるものは？", "a": ["テストの点数", "身長", "運動神経", "くじ引き"]},
+  {"g": "ラノベ", "q": "『僕は友達が少ない』で主人公たちが作った部活は？", "a": ["隣人部", "奉仕部", "SOS団", "古典部"]},
+  {"g": "ラノベ", "q": "『俺の妹がこんなに可愛いわけがない。』の作者は？", "a": ["伏見つかさ", "竹宮ゆゆこ", "平坂読", "鎌池和馬"]},
+  {"g": "ラノベ", "q": "『俺妹』高坂桐乃の秘密の趣味は？", "a": ["妹もののゲームとアニメ", "鉄道模型", "BL同人誌", "釣り"]},
+  {"g": "ラノベ", "q": "『デュラララ!!』の舞台の街は？", "a": ["池袋", "秋葉原", "新宿", "渋谷"]},
+  {"g": "ラノベ", "q": "『デュラララ!!』セルティ・ストゥルルソンの正体は？", "a": ["デュラハン", "吸血鬼", "人狼", "アンドロイド"]},
+  {"g": "ラノベ", "q": "成田良悟のデビュー作は？", "a": ["バッカーノ！", "デュラララ!!", "ヴぁんぷ！", "越佐大橋シリーズ"]},
+  {"g": "ラノベ", "q": "『ソードアート・オンライン』の作者は？", "a": ["川原礫", "鎌池和馬", "成田良悟", "支倉凍砂"]},
+  {"g": "ラノベ", "q": "『SAO』の最初の舞台となる浮遊城の名前は？", "a": ["アインクラッド", "アルヴヘイム", "ガンゲイル", "アンダーワールド"]},
+  {"g": "ラノベ", "q": "『アクセル・ワールド』が大賞を受けた新人賞は？", "a": ["電撃小説大賞", "スニーカー大賞", "このライトノベルがすごい！大賞", "ファンタジア大賞"]},
+  {"g": "ラノベ", "q": "西尾維新のデビュー作は？", "a": ["クビキリサイクル", "化物語", "刀語", "きみとぼくの壊れた世界"]},
+  {"g": "ラノベ", "q": "「戯言シリーズ」の語り手の通称は？", "a": ["いーちゃん", "零崎人識", "哀川潤", "玖渚友"]},
+  {"g": "ラノベ", "q": "「戯言シリーズ」哀川潤の異名は？", "a": ["人類最強の請負人", "殺人鬼", "戯言遣い", "死線の蒼"]},
+  {"g": "ラノベ", "q": "『撲殺天使ドクロちゃん』でドクロちゃんが振り回す釘バットの名前は？", "a": ["エスカリボルグ", "エクスカリバー", "バルディッシュ", "レイジングハート"]},
+  {"g": "ラノベ", "q": "『“文学少女”』シリーズで天野遠子は本をどうする？", "a": ["食べる", "燃やす", "書き写す", "売る"]},
+  {"g": "ラノベ", "q": "『GOSICK』のヒロインは？", "a": ["ヴィクトリカ・ド・ブロワ", "ルイズ", "ホロ", "インデックス"]},
+  {"g": "ラノベ", "q": "『ベン・トー』で主人公たちが奪い合うものは？", "a": ["半額弁当", "購買のパン", "学食の席", "限定プリン"]},
+  {"g": "ラノベ", "q": "『いぬかみっ！』で川平啓太についている犬神は？", "a": ["ようこ", "はけ", "ともはね", "なでしこ"]},
+  {"g": "ラノベ", "q": "『星界の紋章』に登場する宇宙種族は？", "a": ["アーヴ", "ヤプー", "ザラ", "バルタン"]},
+  {"g": "ラノベ", "q": "『よくわかる現代魔法』のレーベルは？", "a": ["スーパーダッシュ文庫", "電撃文庫", "MF文庫J", "ガガガ文庫"]}
+];
+/* 出題済みの問題を記録し、全問出し切るまで同じ問題を出さない（ページを読み直しても続きから） */
+const QKEY = "smokeBoard.quiz.v1";
+let quizMem = null, quiz = null, quizCount = 0;
+function quizState() {
+  if (!quizMem) { try { quizMem = JSON.parse(localStorage.getItem(QKEY) || "null"); } catch (e) { quizMem = null; } }
+  const sig = QUIZ.length + ":" + QUIZ.map((x) => x.q.length).reduce((a, b) => a + b, 0);
+  if (!quizMem || quizMem.sig !== sig || !Array.isArray(quizMem.order) || quizMem.pos >= quizMem.order.length) {
+    const order = QUIZ.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    quizMem = { sig, order, pos: 0, round: (quizMem && quizMem.round ? quizMem.round + 1 : 1), cur: null, curAt: 0 };
+  }
+  return quizMem;
+}
+function saveQuiz() { try { localStorage.setItem(QKEY, JSON.stringify(quizMem)); } catch (e) {} }
+function nextQuizItem() {
+  const st = quizState(), hold = (CONFIG.quizSameMinutes || 0) * 60e3;
+  if (st.cur !== null && hold > 0 && Date.now() - st.curAt < hold) return { item: QUIZ[st.cur], no: st.pos };
+  st.cur = st.order[st.pos++]; st.curAt = Date.now(); saveQuiz();
+  return { item: QUIZ[st.cur], no: st.pos };
+}
+function startQuiz() {
+  const nx = nextQuizItem(), item = nx.item, mode = (new URLSearchParams(location.search).get("qm") || CONFIG.quizMode || "auto");
+  const order = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+  const oxTrue = Math.random() < 0.5, oxShown = oxTrue ? item.a[0] : item.a[1 + Math.floor(Math.random() * 3)];
+  quizCount = nx.no;
+  quiz = { item, mode, order, oxTrue, oxShown, start: Date.now(), done: false, pick: null };
+  renderQuiz();
+}
+function quizThink() { return ((CONFIG.slides.quizSeconds || 30) - 8) * 1000; }   // 最後の8秒は正解の表示
+function renderQuiz() {
+  if (!quiz) return;
+  const { item, mode, order } = quiz, el = $("quizBox");
+  const left = Math.max(0, quizThink() - (Date.now() - quiz.start));
+  if (left === 0 && !quiz.done && mode !== "tap") quiz.done = true;
+  const head = `<div class="qh"><span class="qn">No.${quizCount}/${QUIZ.length}</span><span class="gen">${esc(item.g)}</span><span>${{ auto: "4択", tap: "タップで回答", reveal: "答えを当てよう", ox: "○か×か" }[mode]}</span></div>`;
+  const timer = (label) => `<div class="tb"><span class="bar"><i style="width:${(left / quizThink() * 100).toFixed(1)}%"></i></span><span class="sec">${quiz.done ? "" : Math.ceil(left / 1000)}</span></div>
+    <div class="ans">${quiz.done ? label : ""}</div>`;
+  let body = "";
+  if (mode === "ox") {
+    body = `<div class="qq">${esc(item.q.replace(/[？?]$/, ""))}<br>→ 答えは <b>${esc(quiz.oxShown)}</b>？</div>
+      <div class="ox"><div class="o${quiz.done && quiz.oxTrue ? " ok" : ""}">○</div><div class="x${quiz.done && !quiz.oxTrue ? " ok" : ""}">×</div></div>
+      ${timer(`正解は ${quiz.oxTrue ? "○" : "×"}<small>答え：${esc(item.a[0])}</small>`)}`;
+  } else if (mode === "reveal") {
+    const chars = [...item.a[0]], total = chars.filter((c) => c !== " " && c !== "・").length;
+    const shownN = quiz.done ? total : Math.floor((1 - left / quizThink()) * total * 0.6);
+    const revealOrder = chars.map((c, i) => i).filter((i) => chars[i] !== " " && chars[i] !== "・")
+      .sort((a, b) => ((a * 7919 + quizCount * 31) % 97) - ((b * 7919 + quizCount * 31) % 97)).slice(0, shownN);
+    body = `<div class="qq">${esc(item.q)}</div>
+      <div class="rv">${chars.map((c, i) => c === " " ? `<i class="sp"></i>` : `<i class="${quiz.done || c === "・" || revealOrder.includes(i) ? "" : "h"}">${esc(c)}</i>`).join("")}</div>
+      ${timer(`正解：${esc(item.a[0])}<small>${chars.length}文字</small>`)}`;
+  } else {
+    const ok = item.a[0];
+    body = `<div class="qq">${esc(item.q)}</div><div class="ch">${order.map((oi, j) => {
+      const t = item.a[oi], cls = quiz.done && oi === 0 ? "ok" : quiz.done && quiz.pick === oi ? "ng" : "";
+      return `<div class="${cls}${[...t].length > 14 ? " xl" : [...t].length > 9 ? " lg" : ""}" data-o="${oi}"><span>${"ABCD"[j]}</span>${esc(t)}</div>`; }).join("")}</div>
+      ${mode === "tap" ? `<div class="tb"></div><div class="ans">${quiz.done ? (quiz.pick === 0 ? "正解！" : `残念…　正解は ${esc(ok)}`) : "答えをタップしてね"}</div>`
+        : timer(`正解：${esc(ok)}`)}`;
+  }
+  el.innerHTML = `<div class="qz${quiz.done ? " done" : ""}${mode === "tap" ? " tap" : ""}">${head}${body}</div>`;
+}
+$("quizBox").addEventListener("click", (e) => {
+  if (!quiz || quiz.mode !== "tap" || quiz.done) return;
+  const c = e.target.closest("[data-o]"); if (!c) return;
+  quiz.pick = +c.dataset.o; quiz.done = true;
+  quizHold = Math.max(0, (Date.now() - slideShownAt) + 8000 - slideDuration("quiz"));   // 答えを見る時間を確保
+  renderQuiz();
+});
+setInterval(() => { if (slideOrder()[slideIdx] === "quiz" && quiz && quiz.mode !== "tap") renderQuiz(); }, 250);
+
 /* ---------- 注意表示 ---------- */
 function renderAlerts() {
   const a = [];
@@ -905,6 +1362,8 @@ loadHolidays().then(renderTrain);
 setInterval(() => { if (holidaysLoadedOn !== ymd(new Date())) loadHolidays(); }, 10 * 60e3);
 loadTrainStatus(); setInterval(loadTrainStatus, CONFIG.train.statusRefreshMin * 60e3);
 renderFortune(); setInterval(renderFortune, 60e3);
+showSlide(0); startSlides();
+setInterval(() => { const k = slideOrder()[slideIdx]; if (k === "sky") renderSky(); if (k === "count") renderCount(); }, 60e3);
 loadWeather(); setInterval(loadWeather, CONFIG.weatherRefreshMin * 60e3);
 loadNews(); setInterval(loadNews, CONFIG.news.refreshMin * 60e3);
 keepAwake();
