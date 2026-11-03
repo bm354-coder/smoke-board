@@ -810,6 +810,8 @@ const CONFIG = {
   umbrellaThreshold: 50,
   weatherRefreshMin: 15,
   fullReloadHours: 6,
+  // GitHubに新しい版が上がっていないか、この分数ごとに確認して、変わっていたら自動で読み直す
+  updateCheckMin: 5,
 };
 /* ========================================================= */
 
@@ -2734,6 +2736,24 @@ if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .
 [1500, 5000].forEach((ms) => setTimeout(() => { shrinkToFit(".fc4 .it", 11); autoFit(); }, ms));
 setInterval(autoFit, 60e3);
 setTimeout(() => location.reload(), CONFIG.fullReloadHours * 3600e3);
+
+/* ---------- 新しい版の自動反映 ----------
+   GitHubのファイルを読み直し、下の BOARD_BUILD（版の印）が変わっていたらページを読み直す。
+   詳細ウィンドウを開いている間は待つ */
+const BOARD_BUILD = "20261104-0045";
+async function checkUpdate() {
+  try {
+    const r = await fetch(location.pathname + "?v=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return;
+    const m = (await r.text()).match(/const BOARD_BUILD = "([^"]+)"/);
+    if (m && m[1] !== BOARD_BUILD) {
+      const go = () => { if ($("modal").hidden) location.reload(); else setTimeout(go, 10e3); };
+      go();
+    }
+  } catch (e) {}
+}
+setInterval(checkUpdate, (CONFIG.updateCheckMin || 5) * 60e3);
+setTimeout(checkUpdate, 30e3);
 </script>
 </body>
 </html>
