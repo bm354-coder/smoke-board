@@ -163,13 +163,34 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 /* ---- ニュース ---- */
 .news{flex:none;height:178px;display:flex;flex-direction:column;min-width:0}
 #newsList{display:flex;flex-direction:column}
-.nw{display:grid;grid-template-columns:82px 72px 1fr;align-items:center;height:27px;border-bottom:1px dashed rgba(5,217,232,.16)}
+.nw{display:grid;grid-template-columns:78px 90px 1fr;align-items:center;height:27px;border-bottom:1px dashed rgba(5,217,232,.16)}
 .nw:last-child{border-bottom:none}
 .nw .tm{font-family:var(--mono);font-size:13px;color:var(--cyan)}
-.nw .tg{justify-self:start;white-space:nowrap;font-size:11px;font-weight:700;color:var(--sub);border:1px solid var(--rule);padding:1px 6px;line-height:1.4}
+.nw .tg{justify-self:start;max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:700;color:var(--sub);border:1px solid var(--rule);padding:1px 6px;line-height:1.4}
 .nw .tt{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nw.new .tm{color:var(--mag)}
 .nmsg{color:var(--sub);font-size:14px;padding-top:8px}
+/* ニュース欄の切り替え */
+.nslides{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
+.nslide{position:absolute;inset:0;opacity:0;transform:translateX(40px);pointer-events:none;transition:opacity .7s ease,transform .7s ease}
+.nslide.on{opacity:1;transform:none;pointer-events:auto}
+.nslide.out{transform:translateX(-40px)}
+#gigaList{display:flex;flex-direction:column}
+/* 為替・暗号資産 */
+#mkt{display:grid;grid-template-columns:.85fr 1.15fr;column-gap:22px;padding-top:2px}
+#mkt .col{display:flex;flex-direction:column;min-width:0}
+#mkt .mh{font-size:11px;font-weight:700;color:var(--faint);height:18px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+#mkt .mr{display:grid;grid-template-columns:1fr auto;align-items:baseline;column-gap:8px;height:27px;border-bottom:1px dashed rgba(5,217,232,.16);white-space:nowrap}
+#mkt .mr:last-child{border-bottom:none}
+#mkt .nm{font-size:14px;font-weight:700;color:var(--sub);overflow:hidden;text-overflow:ellipsis}
+#mkt .nm b{font-family:var(--num);font-size:11px;color:var(--faint);font-weight:600;margin-left:6px}
+#mkt .pr{font-family:var(--num);font-size:18px;font-weight:600;text-align:right}
+#mkt .pr small{font-size:12px;color:var(--sub);margin-right:2px}
+#mkt .ch{grid-column:1/-1;display:none}
+#mkt .mr{grid-template-columns:auto 1fr auto}
+#mkt .pc{font-family:var(--num);font-size:12px;font-weight:600;min-width:62px;text-align:right;display:inline-flex;align-items:center;justify-content:flex-end;gap:3px}
+#mkt .pc.up{color:var(--mag)} #mkt .pc.dn{color:var(--cyan)} #mkt .pc.na{color:var(--faint)}
+.tri{width:9px;height:9px;flex:none}
 
 .foot{grid-area:foot;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-align:right;align-self:end}
 .foot a{color:inherit}
@@ -428,8 +449,12 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
     </section>
 
     <section class="news">
-      <div class="sh"><span class="jp">ニュース</span><span class="tap">タップで詳細</span><span class="rl"></span><span class="aux" id="newsAt"></span></div>
-      <div id="newsList"><div class="nmsg">読み込み中…</div></div>
+      <div class="sh"><span class="jp" id="nTitle">ニュース</span><span class="tap" id="nTap">タップで詳細</span><span class="rl"></span><span class="dots" id="nDots"></span><span class="aux" id="newsAt"></span></div>
+      <div class="nslides" id="nSlides">
+        <div class="nslide" data-k="wsj"><div id="newsList"><div class="nmsg">読み込み中…</div></div></div>
+        <div class="nslide" data-k="giga"><div id="gigaList"><div class="nmsg">読み込み中…</div></div></div>
+        <div class="nslide" data-k="market"><div id="mkt"><div class="nmsg">読み込み中…</div></div></div>
+      </div>
     </section>
   </div>
 
@@ -602,6 +627,10 @@ const CONFIG = {
 
   // ---- ニュース（WSJ日本版のRSSを中継スクリプト経由で取得） ----
   news: { count: 5, refreshMin: 15, newWithinMin: 60 },
+  // ニュース欄を時間で切り替える："wsj"（WSJ日本版）/ "giga"（GIGAZINE）/ "market"（為替・暗号資産）
+  //   並べた順に切り替わる。スワイプでも切り替え可。詳細を開いている間は止まる
+  newsSlides: { order: ["wsj", "giga", "market"], seconds: 20 },
+  marketRefreshMin: 3,
 
   // 右下の欄を時間で切り替える："fortune"（星座占い）/ "sky"（月と太陽）/ "count"（カウントダウン）
   //   並べた順に切り替わる。1つだけにすると切り替えなし
@@ -964,17 +993,102 @@ function loadNews() {
         ? "ニュースを表示するには、中継スクリプトの更新が必要です" : "ニュースを取得できませんでした（自動で再取得します）"}</div>`;
       return;
     }
-    const now = Date.now();
     newsItems = d.items.slice(0, CONFIG.news.count);
-    $("newsList").innerHTML = newsItems.map((n, idx) => {
-      const t = new Date(n.pubDate), fresh = now - t < CONFIG.news.newWithinMin * 60e3;
-      return `<div class="nw${fresh ? " new" : ""}" data-i="${idx}"><span class="tm">${isNaN(t) ? "" : ago(t)}</span><span class="tg">${esc(n.tag || "")}</span><span class="tt">${esc(n.title)}</span></div>`;
-    }).join("");
-    newsAt = hm(new Date());
-    $("newsAt").textContent = `WSJ日本版 ・ ${newsAt} 更新`;
+    $("newsList").innerHTML = newsRows(newsItems);
+    newsAt = hm(new Date()); renderNewsHead();
     renderFoot();
   });
 }
+
+/* ---------- GIGAZINE ---------- */
+let gigaAt = "", gigaItems = [];
+function newsRows(list) {
+  const now = Date.now();
+  return list.map((n, idx) => {
+    const t = new Date(n.pubDate), fresh = now - t < CONFIG.news.newWithinMin * 60e3;
+    return `<div class="nw${fresh ? " new" : ""}" data-i="${idx}"><span class="tm">${isNaN(t) ? "" : ago(t)}</span><span class="tg">${esc(n.tag || "")}</span><span class="tt">${esc(n.title)}</span></div>`;
+  }).join("");
+}
+function relayOld(d) { return d && d.line && d.items === undefined && d.coins === undefined; }   // 古い中継は運行情報を返す
+function loadGiga() {
+  if (!CONFIG.relayUrl) return;
+  jsonp(CONFIG.relayUrl + "?type=gigazine", (d) => {
+    if (!d || !d.ok || !d.items) {
+      if (!gigaAt) $("gigaList").innerHTML = `<div class="nmsg">${relayOld(d) ? "表示するには、中継スクリプトの更新が必要です" : "記事を取得できませんでした（自動で再取得します）"}</div>`;
+      return;
+    }
+    gigaItems = d.items.slice(0, CONFIG.news.count);
+    $("gigaList").innerHTML = newsRows(gigaItems);
+    gigaAt = hm(new Date()); renderNewsHead(); renderFoot();
+  });
+}
+
+/* ---------- 為替・暗号資産 ---------- */
+let mktAt = "", mkt = null;
+const yen = (v, dig) => v == null || isNaN(v) ? "--" : Number(v).toLocaleString("ja-JP", { minimumFractionDigits: dig, maximumFractionDigits: dig });
+function pct(v) {
+  if (v == null || isNaN(v)) return `<span class="pc na">--</span>`;
+  const up = v > 0.005, dn = v < -0.005;
+  return `<span class="pc ${up ? "up" : dn ? "dn" : "na"}">${up ? `<svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1.5 9.2 8.5H.8z" fill="currentColor"/></svg>` : dn ? `<svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 8.5 .8 1.5h8.4z" fill="currentColor"/></svg>` : ""}${Math.abs(v).toFixed(2)}%</span>`;
+}
+function renderMarket() {
+  if (!mkt) return;
+  const fx = mkt.fx, coins = mkt.coins || [];
+  const fxDate = fx ? (([, m, d]) => `${+m}/${+d}`)(fx.date.split("-")) : "";
+  const coinDig = (c) => c.price >= 10000 ? 0 : 2;
+  $("mkt").innerHTML = `<div class="col">
+      <div class="mh">為替<span>${fx ? `${fxDate}の公表値・前日比` : "取得できませんでした"}</span></div>
+      <div class="mr"><span class="nm">ドル/円</span><span class="pr">${fx ? yen(fx.usdjpy, 2) : "--"}</span>${pct(fx && fx.usdChange)}</div>
+      <div class="mr"><span class="nm">ユーロ/円</span><span class="pr">${fx ? yen(fx.eurjpy, 2) : "--"}</span>${pct(fx && fx.eurChange)}</div>
+    </div>
+    <div class="col">
+      <div class="mh">暗号資産<span>BTC・ETH・XRP／円・24時間比</span></div>
+      ${coins.map((c) => `<div class="mr"><span class="nm" title="${esc(c.name)}">${esc(c.sym)}</span><span class="pr"><small>¥</small>${yen(c.price, coinDig(c))}</span>${pct(c.change)}</div>`).join("")}
+    </div>`;
+}
+function loadMarket() {
+  if (!CONFIG.relayUrl) return;
+  jsonp(CONFIG.relayUrl + "?type=market", (d) => {
+    if (!d || !d.ok || !d.coins) {
+      if (!mktAt) $("mkt").innerHTML = `<div class="nmsg">${relayOld(d) ? "表示するには、中継スクリプトの更新が必要です" : "相場を取得できませんでした（自動で再取得します）"}</div>`;
+      return;
+    }
+    mkt = d; mktAt = hm(new Date()); renderMarket(); renderNewsHead(); renderFoot();
+  });
+}
+
+/* ---------- ニュース欄の切り替え ---------- */
+const NSLIDE_META = {
+  wsj: { title: "ニュース", tap: "タップで詳細", aux: () => newsAt ? `WSJ日本版 ・ ${newsAt} 更新` : "WSJ日本版" },
+  giga: { title: "GIGAZINE", tap: "タップで詳細", aux: () => gigaAt ? `${gigaAt} 更新` : "" },
+  market: { title: "為替・暗号資産", tap: "", aux: () => mktAt ? `暗号資産 bitFlyer ・ ${mktAt} 更新` : "" },
+};
+let nIdx = 0, nShownAt = Date.now();
+const nOrder = () => ((CONFIG.newsSlides && CONFIG.newsSlides.order) || ["wsj"]).filter((k) => NSLIDE_META[k]);
+function renderNewsHead() {
+  const order = nOrder(), k = order[nIdx] || "wsj";
+  $("nTitle").textContent = NSLIDE_META[k].title;
+  $("nTap").textContent = NSLIDE_META[k].tap;
+  $("newsAt").textContent = NSLIDE_META[k].aux();
+  $("nDots").innerHTML = order.length > 1 ? order.map((_, j) => `<i class="${j === nIdx ? "on" : ""}"></i>`).join("") : "";
+}
+function showNews(i, dir = 1) {
+  const order = nOrder(); if (!order.length) return;
+  nIdx = (i + order.length) % order.length;
+  const k = order[nIdx];
+  document.querySelectorAll(".nslide").forEach((el) => {
+    const on = el.dataset.k === k, was = el.classList.contains("on");
+    if (was && !on && dir > 0) { el.classList.add("out"); setTimeout(() => el.classList.remove("out"), 800); }
+    if (on && !was && dir < 0) { el.style.transition = "none"; el.style.transform = "translateX(-40px)"; void el.offsetWidth; el.style.transition = ""; el.style.transform = ""; }
+    el.classList.toggle("on", on);
+  });
+  nShownAt = Date.now(); renderNewsHead();
+}
+setInterval(() => {
+  if (nOrder().length < 2) return;
+  if (!$("modal").hidden) { nShownAt = Date.now(); return; }
+  if (Date.now() - nShownAt >= (CONFIG.newsSlides.seconds || 20) * 1000) showNews(nIdx + 1);
+}, 500);
 
 /* ---------- 詳細ウィンドウ ---------- */
 let closeTimer = null, timerAnim = null;
@@ -1003,21 +1117,27 @@ function qrSvg(url) {
   try { const q = qrcode(0, "M"); q.addData(url); q.make(); return q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); }
   catch (e) { return ""; }
 }
-$("newsList").addEventListener("click", (e) => {
-  const row = e.target.closest(".nw"); if (!row) return;
-  const n = newsItems[+row.dataset.i]; if (!n) return;
+function showNewsDetail(n, src) {
   const t = new Date(n.pubDate);
   const when = isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()} ${hm(t)}（${ago(t)}）`;
   const qr = n.link ? qrSvg(n.link) : "";
   openModal(`<div class="nd"><div>
-      <div class="meta"><span class="tg">${esc(n.tag || "")}</span><span>${when}</span><span>WSJ日本版</span></div>
+      <div class="meta"><span class="tg">${esc(n.tag || "")}</span><span>${when}</span><span>${src}</span></div>
       <h2>${esc(n.title)}</h2>
       ${n.image ? `<img class="img" src="${esc(n.image)}" alt="" onerror="this.remove()">` : ""}
       <div class="sum">${esc(n.description || "（要約はありません）")}</div>
       ${cleanAuthor(n.author) ? `<div class="by">${esc(cleanAuthor(n.author))}</div>` : ""}
     </div>
-    <div class="qrbox">${qr ? `<div class="qr">${qr}</div><p>スマホのカメラで読み取ると<br>記事の続きが開きます<br>（WSJの有料記事の場合あり）</p>` : ""}</div>
+    <div class="qrbox">${qr ? `<div class="qr">${qr}</div><p>スマホのカメラで読み取ると<br>記事の続きが開きます${src === "WSJ日本版" ? "<br>（WSJの有料記事の場合あり）" : ""}</p>` : ""}</div>
   </div>`);
+}
+$("newsList").addEventListener("click", (e) => {
+  const row = e.target.closest(".nw"); if (!row) return;
+  const n = newsItems[+row.dataset.i]; if (n) showNewsDetail(n, "WSJ日本版");
+});
+$("gigaList").addEventListener("click", (e) => {
+  const row = e.target.closest(".nw"); if (!row) return;
+  const n = gigaItems[+row.dataset.i]; if (n) showNewsDetail(n, "GIGAZINE");
 });
 
 /* 占いのひとこと（日付と星座で毎日決まる） */
@@ -1186,6 +1306,8 @@ function renderTrainDots() {
   $("trainTap").textContent = TRAINS.length > 1 ? "スワイプで路線切替" : "";
 }
 attachSwipe(document.querySelector(".train"), () => $("tPage"), (dir) => showTrain(trainIdx + dir, dir));
+// ニュース欄
+attachSwipe($("nSlides"), () => $("nSlides").querySelector(".nslide.on"), (dir) => { if (nOrder().length > 1) showNews(nIdx + dir, dir); });
 renderTrainDots();
 
 /* ---------- 月と太陽 ---------- */
@@ -1784,12 +1906,19 @@ const QUIZ = [
 /* 出題済みの問題を記録し、全問出し切るまで同じ問題を出さない（ページを読み直しても続きから） */
 const QKEY = "smokeBoard.quiz.v1";
 let quizMem = null, quiz = null, quizCount = 0;
+// 偏りのない並べ替え（Fisher–Yates）
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
 function quizState() {
   if (!quizMem) { try { quizMem = JSON.parse(localStorage.getItem(QKEY) || "null"); } catch (e) { quizMem = null; } }
   const sig = QUIZ.length + ":" + QUIZ.map((x) => x.q.length).reduce((a, b) => a + b, 0);
   if (!quizMem || quizMem.sig !== sig || !Array.isArray(quizMem.order) || quizMem.pos >= quizMem.order.length) {
-    const order = QUIZ.map((_, i) => i);
-    for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    const order = shuffle(QUIZ.map((_, i) => i));
+    // 一巡の最後の問題が、次の一巡の最初にもう一度出ないようにする
+    const last = quizMem && quizMem.sig === sig ? quizMem.cur : null;
+    if (last !== null && order[0] === last && order.length > 1) [order[0], order[1]] = [order[1], order[0]];
     quizMem = { sig, order, pos: 0, round: (quizMem && quizMem.round ? quizMem.round + 1 : 1), cur: null, curAt: 0 };
   }
   return quizMem;
@@ -1803,7 +1932,7 @@ function nextQuizItem() {
 }
 function startQuiz() {
   const nx = nextQuizItem(), item = nx.item, mode = (new URLSearchParams(location.search).get("qm") || CONFIG.quizMode || "auto");
-  const order = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+  const order = shuffle([0, 1, 2, 3]);
   const oxTrue = Math.random() < 0.5, oxShown = oxTrue ? item.a[0] : item.a[1 + Math.floor(Math.random() * 3)];
   quizCount = nx.no;
   quiz = { item, mode, order, oxTrue, oxShown, start: Date.now(), done: false, pick: null };
@@ -1815,7 +1944,7 @@ function renderQuiz() {
   const { item, mode, order } = quiz, el = $("quizBox");
   const left = Math.max(0, quizThink() - (Date.now() - quiz.start));
   if (left === 0 && !quiz.done && mode !== "tap") quiz.done = true;
-  const head = `<div class="qh"><span class="qn">No.${quizCount}/${QUIZ.length}</span><span class="gen">${esc(item.g)}</span><span>${{ auto: "4択", tap: "4択", reveal: "答えを当てよう", ox: "○か×か" }[mode]}</span><button class="qnext" data-next>次の問題<svg class="ic" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.2 1.2 9 5 2.2 8.8z" fill="currentColor"/></svg></button></div>`;
+  const head = `<div class="qh"><span class="qn">${quizCount}問目／全${QUIZ.length}</span><span class="gen">${esc(item.g)}</span><span>${{ auto: "4択", tap: "4択", reveal: "答えを当てよう", ox: "○か×か" }[mode]}</span><button class="qnext" data-next>次の問題<svg class="ic" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.2 1.2 9 5 2.2 8.8z" fill="currentColor"/></svg></button></div>`;
   const kHint = item.k ? `<small>タップで解説</small>` : "";
   const timer = (label) => `<div class="tb"><span class="bar"><i style="width:${(left / quizThink() * 100).toFixed(1)}%"></i></span><span class="sec">${quiz.done ? "" : Math.ceil(left / 1000)}</span></div>
     <div class="ans">${quiz.done ? label : (mode === "auto" ? `<small style="margin:0">選択肢をタップで回答</small>` : "")}</div>`;
@@ -1866,7 +1995,7 @@ function showQuizDetail() {
     return `<div class="${cls}">${"ABCD"[j]}　${esc(item.a[oi])}${tag}</div>`;
   }).join("");
   openModal(`<div class="qd">
-      <div class="qh"><span class="qn">No.${quizCount}/${QUIZ.length}</span><span class="gen">${esc(item.g)}</span></div>
+      <div class="qh"><span class="qn">${quizCount}問目／全${QUIZ.length}</span><span class="gen">${esc(item.g)}</span></div>
       ${res}
       <div class="qq">${esc(item.q)}</div>
       <div class="chs">${chs}</div>
@@ -1917,7 +2046,8 @@ function renderAlerts() {
 function renderFoot() {
   const parts = [`天気 <a href="https://open-meteo.com/">Open-Meteo.com</a> ${weatherAt}`];
   if (statusAt) parts.push(`運行情報 Osaka Metro公式 ${statusAt}現在（発車時刻は時刻表上の予定）`);
-  if (newsAt) parts.push(`ニュース WSJ日本版（Dow Jones）`);
+  if (newsAt || gigaAt) parts.push(`ニュース ${[newsAt && "WSJ日本版（Dow Jones）", gigaAt && "GIGAZINE"].filter(Boolean).join("・")}`);
+  if (mktAt) parts.push(`為替 Frankfurter・暗号資産 bitFlyer`);
   $("foot").innerHTML = parts.join("　／　");
 }
 
@@ -1937,8 +2067,11 @@ showSlide(0); startSlides();
 setInterval(() => { const k = slideOrder()[slideIdx]; if (k === "sky") renderSky(); if (k === "count") renderCount(); }, 60e3);
 loadWeather(); setInterval(loadWeather, CONFIG.weatherRefreshMin * 60e3);
 loadNews(); setInterval(loadNews, CONFIG.news.refreshMin * 60e3);
+showNews(0);
+loadGiga(); setInterval(loadGiga, CONFIG.news.refreshMin * 60e3);
+loadMarket(); setInterval(loadMarket, (CONFIG.marketRefreshMin || 3) * 60e3);
 keepAwake();
-window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); loadNews(); });
+window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); loadNews(); loadGiga(); loadMarket(); });
 if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .it", 11); autoFit(); });
 [1500, 5000].forEach((ms) => setTimeout(() => { shrinkToFit(".fc4 .it", 11); autoFit(); }, ms));
 setInterval(autoFit, 60e3);
