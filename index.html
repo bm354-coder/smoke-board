@@ -30,12 +30,12 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
     linear-gradient(90deg,rgba(5,217,232,.04) 1px,transparent 1px) 0 0/32px 100%,#07040f}
 #fit{position:fixed;inset:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 #stage{position:absolute;left:0;top:0;transform-origin:0 0;padding:22px 26px 14px;display:grid}
-#stage.land{width:1180px;height:780px;grid-template-columns:590px 1fr;column-gap:36px;grid-template-rows:1fr 14px;row-gap:8px;
+#stage.land{width:1180px;height:780px;grid-template-columns:590px 1fr;column-gap:36px;grid-template-rows:1fr 14px;row-gap:12px;
   grid-template-areas:"L R" "foot foot"}
-#stage.port{width:820px;height:1500px;grid-template-columns:1fr;grid-template-rows:auto auto 1fr;row-gap:24px;
+#stage.port{width:820px;height:1580px;grid-template-columns:1fr;grid-template-rows:auto auto 1fr;row-gap:24px;
   grid-template-areas:"L" "R" "foot"}
-.colL{grid-area:L;display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0}
-.colR{grid-area:R;display:flex;flex-direction:column;gap:18px;min-height:0;min-width:0}
+.colL{grid-area:L;display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0;overflow:hidden}
+.colR{grid-area:R;display:flex;flex-direction:column;gap:14px;min-height:0;min-width:0;overflow:hidden}
 #stage.port .train{height:340px;flex:none}
 #stage.port .fortune{height:400px;flex:none}
 .num{font-family:var(--num);font-variant-numeric:tabular-nums}
@@ -106,15 +106,15 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .status::before{content:"● "}
 .status.normal{color:var(--ok)} .status.delay{color:var(--yel);background:rgba(249,240,2,.1)} .status.stop{color:#fff;background:var(--stop);border-color:var(--stop)}
 #statusDetail{font-size:13px;color:var(--yel);margin-top:5px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cd{display:flex;align-items:flex-end;gap:18px;margin-top:8px;white-space:nowrap}
+.cd{display:flex;align-items:flex-end;gap:16px;margin-top:8px;white-space:nowrap;min-width:0}
 .cd .lab{font-size:13px;font-weight:700;color:var(--sub);margin-bottom:6px;min-height:18px}
-#nextIn{font-family:var(--num);font-weight:800;font-size:96px;line-height:.9;color:var(--mag);text-shadow:0 0 16px rgba(255,61,127,.45)}
+#nextIn{font-family:var(--num);font-weight:800;font-size:90px;line-height:.9;color:var(--mag);text-shadow:0 0 16px rgba(255,61,127,.45)}
 .train.has-detail #nextIn{font-size:78px}
 .train.has-detail .cd{margin-top:4px}
 #nextIn.soon{color:var(--yel);text-shadow:0 0 16px rgba(249,240,2,.5)}
 #nextIn.txt{font-family:var(--jph);font-weight:900;font-size:44px;color:var(--text);text-shadow:none}
-#nextAt{font-size:18px;color:var(--sub);font-weight:700;padding-bottom:6px}
-#nextAt b{font-family:var(--num);font-size:30px;color:var(--text);font-weight:600;margin-right:4px}
+#nextAt{font-size:17px;color:var(--sub);font-weight:700;padding-bottom:6px;min-width:0}
+#nextAt b{font-family:var(--num);font-size:28px;color:var(--text);font-weight:600;margin-right:4px}
 #tBoard{margin-top:auto;padding-top:2px;border-top:1px solid rgba(255,61,127,.3)}
 #tBoard .r{display:grid;grid-template-columns:110px 1fr auto;align-items:center;height:31px;border-bottom:1px dashed rgba(255,61,127,.18);font-size:20px}
 #tBoard .r:last-child{border-bottom:none}
@@ -125,31 +125,34 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 #tBoard .last .dst::after{content:"　終電";color:var(--yel)}
 
 /* ---- 星座占い（枠なし・4列） ---- */
-.fortune{flex:1;display:flex;flex-direction:column;min-height:0;min-width:0}
+.fortune{flex:1;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden}
 #fCols{flex:1;display:grid;grid-template-columns:repeat(4,1fr);min-height:0}
 .fc4{position:relative;padding:4px 10px 0 12px;display:flex;flex-direction:column;min-width:0}
 .fc4+.fc4{border-left:1px solid var(--rule)}
-.fc4 .gl{font-size:40px;line-height:1;color:var(--cyan);font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp)}
-.fc4 .nm{font-size:19px;font-weight:900;margin-top:8px;white-space:nowrap}
-.fc4 .rk{display:flex;align-items:baseline;gap:4px;margin-top:12px}
-.fc4 .rk b{font-family:var(--num);font-weight:800;font-size:46px;line-height:1;color:var(--text)}
+.fc4 .gl{font-size:34px;line-height:1;color:var(--cyan);font-family:"Noto Sans Symbols 2","Apple Symbols",var(--jp)}
+.fc4 .nm{font-size:18px;font-weight:900;margin-top:6px;white-space:nowrap}
+.fc4 .rk{display:flex;align-items:baseline;gap:4px;margin-top:8px}
+.fc4 .rk b{font-family:var(--num);font-weight:800;font-size:42px;line-height:1;color:var(--text)}
 .fc4 .rk span{font-family:var(--mono);font-size:13px;color:var(--faint)}
 .fc4.top .rk b{color:var(--yel);text-shadow:0 0 12px rgba(249,240,2,.45)}
 .fc4.top .gl{color:var(--yel)}
-.fc4 .mt{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:10px}
+.fc4 .mt{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:8px}
 .fc4 .mt i{height:8px;background:rgba(255,255,255,.08)}
 .fc4 .mt i.on{background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.6)}
 .fc4.top .mt i.on{background:var(--yel);box-shadow:0 0 6px rgba(249,240,2,.6)}
-.fc4 .k{font-size:12px;font-weight:700;color:var(--faint);margin-top:18px}
+.fc4 .k{font-size:12px;font-weight:700;color:var(--faint);margin-top:12px}
 .fc4 .it{font-size:17px;font-weight:700;line-height:1.3;margin-top:3px;white-space:nowrap;overflow:hidden;letter-spacing:-.02em}
 .fc4 .co{display:flex;align-items:center;gap:7px;font-size:17px;font-weight:700;margin-top:3px;white-space:nowrap}
 .fc4 .co i{width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:none}
-.fc4 .sub3{margin-top:auto;padding:14px 0 2px;display:grid;gap:8px}
+.fc4 .sub3{margin-top:auto;padding:10px 0 2px;display:grid;gap:6px}
 .fc4 .sub3 div{display:flex;align-items:center;justify-content:space-between;font-size:14px;color:var(--sub);font-weight:700}
 .fc4 .sub3 span{display:flex;gap:4px}
 .fc4 .sub3 span i{width:9px;height:9px;transform:rotate(45deg);background:rgba(255,255,255,.12)}
 .fc4 .sub3 span i.on{background:var(--mag);box-shadow:0 0 5px rgba(255,61,127,.7)}
 .fc4{padding-bottom:4px}
+.fortune.t1 .fc4 .gl{font-size:28px} .fortune.t1 .fc4 .k{margin-top:8px} .fortune.t1 .fc4 .sub3{gap:3px;padding-top:6px}
+.fortune.t2 .fc4 .rk b{font-size:34px} .fortune.t2 .fc4 .nm{margin-top:3px} .fortune.t2 .fc4 .sub3 div{font-size:12px}
+.fortune.t3 .fc4 .gl{display:none}
 .fmsg{grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:15px;text-align:center;line-height:1.7}
 
 /* ---- ニュース ---- */
@@ -474,10 +477,30 @@ function fit() {
   const pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight), pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
   const aw = box.clientWidth - pl - pr, ah = box.clientHeight - pt - pb, port = ah > aw;
   st.className = port ? "port" : "land";
-  const W = port ? 820 : 1180, H = port ? 1500 : 780, s = Math.min(aw / W, ah / H);
+  const W = port ? 820 : 1180, H = port ? 1580 : 780, s = Math.min(aw / W, ah / H);
   st.style.transform = `translate(${pl + (aw - W * s) / 2}px, ${pt + (ah - H * s) / 2}px) scale(${s})`;
 }
-window.addEventListener("resize", fit);
+window.addEventListener("resize", () => { fit(); autoFit(); });
+
+/* 端末ごとの文字の大きさの差で、はみ出しそうなら自動で詰める */
+function autoFit() {
+  const fo = document.querySelector(".fortune");
+  if (fo) {
+    fo.classList.remove("t1", "t2", "t3");
+    for (const lv of ["t1", "t2", "t3"]) {
+      if (fo.scrollHeight <= fo.clientHeight + 1) break;
+      fo.classList.add(lv);
+    }
+  }
+  const cd = document.querySelector(".cd"), n = $("nextIn"), at = $("nextAt");
+  if (cd && n) {
+    n.style.fontSize = ""; at.style.fontSize = "";
+    let fs = parseFloat(getComputedStyle(n).fontSize);
+    while (cd.scrollWidth > cd.clientWidth + 1 && fs > 54) { fs -= 2; n.style.fontSize = fs + "px"; }
+    let fa = parseFloat(getComputedStyle(at).fontSize);
+    while (cd.scrollWidth > cd.clientWidth + 1 && fa > 12) { fa -= 1; at.style.fontSize = fa + "px"; }
+  }
+}
 window.addEventListener("orientationchange", () => setTimeout(fit, 300));
 
 function jsonp(url, onData) {
@@ -886,8 +909,9 @@ loadWeather(); setInterval(loadWeather, CONFIG.weatherRefreshMin * 60e3);
 loadNews(); setInterval(loadNews, CONFIG.news.refreshMin * 60e3);
 keepAwake();
 window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); loadNews(); });
-if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .it", 11); });
-[1500, 5000].forEach((ms) => setTimeout(() => shrinkToFit(".fc4 .it", 11), ms));
+if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .it", 11); autoFit(); });
+[1500, 5000].forEach((ms) => setTimeout(() => { shrinkToFit(".fc4 .it", 11); autoFit(); }, ms));
+setInterval(autoFit, 60e3);
 setTimeout(() => location.reload(), CONFIG.fullReloadHours * 3600e3);
 </script>
 </body>
