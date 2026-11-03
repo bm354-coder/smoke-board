@@ -141,10 +141,16 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 /* 案C：大きな路線名＋左端の色帯 */
 .tv-c::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--lc);box-shadow:0 0 14px rgba(var(--lcr),.6);z-index:2}
 .tv-c .tline{margin-top:2px}
-.tv-c .smark{width:40px;height:40px;font-size:15px}
-.tv-c #trainTitle{font-size:28px;color:var(--lc)}
-.tv-c #trainTitle small{font-size:15px;color:var(--sub)}
-.tv-c #nextIn{font-size:82px}
+.tv-c .smark{width:34px;height:34px;font-size:13px}
+.tv-c #trainTitle{font-size:23px;color:var(--lc)}
+.tv-c #trainTitle small{font-size:14px;color:var(--sub)}
+.tv-c #nextIn{font-size:106px}
+.train.tv-c.has-detail #nextIn{font-size:90px}
+/* 「本日の運行は終了」などの文字は、カウントダウン用の大きさにしない */
+.train #nextIn.txt,.train.tv-c #nextIn.txt,.train.tv-c.has-detail #nextIn.txt{font-size:44px}
+.tv-c .cd{margin-top:4px}
+.tv-c .cd .lab{margin-bottom:2px}
+.tv-c #tBoard .r{height:28px}
 /* 案D：路線の頭文字の大きな透かし */
 .tv-d .wm{display:block;position:absolute;right:14px;bottom:-34px;z-index:0;font-family:var(--jph);font-weight:900;font-size:300px;line-height:1;
   color:rgba(var(--lcr),.10);pointer-events:none}
@@ -215,6 +221,101 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 #mkt .pc{font-family:var(--num);font-size:12px;font-weight:600;min-width:62px;text-align:right;display:inline-flex;align-items:center;justify-content:flex-end;gap:3px}
 #mkt .pc.up{color:var(--mag)} #mkt .pc.dn{color:var(--cyan)} #mkt .pc.na{color:var(--faint)}
 .tri{width:9px;height:9px;flex:none}
+/* 今日は何の日 */
+#todayBox{display:flex;flex-direction:column}
+#todayBox .r{display:grid;grid-template-columns:78px 52px 1fr auto;align-items:center;column-gap:4px;height:30px;border-bottom:1px dashed rgba(5,217,232,.16);white-space:nowrap}
+#todayBox .r:last-child{border-bottom:none}
+#todayBox .lb{justify-self:start;font-size:11px;font-weight:700;color:var(--cyan);border:1px solid rgba(5,217,232,.45);padding:1px 8px}
+#todayBox .lb.b{color:var(--mag);border-color:rgba(255,61,127,.55)}
+#todayBox .lb.s{color:var(--yel);border-color:rgba(249,240,2,.5)}
+#todayBox .yr{font-family:var(--num);font-size:14px;font-weight:700;color:var(--mag)}
+#todayBox .tx{font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+#todayBox .ak{font-family:var(--num);font-size:14px;font-weight:700;color:var(--cyan);margin-left:8px;text-align:right}
+#todayBox .ak small{font-family:var(--jp);font-size:11px;color:var(--faint);margin-left:6px}
+#todayBox .none{font-size:12px;font-weight:700;color:var(--faint);height:22px;display:flex;align-items:center}
+/* 案A：タイル */
+#mkt.mv-a{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding-top:4px}
+.mv-a .tl{grid-column:span 2;display:flex;flex-direction:column;justify-content:space-between;height:64px;padding:6px 10px 6px;background:rgba(5,217,232,.05);border:1px solid rgba(5,217,232,.18);min-width:0}
+.mv-a .tl.fx{grid-column:span 3}
+.mv-a .tl .t{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:var(--sub);white-space:nowrap}
+.mv-a .tl .v{font-family:var(--num);font-size:22px;font-weight:600;white-space:nowrap;overflow:hidden}
+.mv-a .tl .v small{font-size:13px;color:var(--sub);margin-right:2px}
+.mv-a .tl.up{border-color:rgba(255,61,127,.45);background:rgba(255,61,127,.07)}
+.mv-a .tl.dn{border-color:rgba(5,217,232,.45)}
+/* 案B：電光掲示板（横に流れる） */
+#mkt.mv-b{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.mv-b .band{position:relative;height:58px;overflow:hidden;border-top:1px solid rgba(249,240,2,.25);border-bottom:1px solid rgba(249,240,2,.25);
+  background:radial-gradient(rgba(249,240,2,.10) 1px,transparent 1.4px) 0 0/5px 5px,rgba(20,14,0,.6)}
+.mv-b .band .lbl{position:absolute;left:0;top:0;bottom:0;z-index:2;display:flex;align-items:center;padding:0 10px;font-size:12px;font-weight:900;color:#000;background:var(--yel)}
+.mv-b .run{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center;white-space:nowrap;animation:tick var(--dur,30s) linear infinite}
+.mv-b .run span.it{display:inline-flex;align-items:baseline;gap:10px;margin-right:46px;font-family:var(--num);font-size:30px;font-weight:600;color:var(--yel);text-shadow:0 0 8px rgba(249,240,2,.55)}
+.mv-b .run span.it em{font-style:normal;font-family:var(--jp);font-size:16px;font-weight:900;color:#fff2a8}
+.mv-b .run .pc{font-size:16px}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* 電光掲示板の整理案（B1〜B4）共通 */
+#mkt[class^="mv-b"]{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.led{position:relative;overflow:hidden;border-top:1px solid rgba(249,240,2,.28);border-bottom:1px solid rgba(249,240,2,.28);
+  background:radial-gradient(rgba(249,240,2,.10) 1px,transparent 1.4px) 0 0/5px 5px,rgba(20,14,0,.6)}
+.led .lbl{position:absolute;left:0;top:0;bottom:0;z-index:2;width:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:#000;background:var(--yel);line-height:1.15;text-align:center}
+.led .lbl small{font-size:10px;font-weight:700}
+.led .run{position:absolute;top:0;bottom:0;left:78px;display:flex;align-items:center;white-space:nowrap;animation:tick 30s linear infinite;will-change:transform}
+.led .it{display:inline-flex;align-items:baseline;gap:10px;padding:0 22px;font-family:var(--num);font-weight:600;color:var(--yel);text-shadow:0 0 8px rgba(249,240,2,.55)}
+.led .it em{font-style:normal;font-family:var(--jp);font-weight:900;color:#fff2a8}
+.led .sep{color:rgba(249,240,2,.35);font-size:12px}
+.led .pc{font-size:15px}
+.ledinfo{font-size:11px;font-weight:700;color:var(--faint);display:flex;justify-content:space-between;white-space:nowrap}
+/* B1：2段・同じ速さで流れる */
+.mv-b1 .led{height:56px}
+.mv-b1 .it{font-size:28px}.mv-b1 .it em{font-size:15px}
+/* B2：為替は止めて、暗号資産だけ流す */
+.mv-b2 .led{height:56px}
+.mv-b2 .fix{position:absolute;left:78px;right:0;top:0;bottom:0;display:grid;grid-template-columns:1fr 1fr}
+.mv-b2 .fix .it{justify-content:center;font-size:26px;padding:0 8px}
+.mv-b2 .fix .it + .it{border-left:1px dashed rgba(249,240,2,.25)}
+.mv-b2 .it{font-size:28px}.mv-b2 .it em{font-size:14px}
+/* B3：1本の太い帯に全部を流す */
+.mv-b3 .led{height:96px}
+.mv-b3 .lbl{width:64px;font-size:12px}
+.mv-b3 .run{left:64px}
+.mv-b3 .it{font-size:44px;padding:0 26px}.mv-b3 .it em{font-size:18px}.mv-b3 .pc{font-size:18px}
+/* B4：流さずに1銘柄ずつ切り替え */
+.mv-b4 .led{height:96px}
+.mv-b4 .one{position:absolute;left:78px;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center}
+.mv-b4 .one .it{font-size:46px;animation:flipin .45s ease}
+.mv-b4 .one .it em{font-size:18px}
+.mv-b4 .one .pc{font-size:20px}
+@keyframes flipin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.mv-b4 .pips{display:flex;gap:5px;justify-content:center}
+.mv-b4 .pips i{width:16px;height:3px;background:rgba(249,240,2,.2)}
+.mv-b4 .pips i.on{background:var(--yel);box-shadow:0 0 6px rgba(249,240,2,.7)}
+/* 案C：主役（BTC）＋小さなグラフ */
+#mkt.mv-c{display:grid;grid-template-columns:1.05fr 1fr;column-gap:20px;padding-top:4px}
+.mv-c .hero{display:flex;flex-direction:column;min-width:0}
+.mv-c .hero .t{font-size:12px;font-weight:700;color:var(--sub);display:flex;justify-content:space-between;align-items:center}
+.mv-c .hero .v{font-family:var(--num);font-size:30px;font-weight:700;line-height:1.15;white-space:nowrap}
+.mv-c .hero .v small{font-size:15px;color:var(--sub);margin-right:3px}
+.mv-c .hero svg.sp{width:100%;height:52px;margin-top:4px}
+.mv-c .lst{display:flex;flex-direction:column}
+.mv-c .lr{display:grid;grid-template-columns:74px 50px 1fr auto;align-items:center;column-gap:8px;height:33px;border-bottom:1px dashed rgba(5,217,232,.16);white-space:nowrap}
+.mv-c .lr:last-child{border-bottom:none}
+.mv-c .lr .nm{font-size:13px;font-weight:700;color:var(--sub)}
+.mv-c .lr svg.sp{width:50px;height:18px}
+.mv-c .lr .pr{font-family:var(--num);font-size:16px;font-weight:600;text-align:right}
+.mv-c .lr .pr small{font-size:11px;color:var(--sub)}
+/* 案D：増減メーター（中央が0、右に伸びると上昇・左に伸びると下落） */
+#mkt.mv-d{display:flex;flex-direction:column;padding-top:2px}
+.mv-d .dr{display:grid;grid-template-columns:40px 76px 1fr 96px 62px;align-items:center;column-gap:10px;height:28px;border-bottom:1px dashed rgba(5,217,232,.14);white-space:nowrap}
+.mv-d .dr:last-child{border-bottom:none}
+.mv-d .g{font-size:10px;font-weight:700;color:var(--faint);border:1px solid var(--rule);text-align:center;padding:1px 0}
+.mv-d .nm{font-size:14px;font-weight:700;color:var(--sub)}
+.mv-d .pr{font-family:var(--num);font-size:18px;font-weight:600;text-align:right}
+.mv-d .pr small{font-size:12px;color:var(--sub);margin-right:2px}
+.mv-d .mt{position:relative;height:10px;background:rgba(255,255,255,.05)}
+.mv-d .mt::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:rgba(255,255,255,.35)}
+.mv-d .mt i{position:absolute;top:0;bottom:0}
+.mv-d .mt i.up{left:50%;background:var(--mag);box-shadow:0 0 6px rgba(255,61,127,.6)}
+.mv-d .mt i.dn{right:50%;background:var(--cyan);box-shadow:0 0 6px rgba(5,217,232,.6)}
 
 .foot{grid-area:foot;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-align:right;align-self:end}
 .foot a{color:inherit}
@@ -333,6 +434,23 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .qd .chs div.ng{color:var(--mag);border-color:var(--mag);background:rgba(255,61,127,.1)}
 .qd .kn{border-left:3px solid var(--cyan);padding:12px 16px;background:rgba(5,217,232,.06)}
 .qd .kn p{font-size:20px;line-height:1.75;color:var(--text)}
+
+/* 全国の天気（タイル） */
+.wx{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.modal.top{align-items:flex-start;padding-top:18px}
+.zw h2{font-family:var(--jph);font-size:26px;font-weight:900;margin-bottom:2px}
+.zw .note{font-size:12px;color:var(--faint);margin-bottom:14px}
+.w3{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.w3 .tile{position:relative;height:100px;padding:8px 10px;background:var(--bg);border:1px solid var(--bd)}
+.w3 .tile b{font-size:15px;font-weight:900}
+.w3 .tile .wi{position:absolute;right:10px;top:8px;font-size:26px;line-height:1}
+.w3 .tile .big{font-family:var(--num);font-size:34px;font-weight:700;margin-top:6px;line-height:1}
+.w3 .tile .big small{font-size:14px;color:var(--sub)}
+.w3 .tile .sm{font-size:12px;color:var(--sub);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.w3 .tile.me{outline:2px solid var(--yel);outline-offset:-2px}
+.w3 .scale{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--faint);margin-top:2px}
+.w3 .scale i{flex:1;height:6px;background:linear-gradient(90deg,#1b4d9c,#1f8fa8,#3aa36b,#d9a53a,#e0533d)}
+.zw .wmsg{color:var(--sub);font-size:15px;padding:40px 0;text-align:center}
 
 /* ---- 詳細ウィンドウ ---- */
 .modal{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(4,2,10,.8)}
@@ -478,6 +596,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
       <div class="nslides" id="nSlides">
         <div class="nslide" data-k="wsj"><div id="newsList"><div class="nmsg">読み込み中…</div></div></div>
         <div class="nslide" data-k="giga"><div id="gigaList"><div class="nmsg">読み込み中…</div></div></div>
+        <div class="nslide" data-k="today"><div id="todayBox"></div></div>
         <div class="nslide" data-k="market"><div id="mkt"><div class="nmsg">読み込み中…</div></div></div>
       </div>
     </section>
@@ -485,7 +604,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 
   <div class="colR">
     <section class="wx">
-      <div class="sh"><span class="jp">天気</span><span class="rl"></span><span class="aux" id="placeLabel"></span></div>
+      <div class="sh"><span class="jp">天気</span><span class="tap">タップで全国の天気</span><span class="rl"></span><span class="aux" id="placeLabel"></span></div>
       <div class="wtop">
         <div class="nrow">
           <div id="nowIcon">⏳</div>
@@ -654,10 +773,12 @@ const CONFIG = {
 
   // ---- ニュース（WSJ日本版のRSSを中継スクリプト経由で取得） ----
   news: { count: 5, refreshMin: 15, newWithinMin: 60 },
-  // ニュース欄を時間で切り替える："wsj"（WSJ日本版）/ "giga"（GIGAZINE）/ "market"（為替・暗号資産）
+  // ニュース欄を時間で切り替える："wsj"（WSJ日本版）/ "today"（今日は何の日）/ "market"（為替・暗号資産）/ "giga"（GIGAZINE）
   //   並べた順に切り替わる。スワイプでも切り替え可。詳細を開いている間は止まる
-  newsSlides: { order: ["wsj", "giga", "market"], seconds: 20 },
+  newsSlides: { order: ["wsj", "today", "market"], seconds: 20 },
   marketRefreshMin: 3,
+  // 為替・暗号資産の見せ方："0"（一覧）/ "a"（タイル）/ "b"（電光掲示板）/ "c"（グラフ付き）/ "d"（増減メーター）
+  marketStyle: "b1",
 
   // 右下の欄を時間で切り替える："fortune"（星座占い）/ "sky"（月と太陽）/ "count"（カウントダウン）
   //   並べた順に切り替わる。1つだけにすると切り替えなし
@@ -747,6 +868,9 @@ function autoFit() {
     n.style.fontSize = ""; at.style.fontSize = "";
     let fs = parseFloat(getComputedStyle(n).fontSize);
     while (cd.scrollWidth > cd.clientWidth + 1 && fs > 54) { fs -= 2; n.style.fontSize = fs + "px"; }
+    // 縦にはみ出す（時刻表の行が枠の外に出る）ときも、カウントダウンを少しずつ小さくする
+    const tp = $("tPage");
+    while (tp && tp.scrollHeight > tp.clientHeight + 1 && fs > 54) { fs -= 2; n.style.fontSize = fs + "px"; }
     let fa = parseFloat(getComputedStyle(at).fontSize);
     while (cd.scrollWidth > cd.clientWidth + 1 && fa > 12) { fa -= 1; at.style.fontSize = fa + "px"; }
   }
@@ -800,6 +924,46 @@ async function loadWeather() {
   renderFoot();
 }
 let weatherAt = "";
+
+/* ---------- 全国の天気（天気の欄をタップすると開く） ---------- */
+// 北から南の順。地点を足したり消したりできます（名前・緯度・経度）
+const JP_CITIES = [["札幌", 43.06, 141.35], ["釧路", 42.98, 144.38], ["青森", 40.82, 140.74], ["仙台", 38.27, 140.87],
+  ["新潟", 37.90, 139.02], ["金沢", 36.56, 136.66], ["長野", 36.65, 138.18], ["東京", 35.68, 139.69],
+  ["名古屋", 35.18, 136.91], ["大阪", 34.69, 135.50], ["広島", 34.39, 132.46], ["高松", 34.34, 134.05],
+  ["高知", 33.56, 133.53], ["福岡", 33.59, 130.40], ["鹿児島", 31.56, 130.56], ["那覇", 26.21, 127.68]];
+let jpWx = null, jpWxAt = 0;
+function tempColor(t) {
+  const st = [[-99, "#1b4d9c"], [10, "#1f8fa8"], [16, "#3aa36b"], [22, "#d9a53a"], [30, "#e0533d"]];
+  let c = st[0][1]; for (const [v, cc] of st) if (t >= v) c = cc; return c;
+}
+function renderJpWx() {
+  const box = document.querySelector("#mbody .zw"); if (!box) return;
+  const body = box.querySelector(".w3body");
+  if (!jpWx) { body.innerHTML = `<div class="wmsg">読み込み中…</div>`; return; }
+  if (jpWx.error) { body.innerHTML = `<div class="wmsg">全国の天気を取得できませんでした。時間をおいて開き直してください</div>`; return; }
+  body.innerHTML = `<div class="w3">${JP_CITIES.map(([n], i) => {
+    const d = jpWx[i] && jpWx[i].daily; if (!d) return "";
+    const hi = Math.round(d.temperature_2m_max[0]), lo = Math.round(d.temperature_2m_min[0]), [ic, ds] = wmo(d.weather_code[0]), pp = d.precipitation_probability_max[0];
+    const c = tempColor(hi);
+    return `<div class="tile${n === (CONFIG.homeCity || "大阪") ? " me" : ""}" style="--bg:${c}33;--bd:${c}99"><b>${n}</b><span class="wi">${ic}</span>
+      <div class="big">${hi}°<small> / ${lo}°</small></div><div class="sm">${ds}${pp == null ? "" : `・降水${pp}%`}</div></div>`;
+  }).join("")}<div class="scale">寒い<i></i>暑い</div></div>`;
+}
+async function showJpWeather() {
+  openModal(`<div class="zw"><h2>全国の天気</h2><div class="note">北から南へ。今日の最高／最低気温・天気・降水確率。タイルの色は最高気温（青＝寒い／赤＝暑い）</div><div class="w3body"></div></div>`);
+  $("modal").classList.add("top");
+  renderJpWx();
+  if (jpWx && !jpWx.error && Date.now() - jpWxAt < 15 * 60e3) return;
+  const q = new URLSearchParams({ latitude: JP_CITIES.map((c) => c[1]).join(","), longitude: JP_CITIES.map((c) => c[2]).join(","),
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max", timezone: "Asia/Tokyo", forecast_days: "1" });
+  try {
+    const r = await fetch("https://api.open-meteo.com/v1/forecast?" + q, { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json(); jpWx = Array.isArray(j) ? j : [j]; jpWxAt = Date.now();
+  } catch (e) { if (!jpWx || jpWx.error) jpWx = { error: true }; }
+  renderJpWx();
+}
+document.querySelector(".wx").addEventListener("click", showJpWeather);
 function renderWeather(w) {
   const c = w.current, [icon, desc] = wmo(c.weather_code), D = w.daily, H = w.hourly, now = Date.now();
   $("placeLabel").textContent = CONFIG.placeName;
@@ -894,8 +1058,12 @@ function renderTrain() {
   const isLast = (x) => { const n = list[list.indexOf(x) + 1]; return !n || n.at - x.at > 2 * 3600e3; };
   el.className = (first.at - Date.now()) < 60e3 ? "soon" : "";
   el.textContent = remain(first.at);
-  $("nextAt").innerHTML = `<b>${hm(first.at)}</b>発 ${first.dst}行${isLast(first) ? "（終電）" : ""}`;
-  $("nextAt").classList.toggle("long", first.dst.length > 5);
+  const atHtml = `<b>${hm(first.at)}</b>発 ${first.dst}行${isLast(first) ? "（終電）" : ""}`;
+  if ($("nextAt").innerHTML !== atHtml) {   // 次の電車が変わったときだけ書き換え、大きさを合わせ直す
+    $("nextAt").innerHTML = atHtml;
+    $("nextAt").classList.toggle("long", first.dst.length > 5);
+    if (typeof autoFit === "function") requestAnimationFrame(autoFit);
+  }
   const rows = [];
   const maxRows = document.querySelector(".train").classList.contains("has-detail") ? 3 : 4;
   for (let i = 1; i < list.length && rows.length < maxRows; i++) {
@@ -916,7 +1084,7 @@ function loadTrainStatus() {
       // 中継スクリプトが古い（路線の指定に未対応）と、千日前線の情報が返ってくる
       if (d && d.ok && d.line && d.line !== ln.line) d = { ok: false, old: true };
       trainStatus[ln.line] = d;
-      if (ln === curTrain()) setStatus(d);
+      if (ln === curTrain()) { setStatus(d); autoFit(); }
       renderAlerts(); renderFoot();
     });
   });
@@ -1059,8 +1227,89 @@ function pct(v) {
   const up = v > 0.005, dn = v < -0.005;
   return `<span class="pc ${up ? "up" : dn ? "dn" : "na"}">${up ? `<svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1.5 9.2 8.5H.8z" fill="currentColor"/></svg>` : dn ? `<svg class="tri" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 8.5 .8 1.5h8.4z" fill="currentColor"/></svg>` : ""}${Math.abs(v).toFixed(2)}%</span>`;
 }
+const marketStyle = (new URLSearchParams(location.search).get("mv") || CONFIG.marketStyle || "b1").toLowerCase();
+// 小さな折れ線グラフ（値の並びから描く）。上がっていればピンク、下がっていれば水色
+function spark(arr, w, h) {
+  const a = (arr || []).filter((v) => v != null && !isNaN(v));
+  if (a.length < 2) return `<svg class="sp" viewBox="0 0 ${w} ${h}"></svg>`;
+  const lo = Math.min(...a), hi = Math.max(...a), rg = hi - lo || 1;
+  const pts = a.map((v, i) => `${(i / (a.length - 1) * (w - 2) + 1).toFixed(1)},${(h - 2 - (v - lo) / rg * (h - 4)).toFixed(1)}`).join(" ");
+  const col = a[a.length - 1] >= a[0] ? "var(--mag)" : "var(--cyan)";
+  return `<svg class="sp" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function marketItems() {
+  const fx = mkt.fx, coins = mkt.coins || [], dig = (c) => c.price >= 10000 ? 0 : 2;
+  const out = [];
+  if (fx) {
+    out.push({ g: "為替", nm: "ドル/円", sym: "USD", v: yen(fx.usdjpy, 2), yen: false, ch: fx.usdChange, hist: fx.usdHist });
+    out.push({ g: "為替", nm: "ユーロ/円", sym: "EUR", v: yen(fx.eurjpy, 2), yen: false, ch: fx.eurChange, hist: fx.eurHist });
+  }
+  coins.forEach((c) => out.push({ g: "暗号", nm: c.name, sym: c.sym, v: yen(c.price, dig(c)), yen: true, ch: c.change, hist: c.hist }));
+  return out;
+}
+let ledTimer = null, ledIdx = 0;
+// 流れる速さをそろえる（中身の長さに合わせて1周の時間を決める。1秒に約55px）
+function ledSpeed() {
+  document.querySelectorAll("#mkt .run").forEach((r) => { const w = r.scrollWidth / 2; r.style.animationDuration = Math.max(8, w / 55) + "s"; });
+}
+function renderLed() {
+  const el = $("mkt"), items = marketItems(), fx = mkt.fx;
+  const fxDate = fx ? (([, m, d]) => `${+m}/${+d}`)(fx.date.split("-")) : "";
+  const one = (x) => `<span class="it"><em>${esc(x.g === "為替" ? x.nm : x.sym)}</em>${x.yen ? "¥" : ""}${x.v}${pct(x.ch)}</span>`;
+  const loop = (list, minN) => { let a = list.slice(); while (a.length < minN) a = a.concat(list); const h = a.map(one).join(`<span class="sep">◆</span>`) + `<span class="sep">◆</span>`; return h + h; };
+  const fxs = items.filter((x) => x.g === "為替"), cos = items.filter((x) => x.g !== "為替");
+  const info = `<div class="ledinfo"><span>為替：${fxDate}の公表値・前日比</span><span>暗号資産：bitFlyer・24時間比</span></div>`;
+  clearInterval(ledTimer);
+  if (marketStyle === "b1") {
+    el.innerHTML = `<div class="led"><span class="lbl">為替<small>${fxDate}</small></span><div class="run">${loop(fxs, 4)}</div></div>
+      <div class="led"><span class="lbl">暗号資産</span><div class="run">${loop(cos, 3)}</div></div>`;
+  } else if (marketStyle === "b2") {
+    el.innerHTML = `<div class="led"><span class="lbl">為替<small>${fxDate}</small></span><div class="fix">${fxs.map(one).join("")}</div></div>
+      <div class="led"><span class="lbl">暗号資産</span><div class="run">${loop(cos, 3)}</div></div>`;
+  } else if (marketStyle === "b3") {
+    el.innerHTML = `<div class="led"><span class="lbl">相場</span><div class="run">${loop(items, 5)}</div></div>${info}`;
+  } else {
+    const show = () => {
+      const x = items[ledIdx % items.length];
+      const box = el.querySelector(".one"); if (!box) return;
+      box.innerHTML = one(x);
+      el.querySelector(".lbl").innerHTML = x.g === "為替" ? `為替<small>${fxDate}</small>` : `暗号資産<small>24時間</small>`;
+      el.querySelectorAll(".pips i").forEach((p, j) => p.classList.toggle("on", j === ledIdx % items.length));
+    };
+    el.innerHTML = `<div class="led"><span class="lbl"></span><div class="one"></div></div><div class="pips">${items.map(() => "<i></i>").join("")}</div>${info}`;
+    show();
+    ledTimer = setInterval(() => { ledIdx++; show(); }, 3000);
+  }
+  ledSpeed();
+}
+function renderMarketStyled() {
+  if (marketStyle.startsWith("b") && marketStyle.length === 2) { $("mkt").className = "mv-" + marketStyle; renderLed(); return; }
+  const el = $("mkt"), items = marketItems(), fx = mkt.fx;
+  const fxDate = fx ? (([, m, d]) => `${+m}/${+d}`)(fx.date.split("-")) : "";
+  const cls = (v) => v == null || isNaN(v) ? "" : v > 0.005 ? " up" : v < -0.005 ? " dn" : "";
+  el.className = "mv-" + marketStyle;
+  if (marketStyle === "a") {
+    el.innerHTML = items.map((x) => `<div class="tl${x.g === "為替" ? " fx" : ""}${cls(x.ch)}"><div class="t"><span>${esc(x.g === "為替" ? x.nm : x.sym + "　" + x.nm)}</span>${pct(x.ch)}</div>
+      <div class="v">${x.yen ? "<small>¥</small>" : ""}${x.v}</div></div>`).join("");
+  } else if (marketStyle === "b") {
+    const run = (list) => { const one = list.map((x) => `<span class="it"><em>${esc(x.g === "為替" ? x.nm : x.sym)}</em>${x.yen ? "¥" : ""}${x.v}${pct(x.ch)}</span>`).join(""); return one + one; };
+    el.innerHTML = `<div class="band"><span class="lbl">為替 ${fxDate}</span><div class="run" style="--dur:26s;padding-left:120px">${run(items.filter((x) => x.g === "為替").concat(items.filter((x) => x.g === "為替")))}</div></div>
+      <div class="band"><span class="lbl">暗号資産</span><div class="run" style="--dur:34s;padding-left:120px">${run(items.filter((x) => x.g !== "為替"))}</div></div>`;
+  } else if (marketStyle === "c") {
+    const hero = items.find((x) => x.sym === "BTC") || items[0], rest = items.filter((x) => x !== hero);
+    el.innerHTML = `<div class="hero"><div class="t"><span>${esc(hero.nm)}　${esc(hero.sym)}・24時間</span>${pct(hero.ch)}</div>
+        <div class="v">${hero.yen ? "<small>¥</small>" : ""}${hero.v}</div>${spark(hero.hist, 200, 52)}</div>
+      <div class="lst">${rest.map((x) => `<div class="lr"><span class="nm">${esc(x.g === "為替" ? x.nm : x.sym)}</span>${spark(x.hist, 56, 18)}<span class="pr">${x.yen ? "<small>¥</small>" : ""}${x.v}</span>${pct(x.ch)}</div>`).join("")}</div>`;
+  } else {
+    const w = (v) => Math.min(100, Math.abs(v || 0) / 5 * 100);   // ±5％で端まで
+    el.innerHTML = items.map((x) => `<div class="dr"><span class="g">${x.g === "為替" ? "為替" : "暗号"}</span><span class="nm">${esc(x.g === "為替" ? x.nm : x.sym)}</span>
+      <span class="pr">${x.yen ? "<small>¥</small>" : ""}${x.v}</span><span class="mt">${x.ch == null ? "" : `<i class="${x.ch >= 0 ? "up" : "dn"}" style="width:${(w(x.ch) / 2).toFixed(1)}%"></i>`}</span>${pct(x.ch)}</div>`).join("");
+  }
+}
 function renderMarket() {
   if (!mkt) return;
+  if (marketStyle !== "0") { renderMarketStyled(); return; }
+  $("mkt").className = "";
   const fx = mkt.fx, coins = mkt.coins || [];
   const fxDate = fx ? (([, m, d]) => `${+m}/${+d}`)(fx.date.split("-")) : "";
   const coinDig = (c) => c.price >= 10000 ? 0 : 2;
@@ -1085,10 +1334,307 @@ function loadMarket() {
   });
 }
 
+/* ---------- 今日は何の日（1995〜2014年ごろのアニメ・ギャルゲ／エロゲ・ラノベ） ---------- */
+// [月-日, 種類, 年（なければ空）, 内容]。自由に追加・修正できます
+const OTAKU_DAYS = [
+  ["01-03", "誕生日", "", "若瀬いずみ（らき☆すた）"],
+  ["01-03", "誕生日", "", "雪ノ下雪乃（やはり俺の青春ラブコメはまちがっている。）"],
+  ["01-06", "放送開始", "2013", "『ラブライブ！』"],
+  ["01-07", "誕生日", "", "月宮あゆ（Kanon）"],
+  ["01-07", "放送開始", "2011", "『魔法少女まどか☆マギカ』"],
+  ["01-08", "誕生日", "", "水蓮寺ルカ（ハヤテのごとく！）"],
+  ["01-09", "誕生日", "", "ティエリア・アーデ（ガンダム00）"],
+  ["01-10", "誕生日", "", "朝倉和美（魔法先生ネギま！）"],
+  ["01-15", "誕生日", "", "秋山澪（けいおん！）"],
+  ["01-15", "誕生日", "", "クリスタ・レンズ（進撃の巨人）"],
+  ["01-17", "誕生日", "", "桜咲刹那（魔法先生ネギま！）"],
+  ["01-17", "誕生日", "", "小泉花陽（ラブライブ！）"],
+  ["01-21", "誕生日", "", "四条貴音（アイドルマスター）"],
+  ["01-25", "誕生日", "", "桜庭ひかる（らき☆すた）"],
+  ["01-26", "発売", "1996", "Leaf『雫』"],
+  ["01-29", "誕生日", "", "川澄舞（Kanon）"],
+  ["01-30", "発売", "2004", "TYPE-MOON『Fate/stay night』"],
+  ["01-31", "誕生日", "", "山中さわ子（けいおん！）"],
+  ["02-01", "誕生日", "", "椎名まゆり（STEINS;GATE）"],
+  ["02-01", "誕生日", "", "美坂栞（Kanon）"],
+  ["02-01", "放送開始", "2004", "『ふたりはプリキュア』"],
+  ["02-03", "誕生日", "", "八坂こう（らき☆すた）"],
+  ["02-03", "誕生日", "", "遠坂凛（Fate/stay night）"],
+  ["02-05", "誕生日", "", "ラクス・クライン（ガンダムSEED）"],
+  ["02-05", "作中", "C.E.70", "月面で「コペルニクスの悲劇」が起きる（ガンダムSEED）"],
+  ["02-07", "放送開始", "1999", "『おジャ魔女どれみ』"],
+  ["02-08", "誕生日", "", "黒井ななこ（らき☆すた）"],
+  ["02-10", "誕生日", "", "ミカサ・アッカーマン（進撃の巨人）"],
+  ["02-11", "作中", "C.E.70", "地球連合がプラントに宣戦布告（ガンダムSEED）"],
+  ["02-13", "作中", "C.E.71", "第8艦隊がクルーゼ隊との戦闘で壊滅（ガンダムSEED）"],
+  ["02-13", "誕生日", "", "シャーロット・E・イェーガー（ストライクウィッチーズ）"],
+  ["02-14", "誕生日", "", "天々座理世（ご注文はうさぎですか？）"],
+  ["02-14", "誕生日", "", "藤原はづき（おジャ魔女どれみ）"],
+  ["02-14", "作中", "C.E.70", "「血のバレンタイン」ユニウスセブン崩壊（ガンダムSEED）"],
+  ["02-17", "誕生日", "", "ミリアリア・ハウ（ガンダムSEED）"],
+  ["02-21", "誕生日", "", "エイラ・イルマタル・ユーティライネン（ストライクウィッチーズ）"],
+  ["02-22", "誕生日", "", "平沢憂（けいおん！）"],
+  ["02-24", "発売", "2006", "âge『マブラヴ オルタネイティヴ』"],
+  ["02-25", "誕生日", "", "如月千早（アイドルマスター）"],
+  ["02-27", "誕生日", "", "アレルヤ・ハプティズム（ガンダム00）"],
+  ["02-28", "誕生日", "", "ペリーヌ・クロステルマン（ストライクウィッチーズ）"],
+  ["02-29", "誕生日", "", "木之本桃矢（カードキャプターさくら）"],
+  ["03-02", "誕生日", "", "間桐桜（Fate/stay night）"],
+  ["03-03", "誕生日", "", "釘宮円（魔法先生ネギま！）"],
+  ["03-03", "誕生日", "", "ロックオン・ストラトス（ガンダム00）"],
+  ["03-03", "誕生日", "", "瀬川おんぷ（おジャ魔女どれみ）"],
+  ["03-07", "放送開始", "1999", "『デジモンアドベンチャー』"],
+  ["03-07", "誕生日", "", "佐々木まき絵（魔法先生ネギま！）"],
+  ["03-10", "作中", "C.E.72", "ユニウス条約（停戦条約）締結（ガンダムSEED）"],
+  ["03-11", "誕生日", "", "ミーナ・ディートリンデ・ヴィルケ（ストライクウィッチーズ）"],
+  ["03-15", "誕生日", "", "園田海未（ラブライブ！）"],
+  ["03-16", "誕生日", "", "古菲（魔法先生ネギま！）"],
+  ["03-18", "誕生日", "", "近衛木乃香（魔法先生ネギま！）"],
+  ["03-18", "刊行", "2011", "『やはり俺の青春ラブコメはまちがっている。』第1巻（ガガガ文庫）"],
+  ["03-20", "誕生日", "", "ゲルトルート・バルクホルン（ストライクウィッチーズ）"],
+  ["03-22", "誕生日", "", "アニ・レオンハート（進撃の巨人）"],
+  ["03-25", "誕生日", "", "高槻やよい（アイドルマスター）"],
+  ["03-30", "誕生日", "", "綾波レイ（新世紀エヴァンゲリオン）"],
+  ["03-30", "誕生日", "", "エレン・イェーガー（進撃の巨人）"],
+  ["04-01", "誕生日", "", "木之本桜（カードキャプターさくら）"],
+  ["04-01", "放送開始", "1997", "『ポケットモンスター』"],
+  ["04-01", "放送開始", "2007", "『天元突破グレンラガン』"],
+  ["04-01", "作中", "C.E.70", "ニュートロンジャマーが地上に散布される（ガンダムSEED）"],
+  ["04-02", "放送開始", "1997", "『少女革命ウテナ』"],
+  ["04-02", "放送開始", "2006", "『涼宮ハルヒの憂鬱』"],
+  ["04-02", "放送開始", "2009", "『けいおん！』"],
+  ["04-03", "誕生日", "", "天海春香（アイドルマスター）"],
+  ["04-03", "放送開始", "1998", "『カウボーイビバップ』"],
+  ["04-04", "誕生日", "", "雪城ほのか（ふたりはプリキュア）"],
+  ["04-06", "放送開始", "2011", "『STEINS;GATE』"],
+  ["04-07", "放送開始", "1995", "『新機動戦記ガンダムW』"],
+  ["04-07", "放送開始", "1998", "『カードキャプターさくら』"],
+  ["04-07", "放送開始", "2013", "『進撃の巨人』"],
+  ["04-07", "誕生日", "", "刹那・F・セイエイ（ガンダム00）"],
+  ["04-07", "誕生日", "", "ジャン・キルシュタイン（進撃の巨人）"],
+  ["04-08", "放送開始", "2002", "『あずまんが大王』"],
+  ["04-08", "放送開始", "2007", "『らき☆すた』"],
+  ["04-09", "誕生日", "", "冬月コウゾウ（新世紀エヴァンゲリオン）"],
+  ["04-09", "誕生日", "", "アリス（ソードアート・オンライン）"],
+  ["04-10", "刊行", "2009", "『ソードアート・オンライン』第1巻（電撃文庫）"],
+  ["04-10", "誕生日", "", "保登心愛（ご注文はうさぎですか？）"],
+  ["04-10", "誕生日", "", "ユージオ（ソードアート・オンライン）"],
+  ["04-11", "誕生日", "", "トール・ケーニヒ（ガンダムSEED）"],
+  ["04-12", "発売", "2012", "TYPE-MOON『魔法使いの夜』"],
+  ["04-14", "放送開始", "2011", "『あの日見た花の名前を僕達はまだ知らない。』"],
+  ["04-16", "誕生日", "", "パトリシア・マーティン（らき☆すた）"],
+  ["04-19", "誕生日", "", "西木野真姫（ラブライブ！）"],
+  ["04-19", "誕生日", "", "リーファ／桐ヶ谷直葉（ソードアート・オンライン）"],
+  ["04-19", "誕生日", "", "エーリカ・ハルトマン（ストライクウィッチーズ）"],
+  ["04-22", "放送開始", "2012", "『氷菓』"],
+  ["04-23", "サービス開始", "2013", "『艦隊これくしょん -艦これ-』"],
+  ["04-24", "誕生日", "", "島村卯月（アイドルマスター シンデレラガールズ）"],
+  ["04-25", "発売", "2003", "ニトロプラス『斬魔大聖デモンベイン』"],
+  ["04-26", "発売", "2002", "Leaf『うたわれるもの』"],
+  ["04-28", "発売", "2004", "Key『CLANNAD』"],
+  ["04-28", "発売", "2005", "0verflow『School Days』"],
+  ["05-02", "誕生日", "", "ネギ・スプリングフィールド（魔法先生ネギま！）"],
+  ["05-02", "誕生日", "", "コニー・スプリンガー（進撃の巨人）"],
+  ["05-04", "誕生日", "", "工藤新一（名探偵コナン）"],
+  ["05-05", "誕生日", "", "水瀬伊織（アイドルマスター）"],
+  ["05-05", "誕生日", "", "青葉シゲル（新世紀エヴァンゲリオン）"],
+  ["05-05", "誕生日", "", "モンキー・D・ルフィ（ONE PIECE）"],
+  ["05-08", "作中", "C.E.71", "アラスカ攻撃、サイクロプスが起動（ガンダムSEED）"],
+  ["05-15", "誕生日", "", "柿崎美砂（魔法先生ネギま！）"],
+  ["05-18", "誕生日", "", "キラ・ヤマト（ガンダムSEED）"],
+  ["05-18", "誕生日", "", "リズベット（ソードアート・オンライン）"],
+  ["05-22", "誕生日", "", "双海亜美・真美（アイドルマスター）"],
+  ["05-23", "発売", "1997", "Leaf『To Heart』"],
+  ["05-23", "誕生日", "", "ユウキ／紺野木綿季（ソードアート・オンライン）"],
+  ["05-24", "誕生日", "", "田村ひより（らき☆すた）"],
+  ["05-26", "誕生日", "", "大河内アキラ（魔法先生ネギま！）"],
+  ["05-28", "誕生日", "", "泉こなた（らき☆すた）"],
+  ["05-29", "発売", "1998", "Tactics『ONE ～輝く季節へ～』"],
+  ["06-01", "誕生日", "", "明石裕奈（魔法先生ネギま！）"],
+  ["06-04", "発売", "1999", "Key『Kanon』"],
+  ["06-06", "誕生日", "", "碇シンジ（新世紀エヴァンゲリオン）"],
+  ["06-09", "誕生日", "", "椎名桜子（魔法先生ネギま！）"],
+  ["06-09", "誕生日", "", "東條希（ラブライブ！）"],
+  ["06-11", "誕生日", "", "リネット・ビショップ（ストライクウィッチーズ）"],
+  ["06-15", "作中", "C.E.71", "地球連合がオーブに侵攻（ガンダムSEED）"],
+  ["06-17", "誕生日", "", "加持リョウジ（新世紀エヴァンゲリオン）"],
+  ["06-18", "誕生日", "", "由比ヶ浜結衣（やはり俺の青春ラブコメはまちがっている。）"],
+  ["06-21", "誕生日", "", "瀬川虎鉄（ハヤテのごとく！）"],
+  ["06-23", "誕生日", "", "秋月律子（アイドルマスター）"],
+  ["06-24", "発売", "2011", "Key『Rewrite』"],
+  ["06-26", "誕生日", "", "スパイク・スピーゲル（カウボーイビバップ）"],
+  ["06-27", "公開", "2009", "『ヱヴァンゲリヲン新劇場版：破』"],
+  ["06-28", "発売", "2002", "CIRCUS『D.C. ～ダ・カーポ～』"],
+  ["07-02", "誕生日", "", "琴吹紬（けいおん！）"],
+  ["07-03", "放送開始", "2009", "『化物語』"],
+  ["07-06", "放送開始", "1998", "『serial experiments lain』"],
+  ["07-07", "誕生日", "", "柊かがみ・柊つかさ（らき☆すた）"],
+  ["07-07", "作中", "", "「笹の葉ラプソディ」3年前の七夕（涼宮ハルヒ）"],
+  ["07-08", "放送開始", "2012", "『ソードアート・オンライン』"],
+  ["07-10", "誕生日", "", "枢木スザク（コードギアス）"],
+  ["07-11", "誕生日", "", "伊吹マヤ（新世紀エヴァンゲリオン）"],
+  ["07-12", "公開", "1997", "『もののけ姫』"],
+  ["07-13", "誕生日", "", "李小狼（カードキャプターさくら）"],
+  ["07-13", "作中", "", "紺野真琴がタイムリープの力を得る（時をかける少女）"],
+  ["07-15", "公開", "2006", "『時をかける少女』"],
+  ["07-15", "誕生日", "", "黒崎一護（BLEACH）"],
+  ["07-15", "誕生日", "", "桐間紗路（ご注文はうさぎですか？）"],
+  ["07-19", "誕生日", "", "三浦あずさ（アイドルマスター）"],
+  ["07-19", "公開", "1997", "『エヴァンゲリオン劇場版 Air／まごころを、君に』"],
+  ["07-20", "公開", "2001", "『千と千尋の神隠し』"],
+  ["07-20", "誕生日", "", "日下部みさお（らき☆すた）"],
+  ["07-20", "誕生日", "", "サイ・アーガイル（ガンダムSEED）"],
+  ["07-20", "作中", "", "上条当麻とインデックスが出会う（とある魔術の禁書目録）"],
+  ["07-22", "誕生日", "", "矢澤にこ（ラブライブ！）"],
+  ["07-25", "誕生日", "", "牧瀬紅莉栖（STEINS;GATE）"],
+  ["07-26", "発売", "1996", "Leaf『痕』"],
+  ["07-26", "発売", "2005", "『THE IDOLM@STER』（ゲームセンター版）"],
+  ["07-26", "誕生日", "", "サシャ・ブラウス（進撃の巨人）"],
+  ["07-27", "発売", "2007", "Key『リトルバスターズ！』"],
+  ["07-28", "作中", "2010", "ラジ館の講演会で物語が動き出す（STEINS;GATE）"],
+  ["07-30", "誕生日", "", "春風どれみ（おジャ魔女どれみ）"],
+  ["08-01", "誕生日", "", "ユイ（ソードアート・オンライン）"],
+  ["08-01", "誕生日", "", "ライナー・ブラウン（進撃の巨人）"],
+  ["08-03", "発売", "2001", "âge『君が望む永遠』"],
+  ["08-03", "誕生日", "", "高坂穂乃果（ラブライブ！）"],
+  ["08-08", "誕生日", "", "比企谷八幡（やはり俺の青春ラブコメはまちがっている。）"],
+  ["08-08", "誕生日", "", "条河麻耶（ご注文はうさぎですか？）"],
+  ["08-10", "頒布", "2002", "『ひぐらしのなく頃に 鬼隠し編』（コミケ62）"],
+  ["08-10", "誕生日", "", "渋谷凛（アイドルマスター シンデレラガールズ）"],
+  ["08-15", "誕生日", "", "雛子（シスター・プリンセス）"],
+  ["08-17", "頒布", "2007", "『うみねこのなく頃に Episode1』（コミケ72）"],
+  ["08-17", "作中", "", "「エンドレスエイト」のループ開始（涼宮ハルヒ）"],
+  ["08-18", "誕生日", "", "早乙女ハルナ（魔法先生ネギま！）"],
+  ["08-18", "誕生日", "", "宮藤芳佳（ストライクウィッチーズ）"],
+  ["08-18", "誕生日", "", "サーニャ・V・リトヴャク（ストライクウィッチーズ）"],
+  ["08-20", "作中", "", "上条当麻が御坂妹と出会う（とある魔術の禁書目録）"],
+  ["08-21", "誕生日", "", "田井中律（けいおん！）"],
+  ["08-21", "作中", "2010", "鈴羽がタイムマシンで戻る先に選んだ日（STEINS;GATE）"],
+  ["08-21", "誕生日", "", "シノン／朝田詩乃（ソードアート・オンライン）"],
+  ["08-25", "誕生日", "", "カズイ・バスカーク（ガンダムSEED）"],
+  ["08-26", "誕生日", "", "坂本美緒（ストライクウィッチーズ）"],
+  ["08-28", "作中", "", "「御使堕し」事件が起こる（とある魔術の禁書目録）"],
+  ["08-29", "誕生日", "", "菊地真（アイドルマスター）"],
+  ["08-30", "誕生日", "", "春風千桜（ハヤテのごとく！）"],
+  ["08-31", "作中", "", "一方通行が打ち止めと出会う（とある魔術の禁書目録）"],
+  ["09-01", "公開", "2007", "『ヱヴァンゲリヲン新劇場版：序』"],
+  ["09-01", "作中", "", "学園都市の新学期。インデックスが風斬氷華と出会う（とある魔術の禁書目録）"],
+  ["09-03", "誕生日", "", "大道寺知世（カードキャプターさくら）"],
+  ["09-05", "誕生日", "", "ハンジ・ゾエ（進撃の巨人）"],
+  ["09-08", "発売", "2000", "Key『AIR』"],
+  ["09-09", "誕生日", "", "藤林杏・藤林椋（CLANNAD）"],
+  ["09-12", "誕生日", "", "岩崎みなみ（らき☆すた）"],
+  ["09-12", "誕生日", "", "相田ケンスケ（新世紀エヴァンゲリオン）"],
+  ["09-12", "誕生日", "", "南ことり（ラブライブ！）"],
+  ["09-13", "誕生日", "", "渚カヲル（新世紀エヴァンゲリオン）"],
+  ["09-13", "作中", "2000", "セカンドインパクトが起きた日（新世紀エヴァンゲリオン）"],
+  ["09-17", "誕生日", "", "天原ふゆき（らき☆すた）"],
+  ["09-19", "作中", "", "大覇星祭が始まる（とある魔術の禁書目録）"],
+  ["09-19", "誕生日", "", "宇治松千夜（ご注文はうさぎですか？）"],
+  ["09-23", "誕生日", "", "可憐（シスター・プリンセス）"],
+  ["09-23", "作中", "C.E.71", "ボアズが核攻撃で壊滅（ガンダムSEED）"],
+  ["09-25", "作中", "", "大覇星祭の最終日（とある魔術の禁書目録）"],
+  ["09-26", "作中", "C.E.71", "第二次ヤキン・ドゥーエ攻防戦（ガンダムSEED）"],
+  ["09-30", "誕生日", "", "アスナ／結城明日奈（ソードアート・オンライン）"],
+  ["09-30", "作中", "", "「0930」事件が起こる（とある魔術の禁書目録）"],
+  ["10-01", "放送開始", "1996", "『機動戦艦ナデシコ』"],
+  ["10-01", "放送開始", "2004", "『魔法少女リリカルなのは』"],
+  ["10-01", "放送開始", "2011", "『Fate/Zero』"],
+  ["10-02", "放送開始", "2008", "『とらドラ！』"],
+  ["10-04", "放送開始", "1995", "『新世紀エヴァンゲリオン』"],
+  ["10-04", "放送開始", "2003", "『鋼の錬金術師』（2003年版）"],
+  ["10-04", "作中", "1986", "六軒島で親族会議が始まる（うみねこのなく頃に）"],
+  ["10-04", "誕生日", "", "シリカ（ソードアート・オンライン）"],
+  ["10-05", "放送開始", "2002", "『機動戦士ガンダムSEED』"],
+  ["10-05", "放送開始", "2006", "『コードギアス 反逆のルルーシュ』"],
+  ["10-06", "放送開始", "2007", "『機動戦士ガンダム00』"],
+  ["10-07", "誕生日", "", "キリト／桐ヶ谷和人（ソードアート・オンライン）"],
+  ["10-07", "誕生日", "", "成実ゆい（らき☆すた）"],
+  ["10-09", "誕生日", "", "霞愛歌（ハヤテのごとく！）"],
+  ["10-09", "作中", "", "学園都市の独立記念日（とある魔術の禁書目録）"],
+  ["10-09", "放送開始", "2012", "『ガールズ＆パンツァー』"],
+  ["10-10", "誕生日", "", "美墨なぎさ（ふたりはプリキュア）"],
+  ["10-10", "誕生日", "", "我那覇響（アイドルマスター）"],
+  ["10-10", "誕生日", "", "坂田銀時（銀魂）"],
+  ["10-10", "誕生日", "", "うずまきナルト（NARUTO）"],
+  ["10-14", "誕生日", "", "エルヴィン・スミス（進撃の巨人）"],
+  ["10-15", "発売", "2009", "5pb.×ニトロプラス『STEINS;GATE』"],
+  ["10-19", "作中", "", "第三次世界大戦が始まる（とある魔術の禁書目録）"],
+  ["10-21", "誕生日", "", "絢瀬絵里（ラブライブ！）"],
+  ["10-25", "誕生日", "", "高良みゆき（らき☆すた）"],
+  ["10-26", "公開", "2013", "『劇場版 魔法少女まどか☆マギカ［新編］叛逆の物語』"],
+  ["10-27", "誕生日", "", "青山ブルーマウンテン（ご注文はうさぎですか？）"],
+  ["10-29", "誕生日", "", "アスラン・ザラ（ガンダムSEED）"],
+  ["11-01", "誕生日", "", "星空凛（ラブライブ！）"],
+  ["11-02", "誕生日", "", "奈津恵（ご注文はうさぎですか？）"],
+  ["11-03", "誕生日", "", "アルミン・アルレルト（進撃の巨人）"],
+  ["11-04", "誕生日", "", "峰岸あやの（らき☆すた）"],
+  ["11-06", "作中", "2022", "SAOのデスゲームが始まる（ソードアート・オンライン）"],
+  ["11-07", "作中", "2024", "アインクラッド攻略、デスゲーム終了（SAO）"],
+  ["11-11", "誕生日", "", "中野梓（けいおん！）"],
+  ["11-11", "誕生日", "", "綾崎ハヤテ（ハヤテのごとく！）"],
+  ["11-14", "誕生日", "", "妹尾あいこ（おジャ魔女どれみ）"],
+  ["11-16", "誕生日", "", "綾瀬夕映（魔法先生ネギま！）"],
+  ["11-17", "誕生日", "", "龍宮真名（魔法先生ネギま！）"],
+  ["11-17", "公開", "2012", "『ヱヴァンゲリヲン新劇場版：Q』"],
+  ["11-18", "公開", "1995", "『GHOST IN THE SHELL／攻殻機動隊』"],
+  ["11-21", "誕生日", "", "和泉亜子（魔法先生ネギま！）"],
+  ["11-21", "誕生日", "", "赤木リツコ（新世紀エヴァンゲリオン）"],
+  ["11-23", "誕生日", "", "星井美希（アイドルマスター）"],
+  ["11-26", "誕生日", "", "永森やまと（らき☆すた）"],
+  ["11-27", "誕生日", "", "平沢唯（けいおん！）"],
+  ["11-30", "誕生日", "", "天王州アテネ（ハヤテのごとく！）"],
+  ["12-01", "誕生日", "", "超鈴音（魔法先生ネギま！）"],
+  ["12-01", "誕生日", "", "本田未央（アイドルマスター シンデレラガールズ）"],
+  ["12-03", "誕生日", "", "三千院ナギ（ハヤテのごとく！）"],
+  ["12-03", "公開", "2011", "『映画けいおん！』"],
+  ["12-04", "誕生日", "", "惣流・アスカ・ラングレー（新世紀エヴァンゲリオン）"],
+  ["12-04", "誕生日", "", "香風智乃（ご注文はうさぎですか？）"],
+  ["12-05", "誕生日", "", "ルルーシュ・ランペルージ（コードギアス）"],
+  ["12-08", "誕生日", "", "葛城ミサト（新世紀エヴァンゲリオン）"],
+  ["12-14", "誕生日", "", "岡部倫太郎（STEINS;GATE）"],
+  ["12-18", "作中", "", "世界が改変される日『涼宮ハルヒの消失』"],
+  ["12-20", "誕生日", "", "小早川ゆたか（らき☆すた）"],
+  ["12-23", "誕生日", "", "水瀬名雪（Kanon）"],
+  ["12-24", "誕生日", "", "古河渚（CLANNAD）"],
+  ["12-24", "誕生日", "", "萩原雪歩（アイドルマスター）"],
+  ["12-24", "誕生日", "", "フランチェスカ・ルッキーニ（ストライクウィッチーズ）"],
+  ["12-25", "誕生日", "", "リヴァイ（進撃の巨人）"],
+  ["12-26", "発売", "2003", "ニトロプラス『沙耶の唄』"],
+  ["12-26", "誕生日", "", "真鍋和（けいおん！）"],
+  ["12-26", "誕生日", "", "鈴原トウジ（新世紀エヴァンゲリオン）"],
+  ["12-28", "作中", "2025", "「聖剣エクスキャリバー」発見の知らせ（ソードアート・オンライン）"],
+  ["12-29", "頒布", "2000", "TYPE-MOON『月姫』（コミケ59）"],
+  ["12-30", "誕生日", "", "日比野文（ハヤテのごとく！）"],
+  ["12-30", "誕生日", "", "ベルトルト・フーバー（進撃の巨人）"]
+];
+function mdOf(d) { return `${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+function renderToday() {
+  const now = new Date(), md = mdOf(now), el = $("todayBox"); if (!el) return;
+  const cls = { 誕生日: "b", 作中: "s" };
+  const row = (x, extra = "") => `<div class="r"><span class="lb ${cls[x[1]] || ""}">${x[1]}</span><span class="yr">${x[2] || ""}</span><span class="tx">${esc(x[3])}</span>${extra}</div>`;
+  const today = OTAKU_DAYS.filter((x) => x[0] === md);
+  if (today.length) {
+    // 4件まで表示。多い日は時間で入れ替え
+    const page = Math.floor(Date.now() / 10e3) % Math.ceil(today.length / 4);
+    el.innerHTML = today.slice(page * 4, page * 4 + 4).map((x) => row(x)).join("");
+  } else {
+    // 今日に該当がない日は、近い日の予定を出す
+    const up = [];
+    for (let k = 1; k <= 366 && up.length < 3; k++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + k), m2 = mdOf(d);
+      OTAKU_DAYS.filter((x) => x[0] === m2).forEach((x) => { if (up.length < 3) up.push([x, k, d]); });
+    }
+    el.innerHTML = `<div class="none">今日にあたる記念日はありません。近いのは…</div>` +
+      up.map(([x, k, d]) => row(x, `<span class="ak">${d.getMonth() + 1}/${d.getDate()}<small>あと${k}日</small></span>`)).join("");
+  }
+}
+
 /* ---------- ニュース欄の切り替え ---------- */
 const NSLIDE_META = {
   wsj: { title: "ニュース", tap: "タップで詳細", aux: () => newsAt ? `WSJ日本版 ・ ${newsAt} 更新` : "WSJ日本版" },
   giga: { title: "GIGAZINE", tap: "タップで詳細", aux: () => gigaAt ? `${gigaAt} 更新` : "" },
+  today: { title: "今日は何の日", tap: "アニメ・ゲーム・ラノベ", aux: () => { const d = new Date(); return `${d.getMonth() + 1}月${d.getDate()}日`; } },
   market: { title: "為替・暗号資産", tap: "", aux: () => mktAt ? `暗号資産 bitFlyer ・ ${mktAt} 更新` : "" },
 };
 let nIdx = 0, nShownAt = Date.now();
@@ -1111,6 +1657,7 @@ function showNews(i, dir = 1) {
     el.classList.toggle("on", on);
   });
   nShownAt = Date.now(); renderNewsHead();
+  if (k === "today") renderToday();
 }
 setInterval(() => {
   if (nOrder().length < 2) return;
@@ -1132,7 +1679,7 @@ function openModal(html, accent) {
 }
 let onModalClose = null;
 function closeModal() {
-  $("modal").hidden = true; clearTimeout(closeTimer); if (timerAnim) timerAnim.cancel();
+  $("modal").hidden = true; $("modal").classList.remove("top"); clearTimeout(closeTimer); if (timerAnim) timerAnim.cancel();
   const f = onModalClose; onModalClose = null; if (f) f();
 }
 $("modal").addEventListener("click", (e) => { if (e.target.id === "modal" || e.target.closest("#mclose")) closeModal(); });
@@ -1327,7 +1874,7 @@ function showTrain(i, dir = 1) {
   const pg = $("tPage");
   pg.style.transition = "none"; pg.style.opacity = "0"; pg.style.transform = `translateX(${dir * 40}px)`; void pg.offsetWidth;
   pg.style.transition = ""; pg.style.opacity = ""; pg.style.transform = "";
-  renderTrainDots(); setStatus(trainStatus[curTrain().line]); renderTrain();
+  renderTrainDots(); setStatus(trainStatus[curTrain().line]); renderTrain(); autoFit();
 }
 const trainStyle = (new URLSearchParams(location.search).get("tv") || CONFIG.train.style || "c").toLowerCase();
 function applyTrainLook(ln) {
@@ -1429,7 +1976,7 @@ function renderCount() {
 
 /* ---------- アニメクイズ ----------
    a[0] が正解。問題は自由に追加・修正できます */
-/* 1995〜2009年ごろのアニメ・ギャルゲ／エロゲ・ラノベから出題（a[0]が正解、kは解説画面に出す豆知識）。自由に追加・修正できます */
+/* 1995〜2014年ごろのアニメ・ギャルゲ／エロゲ・ラノベから出題（a[0]が正解、kは解説画面に出す豆知識）。自由に追加・修正できます */
 const QUIZ = [
   {"g": "アニメ", "q": "『新世紀エヴァンゲリオン』のTV放送が始まった年は？", "a": ["1995年", "1994年", "1996年", "1997年"], "k": "1995年10月にテレビ東京系で放送が始まった全26話の作品。終盤の展開が大きな議論を呼び、1997年に劇場版『Air/まごころを、君に』が作られた。"},
   {"g": "アニメ", "q": "『エヴァ』TV版の監督は？", "a": ["庵野秀明", "押井守", "今敏", "渡辺信一郎"], "k": "庵野秀明は『トップをねらえ！』『ふしぎの海のナディア』も監督した。のちに実写映画『シン・ゴジラ』（2016年）の総監督も務めている。"},
@@ -1622,6 +2169,34 @@ const QUIZ = [
   {"g": "アニメ", "q": "『ひぐらしのなく頃に』のOPを歌ったのは？", "a": ["島みやえい子", "川田まみ", "KOTOKO", "いとうかなこ"], "k": "島みやえい子もI'veの歌手。不気味な曲調が作品の雰囲気を作った。"},
   {"g": "アニメ", "q": "『ハヤテのごとく！』の最初のOPを歌ったのは？", "a": ["KOTOKO", "川田まみ", "Lia", "茶太"], "k": "曲名も作品と同じ「ハヤテのごとく！」。"},
   {"g": "アニメ", "q": "『ブレンパワード』の監督は？", "a": ["富野由悠季", "高橋良輔", "谷口悟朗", "今川泰宏"], "k": "1998年放送。富野監督がガンダム以外で手がけたロボットアニメ。"},
+  {"g": "アニメ", "q": "『魔法少女まどか☆マギカ』で少女たちに契約を持ちかける生き物は？", "a": ["キュゥべえ", "ケルベロス", "ゲマ", "ポチ"], "k": "「僕と契約して魔法少女になってよ」のセリフで知られる。2011年1月に放送が始まった。"},
+  {"g": "アニメ", "q": "『魔法少女まどか☆マギカ』の制作会社は？", "a": ["シャフト", "京都アニメーション", "ufotable", "P.A.WORKS"], "k": "監督は新房昭之、脚本は虚淵玄、キャラクター原案は蒼樹うめ。"},
+  {"g": "アニメ", "q": "『まどか☆マギカ』暁美ほむらの魔法の力は？", "a": ["時間を止める", "心を読む", "空を飛ぶ", "傷を治す"], "k": "時間を止める力と盾を使って戦う。その力には物語の大きな秘密がある。"},
+  {"g": "アニメ", "q": "『まどか☆マギカ』巴マミが得意とする武器は？", "a": ["マスケット銃", "槍", "弓", "剣"], "k": "リボンから大量のマスケット銃を出して戦う。必殺技は「ティロ・フィナーレ」。"},
+  {"g": "アニメ", "q": "『あの日見た花の名前を僕達はまだ知らない。』の舞台の街は？", "a": ["秩父市", "鷲宮町", "大洗町", "飛騨市"], "k": "埼玉県秩父市の風景がそのまま描かれ、多くのファンが訪れるようになった。"},
+  {"g": "アニメ", "q": "『あの花』の幼なじみ6人のグループ名は？", "a": ["超平和バスターズ", "SOS団", "隣人部", "奉仕部"], "k": "子どもの頃に結成した遊び仲間の名前。2011年4月に放送された。"},
+  {"g": "アニメ", "q": "『進撃の巨人』で人類が住む3重の壁のうち、一番外側は？", "a": ["ウォール・マリア", "ウォール・ローゼ", "ウォール・シーナ", "ウォール・ユミル"], "k": "内側へ順にローゼ、シーナと続く。物語はマリアが破られるところから始まる。"},
+  {"g": "アニメ", "q": "『進撃の巨人』で調査兵団の「兵士長」は？", "a": ["リヴァイ", "エルヴィン", "ハンジ", "ミケ"], "k": "「人類最強の兵士」と呼ばれる。アニメは2013年4月に放送が始まった。"},
+  {"g": "アニメ", "q": "『ラブライブ！』のスクールアイドルグループ「μ's」のメンバーは何人？", "a": ["9人", "5人", "7人", "12人"], "k": "グループ名はギリシャ神話の9人の女神「ミューズ」から。"},
+  {"g": "アニメ", "q": "『ラブライブ！』で穂乃果たちが通う高校は？", "a": ["音ノ木坂学院", "浦の星女学院", "私立恵比寿高校", "陵桜学園"], "k": "廃校の危機を救うため、スクールアイドルを始める。アニメは2013年1月放送開始。"},
+  {"g": "アニメ", "q": "『ガールズ＆パンツァー』の舞台の町は？", "a": ["大洗町", "秩父市", "鷲宮町", "沼津市"], "k": "茨城県の大洗町。作品をきっかけに、町とファンの交流が続いている。"},
+  {"g": "アニメ", "q": "『ガールズ＆パンツァー』西住みほの家に伝わる戦車道の流派は？", "a": ["西住流", "島田流", "大洗流", "黒森峰流"], "k": "厳しい家元の流派から離れ、大洗女子学園で戦車道を始める。"},
+  {"g": "アニメ", "q": "『氷菓』千反田えるの口ぐせは？", "a": ["わたし、気になります！", "問題ない", "ごきげんよう", "にゃんぱすー"], "k": "2012年に京都アニメーションがアニメ化。原作は米澤穂信の〈古典部〉シリーズ。"},
+  {"g": "アニメ", "q": "『氷菓』で主人公・折木奉太郎が入る部活は？", "a": ["古典部", "文芸部", "奉仕部", "隣人部"], "k": "省エネ主義の奉太郎が、姉の勧めで古典部に入部するところから始まる。"},
+  {"g": "アニメ", "q": "『Fate/Zero』（2011年）のアニメ制作会社は？", "a": ["ufotable", "スタジオディーン", "シャフト", "A-1 Pictures"], "k": "第四次聖杯戦争を描く。原作は虚淵玄の小説。"},
+  {"g": "アニメ", "q": "『TIGER & BUNNY』ワイルドタイガーの本名は？", "a": ["鏑木・T・虎徹", "バーナビー・ブルックスJr.", "ユーリ・ペトロフ", "キース・グッドマン"], "k": "2011年放送。スポンサーのロゴを付けて戦うヒーローたちの物語。"},
+  {"g": "アニメ", "q": "『キルラキル』の主人公は？", "a": ["纒流子", "鬼龍院皐月", "満艦飾マコ", "鬼龍院羅暁"], "k": "2013年放送、制作はTRIGGER。監督は今石洋之。"},
+  {"g": "アニメ", "q": "『ご注文はうさぎですか？』の喫茶店の名前は？", "a": ["ラビットハウス", "甘兎庵", "フルール・ド・ラパン", "ファミーユ"], "k": "チノの家の喫茶店。看板うさぎのティッピーがいる。"},
+  {"g": "アニメ", "q": "『侵略！イカ娘』イカ娘の語尾は？", "a": ["〜でゲソ", "〜にょ", "〜だっちゃ", "〜ござる"], "k": "海の家「れもん」で働かされながら、地上の侵略を目指す。"},
+  {"g": "アニメ", "q": "『とある科学の超電磁砲』白井黒子の能力は？", "a": ["空間移動（テレポート）", "念動力", "発電", "読心"], "k": "美琴を「お姉様」と慕う風紀委員（ジャッジメント）。"},
+  {"g": "アニメ", "q": "『Angel Beats!』の原作・脚本を手がけたのは？", "a": ["麻枝准", "虚淵玄", "岡田麿里", "奈須きのこ"], "k": "死後の世界の学校が舞台。2010年放送。"},
+  {"g": "アニメ", "q": "『STEINS;GATE』（2011年）のアニメ制作会社は？", "a": ["WHITE FOX", "シャフト", "ufotable", "京都アニメーション"], "k": "原作は2009年発売のゲーム。"},
+  {"g": "アニメ", "q": "『輪るピングドラム』のペンギン帽子の決めゼリフは？", "a": ["生存戦略", "戦略的撤退", "問題ない", "バカばっか"], "k": "2011年放送、監督は幾原邦彦。"},
+  {"g": "アニメ", "q": "『PSYCHO-PASS』で犯罪係数を測る銃の名前は？", "a": ["ドミネーター", "パースエイダー", "エスカリボルグ", "デルフリンガー"], "k": "2012年放送。脚本は虚淵玄。"},
+  {"g": "アニメ", "q": "『黒子のバスケ』黒子テツヤの得意技は？", "a": ["ミスディレクション", "ゾーン", "天帝の眼", "ダンク"], "k": "存在感の薄さを生かして、相手の視線をそらすパスを出す。"},
+  {"g": "アニメ", "q": "『ハイキュー!!』日向翔陽が入る高校のバレー部は？", "a": ["烏野高校", "青葉城西高校", "音駒高校", "白鳥沢学園"], "k": "アニメは2014年に放送が始まった。"},
+  {"g": "アニメ", "q": "『のんのんびより』宮内れんげのあいさつは？", "a": ["にゃんぱすー", "ごきげんよう", "はわわ", "あうー"], "k": "田舎の分校が舞台の日常もの。2013年放送。"},
+  {"g": "アニメ", "q": "『PSYCHO-PASS』の主人公・常守朱が所属する部署は？", "a": ["公安局刑事課一係", "公安9課", "特車2課", "ネルフ作戦部"], "k": "「シビュラシステム」に管理された社会が舞台。"},
   {"g": "ギャルゲ・エロゲ", "q": "『To Heart』（1997）の開発ブランドは？", "a": ["Leaf", "Key", "エルフ", "アリスソフト"], "k": "1997年発売。のちに家庭用ゲーム機版やアニメ版も作られ、学園恋愛ゲームの定番になった。"},
   {"g": "ギャルゲ・エロゲ", "q": "『To Heart』のメイドロボ・マルチの型番は？", "a": ["HMX-12", "HMX-13", "RX-78", "EVA-01"], "k": "マルチは来栖川電工の試作メイドロボ。同じ時期に作られた高性能機がHMX-13のセリオ。"},
   {"g": "ギャルゲ・エロゲ", "q": "『To Heart』で主人公の幼なじみは？", "a": ["神岸あかり", "長岡志保", "来栖川芹香", "保科智子"], "k": "神岸あかりは主人公・藤田浩之の幼なじみ。料理が得意。"},
@@ -1780,6 +2355,25 @@ const QUIZ = [
   {"g": "ギャルゲ・エロゲ", "q": "『STEINS;GATE』で過去にメールを送る装置の通称は？", "a": ["電話レンジ（仮）", "タイムリープマシン", "ダイバージェンスメーター", "IBN5100"], "k": "電子レンジを改造した装置。のちにタイムリープマシンへ発展する。"},
   {"g": "ギャルゲ・エロゲ", "q": "『うみねこのなく頃に』の制作サークルは？", "a": ["07th Expansion", "TYPE-MOON", "上海アリス幻樂団", "黄昏フロンティア"], "k": "『ひぐらし』と同じ竜騎士07のサークル。2007年から発表された。"},
   {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』の物語の時代は？", "a": ["昭和58年", "昭和48年", "平成元年", "平成10年"], "k": "1983年6月の雛見沢村が舞台。"},
+  {"g": "ギャルゲ・エロゲ", "q": "Keyの『Rewrite』（2011年）の主人公は？", "a": ["天王寺瑚太朗", "岡崎朋也", "直枝理樹", "相沢祐一"], "k": "メインシナリオは田中ロミオ。竜騎士07もシナリオに参加した。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『Rewrite』の舞台の街は？", "a": ["風祭市", "初音島", "音羽", "竜宮島"], "k": "緑化が進んだ地方都市が舞台。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『Rewrite』にシナリオで参加した『ひぐらし』の作者は？", "a": ["竜騎士07", "虚淵玄", "奈須きのこ", "丸戸史明"], "k": "メインの田中ロミオと共に、ルートの一部を担当した。"},
+  {"g": "ギャルゲ・エロゲ", "q": "TYPE-MOON『魔法使いの夜』（2012年）の主人公の少女は？", "a": ["蒼崎青子", "久遠寺有珠", "両儀式", "遠坂凛"], "k": "1980年代後半の三咲町が舞台。シナリオは奈須きのこ。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『素晴らしき日々 ～不連続存在～』（2010年）の開発ブランドは？", "a": ["ケロQ", "ニトロプラス", "Key", "âge"], "k": "シナリオはSCA-自。哲学的な内容で評価が高い。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『グリザイアの果実』（2011年）の開発ブランドは？", "a": ["フロントウイング", "ゆずソフト", "オーガスト", "Navel"], "k": "主人公の風見雄二が、問題を抱えた少女たちの学園に転入する。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『グリザイアの果実』の主人公は？", "a": ["風見雄二", "天王寺瑚太朗", "北原春希", "森田賢一"], "k": "2014年にアニメ化された。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『穢翼のユースティア』（2011年）の開発ブランドは？", "a": ["オーガスト", "CIRCUS", "ゆずソフト", "âge"], "k": "浮遊都市を舞台にしたダークファンタジー。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『恋と選挙とチョコレート』（2010年）の開発ブランドは？", "a": ["sprite", "ゆずソフト", "Navel", "minori"], "k": "生徒会選挙を舞台にした学園もの。2012年にアニメ化。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『DRACU-RIOT!』（2013年）の開発ブランドは？", "a": ["ゆずソフト", "オーガスト", "sprite", "フロントウイング"], "k": "吸血鬼の住む人工島が舞台。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『ROBOTICS;NOTES』（2012年）の舞台の島は？", "a": ["種子島", "六軒島", "竜宮島", "初音島"], "k": "科学アドベンチャーシリーズの一つ。ロボット部の高校生たちの物語。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『CHAOS;CHILD』（2014年）の舞台の街は？", "a": ["渋谷", "秋葉原", "種子島", "池袋"], "k": "『CHAOS;HEAD』の6年後の渋谷が舞台。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『WHITE ALBUM2』（2010年〜）の主人公は？", "a": ["北原春希", "藤井冬弥", "鳴海孝之", "藤田浩之"], "k": "Leafの作品。シナリオは丸戸史明。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『WHITE ALBUM2』でピアノの天才少女は？", "a": ["冬馬かずさ", "小木曽雪菜", "森川由綺", "緒方理奈"], "k": "学園祭のバンドをきっかけに、三角関係の物語が始まる。"},
+  {"g": "ギャルゲ・エロゲ", "q": "ニトロプラス『装甲悪鬼村正』（2009年）のシナリオライターは？", "a": ["奈良原一鉄", "虚淵玄", "下倉バイオ", "鋼屋ジン"], "k": "鎧（劔冑）をまとった武者たちの戦いを描く。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『アイドルマスター シンデレラガールズ』（2011年）が最初に配信されたのは？", "a": ["Mobage", "GREE", "LINE", "Steam"], "k": "ソーシャルゲームとして始まり、のちにアニメ化された。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『艦隊これくしょん -艦これ-』でプレイヤーは何と呼ばれる？", "a": ["提督", "プロデューサー", "マスター", "指揮官"], "k": "2013年4月に運営開始。艦船を少女の姿にした「艦娘」を集める。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『STEINS;GATE』でメールを過去に送ることを何と呼ぶ？", "a": ["Dメール", "タイムリープ", "リーディング・シュタイナー", "世界線変動"], "k": "「Dメール」は過去へのメール。記憶を過去へ送るのがタイムリープ。"},
+  {"g": "ギャルゲ・エロゲ", "q": "『STEINS;GATE』岡部倫太郎が持つ、世界の変化を覚えていられる力は？", "a": ["リーディング・シュタイナー", "直死の魔眼", "幻想殺し", "死に戻り"], "k": "ほかの人が忘れても、岡部だけが前の世界線の記憶を持ち続ける。"},
   {"g": "ラノベ", "q": "『ブギーポップは笑わない』の作者は？", "a": ["上遠野浩平", "秋山瑞人", "時雨沢恵一", "高橋弥七郎"], "k": "上遠野浩平は1998年に第4回電撃ゲーム小説大賞を受賞してデビュー。のちのライトノベルに大きな影響を与えたと言われる。"},
   {"g": "ラノベ", "q": "『ブギーポップ』のイラストを担当したのは？", "a": ["緒方剛志", "いとうのいぢ", "黒星紅白", "竹"], "k": "緒方剛志の独特の線と色づかいが、作品の雰囲気を作った。"},
   {"g": "ラノベ", "q": "ブギーポップが「浮かび上がる」少女の名前は？", "a": ["宮下藤花", "霧間凪", "末真和子", "竹田啓司"], "k": "宮下藤花は普通の女子高生。ブギーポップが表に出ているときのことは、本人は覚えていない。"},
@@ -1941,7 +2535,30 @@ const QUIZ = [
   {"g": "ラノベ", "q": "『イリヤの空』で浅羽が所属する部活は？", "a": ["新聞部", "文芸部", "写真部", "放送部"], "k": "部長の水前寺邦博に振り回されながら、UFOを探して夏休みを過ごした。"},
   {"g": "ラノベ", "q": "『スレイヤーズ』の「ドラグ・スレイブ」の別名は？", "a": ["竜破斬", "烈閃槍", "火炎球", "氷結弾"], "k": "呪文には漢字とカタカナの名前がある。「竜破斬」と書いて「ドラグ・スレイブ」と読む。"},
   {"g": "ラノベ", "q": "『GOSICK』の舞台の時代は？", "a": ["1920年代", "1990年代", "1800年代", "2000年代"], "k": "第一次世界大戦と第二次世界大戦の間の時代。"},
-  {"g": "ラノベ", "q": "『狼と香辛料』の第1巻で、ホロとロレンスが最初に向かう町は？", "a": ["パッツィオ", "ヨイツ", "リュビンハイゲン", "クメルスン"], "k": "銀貨の取引をめぐる駆け引きが第1巻の中心になる。"}
+  {"g": "ラノベ", "q": "『狼と香辛料』の第1巻で、ホロとロレンスが最初に向かう町は？", "a": ["パッツィオ", "ヨイツ", "リュビンハイゲン", "クメルスン"], "k": "銀貨の取引をめぐる駆け引きが第1巻の中心になる。"},
+  {"g": "ラノベ", "q": "『やはり俺の青春ラブコメはまちがっている。』の作者は？", "a": ["渡航", "伏見つかさ", "平坂読", "川原礫"], "k": "2011年からガガガ文庫で刊行。"},
+  {"g": "ラノベ", "q": "『俺ガイル』比企谷八幡が入れられる部活は？", "a": ["奉仕部", "隣人部", "古典部", "SOS団"], "k": "雪ノ下雪乃が部長の、生徒の悩みを手助けする部活。"},
+  {"g": "ラノベ", "q": "『魔法科高校の劣等生』の作者は？", "a": ["佐島勤", "鎌池和馬", "川原礫", "橘公司"], "k": "もとはウェブで公開された作品。2011年から電撃文庫で刊行。"},
+  {"g": "ラノベ", "q": "『魔法科高校の劣等生』司波達也の妹は？", "a": ["司波深雪", "千葉エリカ", "柴田美月", "七草真由美"], "k": "兄と違い、入学試験トップの優等生。"},
+  {"g": "ラノベ", "q": "『ノーゲーム・ノーライフ』の作者は？", "a": ["榎宮祐", "大森藤ノ", "暁なつめ", "長月達平"], "k": "作者がイラストも担当している。2012年からMF文庫Jで刊行。"},
+  {"g": "ラノベ", "q": "『ノーゲーム・ノーライフ』の兄妹ゲーマーのチーム名は？", "a": ["『　』（空白）", "隣人部", "ヘスティア・ファミリア", "アインズ・ウール・ゴウン"], "k": "すべてのことがゲームで決まる異世界に、兄妹が呼ばれる。"},
+  {"g": "ラノベ", "q": "『ダンジョンに出会いを求めるのは間違っているだろうか』の作者は？", "a": ["大森藤ノ", "榎宮祐", "丸戸史明", "和ヶ原聡司"], "k": "2013年からGA文庫で刊行。"},
+  {"g": "ラノベ", "q": "『ダンまち』でベル・クラネルが所属するのは？", "a": ["ヘスティア・ファミリア", "ロキ・ファミリア", "フレイヤ・ファミリア", "ゼウス・ファミリア"], "k": "女神ヘスティアの、団員がベルひとりだけのファミリア。"},
+  {"g": "ラノベ", "q": "『この素晴らしい世界に祝福を！』の主人公は？", "a": ["佐藤和真", "ナツキ・スバル", "比企谷八幡", "司波達也"], "k": "異世界に転生するとき、女神アクアを道連れにする。2013年からスニーカー文庫で刊行。"},
+  {"g": "ラノベ", "q": "『Re:ゼロから始める異世界生活』の主人公の能力は？", "a": ["死に戻り", "幻想殺し", "死の線が見える", "時間停止"], "k": "死ぬと決まった時点まで時間が戻る。2014年からMF文庫Jで刊行。"},
+  {"g": "ラノベ", "q": "『冴えない彼女の育てかた』のメインヒロインは？", "a": ["加藤恵", "霞ヶ丘詩羽", "澤村・スペンサー・英梨々", "氷堂美智留"], "k": "作者は丸戸史明。2012年から富士見ファンタジア文庫で刊行。"},
+  {"g": "ラノベ", "q": "『這いよれ！ニャル子さん』ニャル子の正体は？", "a": ["ニャルラトホテプ", "クトゥルフ", "ハスター", "クトゥグア"], "k": "クトゥルフ神話の邪神が、かわいい宇宙人の少女として現れる。"},
+  {"g": "ラノベ", "q": "『中二病でも恋がしたい！』のレーベルは？", "a": ["KAエスマ文庫", "電撃文庫", "MF文庫J", "ガガガ文庫"], "k": "京都アニメーションのレーベル。2012年にアニメ化された。"},
+  {"g": "ラノベ", "q": "『のうりん』の舞台の高校は？", "a": ["田茂農林高校", "陵桜学園", "桜が丘高校", "やまぶき高校"], "k": "岐阜県の農業高校が舞台。作者は白鳥士郎（GA文庫）。"},
+  {"g": "ラノベ", "q": "『はたらく魔王さま！』で魔王がアルバイトする店は？", "a": ["マグロナルド", "ラビットハウス", "ゲーマーズ", "ファミーユ"], "k": "異世界から東京・笹塚に来た魔王が、ファストフード店で働く。作者は和ヶ原聡司。"},
+  {"g": "ラノベ", "q": "『ストライク・ザ・ブラッド』の作者は？", "a": ["三雲岳斗", "橘公司", "鎌池和馬", "渡航"], "k": "2011年から電撃文庫で刊行。"},
+  {"g": "ラノベ", "q": "『デート・ア・ライブ』の作者は？", "a": ["橘公司", "三雲岳斗", "佐島勤", "白鳥士郎"], "k": "2011年から富士見ファンタジア文庫で刊行。精霊をデートでデレさせて封印する。"},
+  {"g": "ラノベ", "q": "『ログ・ホライズン』の作者は？", "a": ["橙乃ままれ", "川原礫", "丸山くがね", "佐島勤"], "k": "ゲーム「エルダー・テイル」の世界に閉じ込められた人々の物語。"},
+  {"g": "ラノベ", "q": "『オーバーロード』の主人公の名前は？", "a": ["アインズ・ウール・ゴウン", "ナツキ・スバル", "キリト", "ベル・クラネル"], "k": "もとのアバター名はモモンガ。作者は丸山くがね。"},
+  {"g": "ラノベ", "q": "『アクセル・ワールド』の加速世界の対戦ゲームの名前は？", "a": ["ブレイン・バースト", "ソードアート・オンライン", "エルダー・テイル", "ガンゲイル・オンライン"], "k": "黒雪姫から渡されたアプリで、ハルユキは加速世界の戦いに入る。"},
+  {"g": "ラノベ", "q": "『IS〈インフィニット・ストラトス〉』でISを動かせる唯一の男子は？", "a": ["織斑一夏", "平賀才人", "吉井明久", "上条当麻"], "k": "女性しか動かせないはずのパワードスーツを、なぜか動かせてしまう。"},
+  {"g": "ラノベ", "q": "『境界線上のホライゾン』の作者は？", "a": ["川上稔", "三雲岳斗", "橘公司", "渡航"], "k": "1冊1000ページを超える巻があるほどの分厚さで知られる。電撃文庫。"},
+  {"g": "ラノベ", "q": "『ソードアート・オンライン』第1巻が刊行された年は？", "a": ["2009年", "2005年", "2011年", "2013年"], "k": "もとはウェブ公開。電撃文庫から2009年4月に第1巻が出た。"}
 ];
 /* 出題済みの問題を記録し、全問出し切るまで同じ問題を出さない（ページを読み直しても続きから） */
 const QKEY = "smokeBoard.quiz.v1";
@@ -2107,11 +2724,12 @@ showSlide(0); startSlides();
 setInterval(() => { const k = slideOrder()[slideIdx]; if (k === "sky") renderSky(); if (k === "count") renderCount(); }, 60e3);
 loadWeather(); setInterval(loadWeather, CONFIG.weatherRefreshMin * 60e3);
 loadNews(); setInterval(loadNews, CONFIG.news.refreshMin * 60e3);
+renderToday(); setInterval(() => { if (nOrder()[nIdx] === "today") renderToday(); }, 10e3);
 showNews(0);
-loadGiga(); setInterval(loadGiga, CONFIG.news.refreshMin * 60e3);
+if (nOrder().includes("giga")) { loadGiga(); setInterval(loadGiga, CONFIG.news.refreshMin * 60e3); }
 loadMarket(); setInterval(loadMarket, (CONFIG.marketRefreshMin || 3) * 60e3);
 keepAwake();
-window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); loadNews(); loadGiga(); loadMarket(); });
+window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); loadNews(); if (nOrder().includes("giga")) loadGiga(); loadMarket(); });
 if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .it", 11); autoFit(); });
 [1500, 5000].forEach((ms) => setTimeout(() => { shrinkToFit(".fc4 .it", 11); autoFit(); }, ms));
 setInterval(autoFit, 60e3);
