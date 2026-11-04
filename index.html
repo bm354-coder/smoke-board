@@ -351,6 +351,29 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .sky .daybar em{position:absolute;top:-5px;width:2px;height:16px;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
 .sky .daylab{grid-column:1/-1;display:flex;justify-content:space-between;font-family:var(--num);font-size:11px;color:var(--faint);margin-top:5px}
 /* カウントダウン */
+/* カウントダウン：1年のドット暦 */
+#countBox .cyan{--c:var(--cyan);--cr:5,217,232}#countBox .mag{--c:var(--mag);--cr:255,61,127}
+#countBox .yel{--c:var(--yel);--cr:249,240,2}#countBox .txt{--c:#e8eef8;--cr:232,238,248}
+.ve{display:flex;flex-direction:column;flex:1;min-height:0}
+.ve .cs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding-top:2px}
+.ve .cs>div{border-top:2px solid var(--c);padding-top:6px;min-width:0}
+.ve .cs b{font-family:var(--num);font-size:30px;font-weight:800;line-height:1;color:var(--text)}
+.ve .cs b small{font-family:var(--jp);font-size:11px;font-weight:700;color:var(--sub);margin-left:3px}
+.ve .cs span{display:block;font-size:12px;font-weight:900;color:var(--c);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ve .cal{display:grid;grid-template-columns:28px repeat(31,11px);gap:3px;margin-top:16px;align-items:center}
+.ve .cal .m{font-family:var(--num);font-size:9px;color:var(--faint);text-align:right;padding-right:4px}
+.ve .cal i{width:11px;height:11px;box-sizing:border-box;border:1px solid rgba(255,255,255,.12)}
+.ve .cal i.p{background:rgba(5,217,232,.32);border-color:transparent}
+.ve .cal i.hd{border-color:rgba(5,217,232,.8)}
+.ve .cal i.p.hd{background:rgba(5,217,232,.55)}
+.ve .cal i.t{background:#fff;border-color:#fff;box-shadow:0 0 8px #fff,0 0 14px var(--cyan);animation:tdp 2s ease-in-out infinite}
+@keyframes tdp{50%{opacity:.45}}
+.ve .cal i.ev{background:var(--c);border-color:var(--c);box-shadow:0 0 6px rgba(var(--cr),.9)}
+.ve .cal i.x{visibility:hidden}
+.ve .ft{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;color:var(--faint);padding-bottom:4px;white-space:nowrap}
+.ve .ft b{font-family:var(--num);font-size:15px;color:var(--text);margin:0 4px}
+.ve .lg{display:flex;gap:12px}.ve .lg span{display:flex;align-items:center;gap:5px}
+.ve .lg i{width:9px;height:9px;display:inline-block;box-sizing:border-box}
 .cnt{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;flex:1;align-content:start;padding-top:4px}
 .cnt .c{border-left:3px solid var(--cyan);padding:8px 14px;background:rgba(5,217,232,.04)}
 .cnt .c.mag{border-left-color:var(--mag);background:rgba(255,61,127,.05)}
@@ -451,6 +474,38 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .w3 .scale{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--faint);margin-top:2px}
 .w3 .scale i{flex:1;height:6px;background:linear-gradient(90deg,#1b4d9c,#1f8fa8,#3aa36b,#d9a53a,#e0533d)}
 .zw .wmsg{color:var(--sub);font-size:15px;padding:40px 0;text-align:center}
+
+/* ---- 隠し画面 ---- */
+#time{touch-action:manipulation}
+#time .sec{position:relative}
+#time .sec::after{content:"";position:absolute;inset:-14px -16px}   /* 押しやすいよう当たり判定を広げる */
+#hid{position:fixed;inset:0;z-index:800;background:#030207;overflow:hidden;color:var(--text);font-family:var(--jp);cursor:pointer;-webkit-tap-highlight-color:transparent}
+#hid[hidden]{display:none}
+#hid .hbox{position:absolute;left:0;top:0;width:1180px;height:780px;transform-origin:0 0}
+#hid .scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px)}
+#hid .hvig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85) 100%)}
+.h2{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.h2 .lab{font-family:var(--mono);font-size:16px;letter-spacing:.5em;color:rgba(255,61,127,.75)}
+.h2 .row{display:flex;align-items:baseline;gap:16px}
+.h2 .big{position:relative;font-family:var(--num);font-weight:800;font-size:250px;line-height:1;color:#ff3d7f;text-shadow:0 0 30px rgba(255,61,127,.55);letter-spacing:.02em}
+/* 数字の残像（現れる瞬間だけ。そのあと0.5秒で消える） */
+.h2 .big::before,.h2 .big::after{content:attr(data-t);position:absolute;left:0;top:0;text-shadow:none;opacity:0;transition:opacity .5s ease}
+.h2 .big::before{color:#05d9e8;transform:translate(-10px,0);clip-path:inset(30% 0 62% 0)}
+.h2 .big::after{color:#f9f002;transform:translate(12px,0);clip-path:inset(71% 0 23% 0)}
+.h2.ghost .big::before,.h2.ghost .big::after{opacity:.55;transition:none}
+.h2.jit{animation:hjit .16s steps(1) 1}
+@keyframes hjit{0%{transform:translateX(-12px);clip-path:inset(10% 0 45% 0)}25%{transform:translateX(14px);clip-path:inset(50% 0 8% 0)}
+  50%{transform:translateX(-6px) skewX(6deg);clip-path:none}75%{transform:translateX(4px)}100%{transform:none}}
+.h2 .unit{font-family:var(--jph);font-size:96px;font-weight:900;color:#ff3d7f;text-shadow:0 0 26px rgba(255,61,127,.5);opacity:.92;transform:translateY(-.078em)}
+.h2 .clk{font-family:var(--num);font-size:56px;font-weight:600;margin-top:22px;color:var(--text)}
+.h2 .sub{font-size:14px;color:var(--faint);margin-top:16px;font-family:var(--mono);letter-spacing:.2em}
+/* 切り替え演出（闇に沈む）の重ね板 */
+#fxl{position:fixed;inset:0;z-index:900;overflow:hidden}
+#fxl > i{position:absolute;inset:0;opacity:0}
+#fxl .tint{background:#ff1a4a;mix-blend-mode:color}
+#fxl .dark{background:#000}
+#fxl .glw{background:radial-gradient(circle at center,#990519 0,rgba(153,5,25,.4) 120px,transparent 260px)}
+#fxl .iris{inset:auto;left:50%;top:50%;opacity:1;border-radius:50%;box-shadow:0 0 0 400vmax #000;transform:translate(-50%,-50%)}
 
 /* ---- 詳細ウィンドウ ---- */
 .modal{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(4,2,10,.8)}
@@ -776,6 +831,9 @@ const CONFIG = {
   // ニュース欄を時間で切り替える："wsj"（WSJ日本版）/ "today"（今日は何の日）/ "market"（為替・暗号資産）/ "giga"（GIGAZINE）
   //   並べた順に切り替わる。スワイプでも切り替え可。詳細を開いている間は止まる
   newsSlides: { order: ["wsj", "today", "market"], seconds: 20 },
+  // 隠し画面（時計の秒を2秒以内に5回タップ）。moveIn＝入居日。
+  // countFromOne を true にすると入居日を「1日目」として数える（false＝経過日数）
+  hidden: { moveIn: "2024-08-10", countFromOne: true, taps: 5, idleCloseSec: 60 },
   marketRefreshMin: 3,
   // 為替・暗号資産の見せ方："0"（一覧）/ "a"（タイル）/ "b"（電光掲示板）/ "c"（グラフ付き）/ "d"（増減メーター）
   marketStyle: "b1",
@@ -881,10 +939,11 @@ window.addEventListener("orientationchange", () => setTimeout(fit, 300));
 
 function jsonp(url, onData) {
   const cb = "cb" + Date.now() + Math.floor(Math.random() * 1e4), s = document.createElement("script");
-  const timer = setTimeout(cleanup, 20000);
+  const timer = setTimeout(fail, 30000);
   function cleanup() { clearTimeout(timer); delete window[cb]; s.remove(); }
+  function fail() { cleanup(); try { onData(null); } catch (e) {} }
   window[cb] = (data) => { cleanup(); try { onData(data); } catch (e) {} };
-  s.onerror = cleanup;
+  s.onerror = fail;
   s.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb + "&_=" + Date.now();
   document.body.appendChild(s);
 }
@@ -1085,6 +1144,7 @@ function loadTrainStatus() {
     jsonp(url, (d) => {
       // 中継スクリプトが古い（路線の指定に未対応）と、千日前線の情報が返ってくる
       if (d && d.ok && d.line && d.line !== ln.line) d = { ok: false, old: true };
+      if (!d) { if (trainStatus[ln.line] && trainStatus[ln.line].ok) return; d = { ok: false }; }   // 応答なし（前回の情報があれば残す）
       trainStatus[ln.line] = d;
       if (ln === curTrain()) { setStatus(d); autoFit(); }
       renderAlerts(); renderFoot();
@@ -1188,7 +1248,7 @@ function loadNews() {
   jsonp(CONFIG.relayUrl + "?type=news", (d) => {
     if (!d || !d.ok || !d.items) {
       if (!newsAt) $("newsList").innerHTML = `<div class="nmsg">${d && d.items === undefined && d.line
-        ? "ニュースを表示するには、中継スクリプトの更新が必要です" : "ニュースを取得できませんでした（自動で再取得します）"}</div>`;
+        ? "ニュースを表示するには、中継スクリプトの更新が必要です" : !d ? "中継スクリプトから応答がありません（自動で再取得します）" : "ニュースを取得できませんでした（自動で再取得します）"}</div>`;
       return;
     }
     newsItems = d.items.slice(0, CONFIG.news.count);
@@ -1212,7 +1272,7 @@ function loadGiga() {
   if (!CONFIG.relayUrl) return;
   jsonp(CONFIG.relayUrl + "?type=gigazine", (d) => {
     if (!d || !d.ok || !d.items) {
-      if (!gigaAt) $("gigaList").innerHTML = `<div class="nmsg">${relayOld(d) ? "表示するには、中継スクリプトの更新が必要です" : "記事を取得できませんでした（自動で再取得します）"}</div>`;
+      if (!gigaAt) $("gigaList").innerHTML = `<div class="nmsg">${relayOld(d) ? "表示するには、中継スクリプトの更新が必要です" : !d ? "中継スクリプトから応答がありません（自動で再取得します）" : "記事を取得できませんでした（自動で再取得します）"}</div>`;
       return;
     }
     gigaItems = d.items.slice(0, CONFIG.news.count);
@@ -1329,7 +1389,7 @@ function loadMarket() {
   if (!CONFIG.relayUrl) return;
   jsonp(CONFIG.relayUrl + "?type=market", (d) => {
     if (!d || !d.ok || !d.coins) {
-      if (!mktAt) $("mkt").innerHTML = `<div class="nmsg">${relayOld(d) ? "表示するには、中継スクリプトの更新が必要です" : "相場を取得できませんでした（自動で再取得します）"}</div>`;
+      if (!mktAt) $("mkt").innerHTML = `<div class="nmsg">${relayOld(d) ? "表示するには、中継スクリプトの更新が必要です" : !d ? "中継スクリプトから応答がありません（自動で再取得します）" : "相場を取得できませんでした（自動で再取得します）"}</div>`;
       return;
     }
     mkt = d; mktAt = hm(new Date()); renderMarket(); renderNewsHead(); renderFoot();
@@ -1663,7 +1723,7 @@ function showNews(i, dir = 1) {
 }
 setInterval(() => {
   if (nOrder().length < 2) return;
-  if (!$("modal").hidden) { nShownAt = Date.now(); return; }
+  if (!$("modal").hidden || hidOpen) { nShownAt = Date.now(); return; }
   if (Date.now() - nShownAt >= (CONFIG.newsSlides.seconds || 20) * 1000) showNews(nIdx + 1);
 }, 500);
 
@@ -1826,7 +1886,7 @@ function slideDuration(k) { return (k === "quiz" ? CONFIG.slides.quizSeconds || 
 function startSlides() {
   clearInterval(slideTimer);
   if (slideOrder().length > 1) slideTimer = setInterval(() => {
-    if (!$("modal").hidden) { slideShownAt = Date.now(); return; }
+    if (!$("modal").hidden || hidOpen) { slideShownAt = Date.now(); return; }
     const k = slideOrder()[slideIdx];
     if (Date.now() - slideShownAt >= slideDuration(k) + quizHold) showSlide(slideIdx + 1);
   }, 500);
@@ -1953,27 +2013,41 @@ function renderSky() {
 
 /* ---------- カウントダウン ---------- */
 function daysUntil(t) { const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(t); b.setHours(0, 0, 0, 0); return Math.round((b - a) / 864e5); }
-function renderCount() {
-  const now = new Date(), cards = [];
-  // 次の祝日
+// 予定の一覧（近い順）。週末は時間、ほかは日数で数える
+function cdItems() {
+  const now = new Date(), out = [];
   const hk = Object.keys(holidays).sort().find((d) => d > ymd(now));
-  if (hk) cards.push({ cls: "", l: `次の祝日・${holidays[hk]}`, v: daysUntil(hk + "T00:00:00"), u: "日", s: `${fmtDate(hk + "T00:00:00")}（${WEEK[new Date(hk + "T00:00:00").getDay()]}）` });
-  // 週末まで
+  if (hk) { const t = new Date(hk + "T00:00:00"); out.push({ k: "hol", nm: holidays[hk], d: daysUntil(t), t, col: "cyan" }); }
   const sat = new Date(now); sat.setHours(0, 0, 0, 0); sat.setDate(sat.getDate() + ((6 - sat.getDay() + 7) % 7));
-  const isWeekend = now.getDay() === 0 || now.getDay() === 6;
-  cards.push(isWeekend ? { cls: "yel", l: "週末まで", v: "週末", u: "", s: "今日は休日" }
-    : { cls: "yel", l: "週末（土曜）まで", v: Math.floor((sat - now) / 3600e3), u: "時間", s: `あと${daysUntil(sat)}日` });
-  // 年末・クリスマスなど（設定で追加可能）
+  const we = now.getDay() === 0 || now.getDay() === 6;
+  out.push({ k: "wk", nm: we ? "今日は週末" : "週末", d: we ? 0 : daysUntil(sat), h: we ? 0 : Math.floor((sat - now) / 3600e3), t: sat, col: "yel" });
   (CONFIG.countdowns || []).forEach((c) => {
     let t = new Date(`${now.getFullYear()}-${c.date}T00:00:00`);
     if (daysUntil(t) < 0) t = new Date(`${now.getFullYear() + 1}-${c.date}T00:00:00`);
-    cards.push({ cls: c.color || "mag", l: c.name, v: daysUntil(t), u: "日", s: `${fmtDate(t)}（${WEEK[t.getDay()]}）` });
+    out.push({ k: "ev", nm: c.name.replace(/まで$/, ""), d: daysUntil(t), t, col: c.color || "txt" });
   });
-  const y0 = new Date(now.getFullYear(), 0, 1), y1 = new Date(now.getFullYear() + 1, 0, 1), yp = (now - y0) / (y1 - y0) * 100;
-  $("countBox").innerHTML = `<div class="cnt">${cards.slice(0, 4).map((c) => `<div class="c ${c.cls}"><div class="l">${esc(c.l)}</div>
-      <div class="v">${c.v === 0 ? "今日" : c.v}<small>${c.v === 0 ? "" : c.u}</small></div><div class="s">${esc(c.s)}</div></div>`).join("")}
-    <div class="yr"><div class="l" style="font-size:13px;color:var(--sub);font-weight:700">${now.getFullYear()}年の経過 <b style="font-family:var(--num);color:var(--text);font-size:18px;margin-left:6px">${yp.toFixed(1)}%</b>
-      <span style="margin-left:12px;color:var(--faint)">残り ${daysUntil(y1)}日</span></div><div class="bar"><i style="width:${yp.toFixed(2)}%"></i></div></div></div>`;
+  return out.sort((x, y) => x.d - y.d);
+}
+function renderCount() {
+  const now = new Date(), Y = now.getFullYear(), td = ymd(now), items = cdItems();
+  const y0 = new Date(Y, 0, 1), y1 = new Date(Y + 1, 0, 1), yp = (now - y0) / (y1 - y0) * 100;
+  const evs = {}; items.forEach((x) => { if (x.t.getFullYear() === Y && x.k !== "wk") evs[ymd(x.t)] = x.k === "hol" ? "cyan" : "mag"; });   // 暦の上では予定日はピンク
+  // 1年を「1行＝1か月、1マス＝1日」で並べる
+  let cal = "";
+  for (let m = 0; m < 12; m++) {
+    cal += `<span class="m">${m + 1}月</span>`;
+    const md = new Date(Y, m + 1, 0).getDate();
+    for (let d = 1; d <= 31; d++) {
+      if (d > md) { cal += `<i class="x"></i>`; continue; }
+      const k = `${Y}-${pad(m + 1)}-${pad(d)}`;
+      cal += `<i class="${[k < td ? "p" : "", holidays[k] ? "hd" : "", k === td ? "t" : "", evs[k] ? "ev " + evs[k] : ""].join(" ").trim()}"></i>`;
+    }
+  }
+  const val = (x) => x.k === "wk" ? (x.h ? `${x.h}<small>時間</small>` : `<small>　</small>`) : x.d === 0 ? "今日" : `${x.d}<small>日</small>`;
+  $("countBox").innerHTML = `<div class="ve"><div class="cs">${items.slice(0, 4).map((x) => `<div class="${x.col}"><b>${val(x)}</b><span>${esc(x.nm)}</span></div>`).join("")}</div>
+    <div class="cal">${cal}</div>
+    <div class="ft"><div class="lg"><span><i style="background:rgba(5,217,232,.32)"></i>過ぎた日</span><span><i style="background:#fff"></i>今日</span><span><i style="border:1px solid var(--cyan)"></i>祝日</span><span><i style="background:var(--mag)"></i>イベント</span></div>
+      <span>${Y}年 <b>${yp.toFixed(1)}%</b> 経過 ／ 残り<b>${daysUntil(y1)}</b>日</span></div></div>`;
 }
 
 /* ---------- アニメクイズ ----------
@@ -2717,6 +2791,101 @@ document.addEventListener("click", keepAwake);
 
 /* ---------- 起動 ---------- */
 fit();
+/* ---------- 隠し画面（時計の秒を2秒以内に5回タップすると開く） ---------- */
+const HID = Object.assign({ moveIn: "2024-08-10", countFromOne: false, taps: 5, idleCloseSec: 60 }, CONFIG.hidden || {});
+let hidOpen = false, hidBusy = false, hidTaps = [], hidIdle = null, hidTick = null;
+function hidBuild() {
+  if ($("hid")) return;
+  const d = document.createElement("div"); d.id = "hid"; d.hidden = true;
+  d.innerHTML = `<div class="hbox"><div class="h2"><div class="lab">DAYS SINCE MOVE-IN</div>
+    <div class="row"><div class="big" id="hDays" data-t=""></div><div class="unit">日目</div></div>
+    <div class="clk" id="hClk"></div><div class="sub" id="hSub"></div></div></div><div class="scan"></div><div class="hvig"></div>`;
+  document.body.appendChild(d);
+  d.addEventListener("click", () => { if (!hidBusy) closeHidden(); });
+}
+function hidFit() {
+  const b = document.querySelector("#hid .hbox"); if (!b) return;
+  const sc = Math.min(innerWidth / 1180, innerHeight / 780);
+  b.style.transform = `translate(${(innerWidth - 1180 * sc) / 2}px,${(innerHeight - 780 * sc) / 2}px) scale(${sc})`;
+}
+window.addEventListener("resize", hidFit);
+function renderHidden() {
+  const now = new Date(), [y, m, d] = HID.moveIn.split("-").map(Number), start = new Date(y, m - 1, d);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const days = Math.round((today - start) / 864e5) + (HID.countFromOne ? 1 : 0);
+  let yy = now.getFullYear() - y, mm = now.getMonth() + 1 - m, dd = now.getDate() - d;   // ○年○か月○日
+  if (dd < 0) { mm--; dd += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+  if (mm < 0) { yy--; mm += 12; }
+  const el = $("hDays");
+  if (el.textContent !== String(days)) { el.textContent = days; el.dataset.t = days; }
+  $("hClk").textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  $("hSub").textContent = `SINCE ${y}.${pad(m)}.${pad(d)} ／ ${yy}年${mm}か月${dd}日`;
+}
+const easeS = (x) => { x = Math.min(Math.max(x, 0), 1); return x * x * (3 - 2 * x); };
+const pulseAt = (t, c, w) => Math.exp(-(((t - c) / w) ** 2));
+// 演出：色が抜けて赤黒く沈む（鼓動3回）→ 暗転（赤い光が1回脈打つ）→ 闇が開くように現れる → 一瞬乱れる
+function openHidden() {
+  if (hidOpen || hidBusy) return;
+  hidBuild(); hidFit(); renderHidden();
+  if (!$("modal").hidden) closeModal();
+  hidBusy = true; hidOpen = true;
+  const fx = document.createElement("div"); fx.id = "fxl";
+  fx.innerHTML = `<i class="tint"></i><i class="dark"></i><i class="glw"></i><i class="iris"></i>`;
+  document.body.appendChild(fx);
+  const [tint, dark, glw, iris] = fx.children, fit = $("fit"), hid = $("hid"), h2 = hid.querySelector(".h2");
+  const R0 = Math.hypot(innerWidth, innerHeight) / 2;
+  const setIris = (r) => {
+    const R = Math.max(1, r * R0);
+    iris.style.width = iris.style.height = 2 * R + "px";
+    iris.style.background = `radial-gradient(circle closest-side,transparent ${Math.max(0, (r - .3) / r * 100).toFixed(1)}%,#000 100%)`;
+  };
+  let t0 = null, shown = false;
+  const step = (now) => {
+    if (t0 === null) t0 = now;
+    const t = (now - t0) / 1000;
+    if (t < 2.4) {
+      const p = t / 2.4, pu = .55 * pulseAt(t, .6, .07) + .75 * pulseAt(t, 1.25, .08) + .95 * pulseAt(t, 1.9, .09);
+      tint.style.opacity = (easeS(p) * .85).toFixed(3);
+      dark.style.opacity = Math.max(0, .72 * p - .45 * pu).toFixed(3);
+      fit.style.transform = pu > .01 ? `scale(${(1 + .018 * pu).toFixed(4)})` : "";
+      setIris(1.25 - .97 * easeS(p));
+    } else if (t < 3.2) {
+      fit.style.transform = ""; tint.style.opacity = 0; dark.style.opacity = 1; iris.style.opacity = 0;
+      glw.style.opacity = (.55 * pulseAt(t, 2.8, .1)).toFixed(3);
+    } else if (t < 4.4) {
+      if (!shown) { shown = true; hid.hidden = false; h2.classList.add("ghost"); glw.style.opacity = 0; iris.style.opacity = 1; }
+      const q = easeS((t - 3.2) / 1.2);
+      dark.style.opacity = (.65 * (1 - q)).toFixed(3);
+      setIris(.05 + 1.3 * q);
+      h2.style.filter = q < .99 ? `blur(${(16 * (1 - q)).toFixed(1)}px)` : "";
+    } else {
+      fx.remove(); fit.style.transform = ""; h2.style.filter = "";
+      h2.classList.add("jit");
+      setTimeout(() => h2.classList.remove("jit", "ghost"), 160);   // 乱れのあと、残像が0.5秒で消える
+      hidBusy = false;
+      hidTick = setInterval(renderHidden, 1000);
+      hidIdle = setTimeout(closeHidden, HID.idleCloseSec * 1e3);
+      return;
+    }
+    requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+function closeHidden() {
+  if (!hidOpen || hidBusy) return;
+  clearInterval(hidTick); clearTimeout(hidIdle);
+  const hid = $("hid"); hid.style.transition = "opacity .6s"; hid.style.opacity = "0";
+  setTimeout(() => {
+    hid.hidden = true; hid.style.opacity = ""; hid.style.transition = "";
+    hidOpen = false; slideShownAt = Date.now(); nShownAt = Date.now();
+  }, 600);
+}
+$("time").addEventListener("click", (e) => {
+  if (!e.target.closest(".sec")) return;
+  const n = Date.now(); hidTaps = hidTaps.filter((x) => n - x < 2000); hidTaps.push(n);
+  if (hidTaps.length >= HID.taps) { hidTaps = []; openHidden(); }
+});
+
 tick(); setInterval(tick, 1000);
 loadHolidays().then(renderTrain);
 setInterval(() => { if (holidaysLoadedOn !== ymd(new Date())) loadHolidays(); }, 10 * 60e3);
@@ -2740,14 +2909,14 @@ setTimeout(() => location.reload(), CONFIG.fullReloadHours * 3600e3);
 /* ---------- 新しい版の自動反映 ----------
    GitHubのファイルを読み直し、下の BOARD_BUILD（版の印）が変わっていたらページを読み直す。
    詳細ウィンドウを開いている間は待つ */
-const BOARD_BUILD = "20261104-0045";
+const BOARD_BUILD = "20261104-1520";
 async function checkUpdate() {
   try {
     const r = await fetch(location.pathname + "?v=" + Date.now(), { cache: "no-store" });
     if (!r.ok) return;
     const m = (await r.text()).match(/const BOARD_BUILD = "([^"]+)"/);
     if (m && m[1] !== BOARD_BUILD) {
-      const go = () => { if ($("modal").hidden) location.reload(); else setTimeout(go, 10e3); };
+      const go = () => { if ($("modal").hidden && !hidOpen) location.reload(); else setTimeout(go, 10e3); };
       go();
     }
   } catch (e) {}
