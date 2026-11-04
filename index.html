@@ -485,7 +485,7 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .cfxB .band{position:absolute;left:-10%;right:-10%;top:50%;height:120px;margin-top:-60px;transform:skewY(-8deg);background:linear-gradient(90deg,transparent,rgba(3,2,7,.92) 12%,rgba(3,2,7,.92) 88%,transparent);
   border-top:3px solid var(--cc);border-bottom:3px solid var(--cc);box-shadow:0 0 24px var(--cc);animation:bBand 1.5s cubic-bezier(.7,0,.3,1) both}
 .cfxB .lines{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 40px,rgba(255,255,255,.12) 40px 42px);animation:bLines .3s linear infinite}
-.cfxB .inn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:18px;transform:skewY(8deg)}
+.cfxB .inn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:18px}   /* 文字も帯と同じ向きに傾く */
 .cfxB .inn b{font-family:var(--num);font-weight:900;font-size:92px;line-height:1;color:var(--cc);text-shadow:0 0 20px var(--cc);animation:bNum 1.5s ease-out both}
 .cfxB .inn strong{font-family:var(--num);font-weight:900;font-size:46px;letter-spacing:.12em;color:#fff}
 @keyframes bBand{0%{transform:skewY(-8deg) translateX(-110%)}22%{transform:skewY(-8deg) translateX(0)}78%{transform:skewY(-8deg) translateX(0)}100%{transform:skewY(-8deg) translateX(110%)}}
@@ -571,8 +571,26 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 #gend .cnt em{font-style:normal;font-family:var(--num);font-weight:900;font-size:56px;letter-spacing:.3em;color:#fff;text-shadow:0 0 20px #ffcc33;margin-bottom:6px;opacity:0}
 #gend .shine{position:absolute;top:0;bottom:0;width:180px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);opacity:0}
 #gend .dust{position:absolute;left:0;top:0;width:6px;height:6px;border-radius:50%;background:#fff3c4;box-shadow:0 0 8px #ffcc33,0 0 16px rgba(255,204,51,.6);opacity:0}
-#gend .ty{position:absolute;left:0;right:0;bottom:90px;text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.6em;color:#fff3c4;opacity:0}
+#gend .ty{position:absolute;left:0;right:0;bottom:104px;text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.6em;color:#fff3c4;opacity:0}
+#gend .rec{position:absolute;left:0;right:0;bottom:70px;text-align:center;font-family:var(--num);font-size:15px;letter-spacing:.25em;color:rgba(255,243,196,.75);opacity:0}
+#gend .hint{position:absolute;left:0;right:0;bottom:calc(30px + env(safe-area-inset-bottom,0px));text-align:center;font-size:13px;font-weight:700;letter-spacing:.2em;color:rgba(255,255,255,.45);opacity:0}
+#gend.tap{pointer-events:auto;cursor:pointer}
 .clrb{display:inline-flex;align-items:center;margin-left:14px;padding:2px 12px;font-family:var(--num);font-weight:900;font-size:15px;letter-spacing:.2em;color:#1a0f00;background:linear-gradient(90deg,#fff6c8,#ffcc33);box-shadow:0 0 12px #ffcc33;vertical-align:middle}
+
+/* ---- デモ機 ---- */
+body.demo #stage > *{visibility:hidden}
+body.demo #stage .fortune{visibility:visible;position:fixed;left:290px;top:30px;width:600px;height:470px;z-index:5;flex:none}
+body.demo #stage.port .fortune{left:10px;top:30px;width:800px;height:640px}
+@media (max-width:600px){#demo{padding:8px 10px;gap:6px}#demo button{font-size:12px;padding:5px 8px}#demo .st{font-size:12px}}
+#demo{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;padding:12px 14px;width:min(600px,calc(100vw - 24px));box-sizing:border-box;background:rgba(10,8,20,.94);border:1px solid rgba(5,217,232,.5);box-shadow:0 0 24px rgba(0,0,0,.6);font-family:var(--jp);color:#e8eef8;max-width:calc(100vw - 24px)}
+#demo .st{font-family:var(--num);font-size:14px;letter-spacing:.08em;color:#05d9e8;display:flex;justify-content:space-between;gap:16px}
+#demo .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#demo .row small{font-size:11px;color:#8b93a7;margin-right:2px}
+#demo button{font:inherit;font-size:13px;font-weight:700;padding:6px 11px;border:1px solid rgba(255,255,255,.2);background:#15131f;color:#e8eef8;cursor:pointer}
+#demo button.ok{border-color:#3dff8b;color:#3dff8b}#demo button.ng{border-color:#ff3d7f;color:#ff3d7f}
+#demo button:active{transform:translateY(1px)}
+#demo.min .row{display:none}
+#demo .tg{margin-left:auto}
 
 /* ---- 隠し画面 ---- */
 #time{touch-action:manipulation}
@@ -800,6 +818,8 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 </div></div>
 
 <script>
+// デモ機：アドレスの最後に ?demo=1 をつけると、クイズだけを大きく出して演出を試せる（本番の記録とは別に保存）
+const DEMO = new URLSearchParams(location.search).has("demo") || window.__DEMO === true;
 /* =========================================================
    ★ 設定はここだけ書き換えてください ★
    ========================================================= */
@@ -3245,7 +3265,7 @@ const QUIZ = [
   {"g": "ラノベ", "q": "『とらドラ！』の第1巻が刊行された年は？", "a": ["2006年", "2003年", "2009年", "2001年"], "k": "電撃文庫から刊行。2008年にTVアニメ化された。"}
 ];
 /* 出題済みの問題を記録し、全問出し切るまで同じ問題を出さない（ページを読み直しても続きから） */
-const QKEY = "smokeBoard.quiz.v1";
+const QKEY = DEMO ? "smokeBoard.demo.quiz" : "smokeBoard.quiz.v1";
 let quizMem = null, quiz = null, quizCount = 0;
 // 偏りのない並べ替え（Fisher–Yates）
 function shuffle(a) {
@@ -3322,7 +3342,7 @@ $("quizBox").addEventListener("click", (e) => {
     const c = e.target.closest("[data-o]"); if (!c) return;
     quiz.pick = +c.dataset.o; quiz.done = true;
     renderQuiz();
-    if (gameAnswer(quiz.pick === 0)) return;
+    if (gameAnswer(quiz.pick === 0)) { if (!GAME.busy) autoNextQuiz(quiz); return; }
   }
   showQuizDetail();
 });
@@ -3373,13 +3393,15 @@ setInterval(quizTick, 250);
 /* ---------- 連続正解のゲーム（コンボ → フィーバー → ぷちゅん → クイズジェネレーター → 100でクリア） ---------- */
 const GM = Object.assign({ comboFrom: 5, feverAt: 10, genAt: 20, stageEvery: 20, clearAt: 100, stageSec: [18, 14, 11, 8], idleTimeouts: 3, feverIdleMin: 10 }, CONFIG.game || {});
 const GAME = { combo: 0, fever: false, gen: false, busy: false, lastAt: 0 };
-const GKEY = "smokeBoard.game";
+const GKEY = DEMO ? "smokeBoard.demo.game" : "smokeBoard.game";
+let fxToken = 0;   // デモで「リセット」したとき、途中の演出を止めるための番号
+const gLater = (fn, ms) => { const tk = fxToken; setTimeout(() => { if (tk === fxToken) fn(); }, ms); };
 function gameMem() { try { return JSON.parse(localStorage.getItem(GKEY) || "{}") || {}; } catch (e) { return {}; } }
 function gameSave(o) { try { localStorage.setItem(GKEY, JSON.stringify(Object.assign(gameMem(), o))); } catch (e) {} }
 const gameBusy = () => GAME.fever || GAME.gen || GAME.busy;
 const gcl = (x) => Math.max(0, Math.min(1, x)), gease = (x) => 1 - (1 - gcl(x)) ** 3;
 // 時間で進む演出を動かす（fn(秒) が false を返すまで毎フレーム呼ぶ）
-function playFx(fn, done) { let t0 = null; const step = (now) => { if (t0 === null) t0 = now; if (fn((now - t0) / 1000) === false) { if (done) done(); return; } requestAnimationFrame(step); }; requestAnimationFrame(step); }
+function playFx(fn, done) { const tk = fxToken; let t0 = null; const step = (now) => { if (tk !== fxToken) return; if (t0 === null) t0 = now; if (fn((now - t0) / 1000) === false) { if (done) done(); return; } requestAnimationFrame(step); }; requestAnimationFrame(step); }
 function comboColor(n) { return n >= 9 ? "#ffcc33" : n >= 7 ? "#a35bff" : "#05d9e8"; }
 function bumpBest() { if (GAME.combo > (gameMem().best || 0)) gameSave({ best: GAME.combo }); }
 function renderComboBadge() {
@@ -3405,9 +3427,19 @@ function gameAnswer(ok) {
   if (!ok) { GAME.combo = 0; if (GAME.fever) feverEnd(); renderComboBadge(); return false; }
   GAME.combo++; bumpBest(); renderComboBadge();
   if (GAME.combo >= GM.comboFrom) comboBand(GAME.combo);
-  if (GAME.fever && GAME.combo >= GM.genAt) { GAME.busy = true; setTimeout(puchun, 1500); return true; }
-  if (!GAME.fever && GAME.combo >= GM.feverAt) setTimeout(feverStart, 1000);
+  if (GAME.fever && GAME.combo >= GM.genAt) { GAME.busy = true; gLater(puchun, 1500); return true; }
+  if (!GAME.fever && GAME.combo >= GM.feverAt) gLater(feverStart, 1000);
   return GAME.combo >= GM.comboFrom;
+}
+// コンボの演出のあと、自動で次の問題へ（解説を開いているあいだは待つ。自分で次へ進んだときは何もしない）
+function autoNextQuiz(q0) {
+  const wait = GAME.combo === GM.feverAt ? 4500 : 3000;
+  const go = () => {
+    if (quiz !== q0 || GAME.gen || GAME.busy) return;
+    if (!$("modal").hidden) { gLater(go, 1000); return; }
+    if (slideOrder()[slideIdx] === "quiz") nextQuiz();
+  };
+  gLater(go, wait);
 }
 function feverStart() {
   if (GAME.fever) return;
@@ -3510,19 +3542,19 @@ function genPick(e) {
   const c = e.target.closest("[data-o]"); if (!c || !genQ || genQ.done || GAME.busy) return;
   const oi = +c.dataset.o; genReveal(oi); genIdle = 0; GAME.lastAt = Date.now();
   const g = $("gen");
-  if (oi !== 0) { g.querySelector(".msg").textContent = `残念… ${GAME.combo} COMBOで終了`; setTimeout(genEnd, 1600); return; }
+  if (oi !== 0) { g.querySelector(".msg").textContent = `残念… ${GAME.combo} COMBOで終了`; gLater(genEnd, 1600); return; }
   GAME.combo++; bumpBest();
   const cb = g.querySelector(".cmb b"); cb.textContent = GAME.combo; cb.classList.remove("pop"); void cb.offsetWidth; cb.classList.add("pop");
   g.querySelector(".rest").textContent = `ゲームクリアまで あと${Math.max(0, GM.clearAt - GAME.combo)}`;
-  if (GAME.combo >= GM.clearAt) { GAME.busy = true; setTimeout(gameClear, 900); return; }
-  if ((GAME.combo - GM.genAt) % GM.stageEvery === 0) { GAME.busy = true; setTimeout(stageUp, 700); return; }
-  setTimeout(genNext, 1200);
+  if (GAME.combo >= GM.clearAt) { GAME.busy = true; gLater(gameClear, 900); return; }
+  if ((GAME.combo - GM.genAt) % GM.stageEvery === 0) { GAME.busy = true; gLater(stageUp, 700); return; }
+  gLater(genNext, 1200);
 }
 function genTimeout() {
   genReveal(null); genIdle++;
   const g = $("gen");
-  if (genIdle >= GM.idleTimeouts) { g.querySelector(".msg").textContent = "時間切れが続いたので終了します"; setTimeout(genEnd, 2000); return; }
-  g.querySelector(".msg").textContent = "時間切れ（コンボはそのまま）"; setTimeout(genNext, 2200);
+  if (genIdle >= GM.idleTimeouts) { g.querySelector(".msg").textContent = "時間切れが続いたので終了します"; gLater(genEnd, 2000); return; }
+  g.querySelector(".msg").textContent = "時間切れ（コンボはそのまま）"; gLater(genNext, 2200);
 }
 function genEnd() {
   GAME.gen = false; GAME.busy = false; clearInterval(genTimer); genQ = null; GAME.combo = 0; feverEnd(true);
@@ -3551,9 +3583,13 @@ function gameClear() {
   const f = document.createElement("div"); f.id = "gend";
   const dust = Array.from({ length: 90 }, () => ({ x: Math.random() * innerWidth, sp: 60 + Math.random() * 110, sw: 10 + Math.random() * 30, ph: Math.random() * 6.28, d: Math.random() * 1.2, s: .5 + Math.random() * 1.1 }));
   f.innerHTML = `<div class="dim"></div><div class="aura"></div>${dust.map(() => '<i class="dust"></i>').join("")}<div class="rg"></div><div class="rg"></div>
-    <div class="cnt"><em>PERFECT</em><b>0</b><small>COMBO</small></div><div class="shine"></div><div class="wf"></div><div class="ty">THANK YOU FOR PLAYING</div>`;
+    <div class="cnt"><em>PERFECT</em><b>0</b><small>COMBO</small></div><div class="shine"></div><div class="wf"></div><div class="ty">THANK YOU FOR PLAYING</div><div class="rec"></div><div class="hint">画面をタップすると戻ります</div>`;
   document.body.appendChild(f);
   const q = (x) => f.querySelector(x), qa = (x) => [...f.querySelectorAll(x)], dEl = qa(".dust"), N = GM.clearAt, H = innerHeight;
+  const now0 = new Date(); q(".rec").textContent = `${now0.getFullYear()}.${pad(now0.getMonth() + 1)}.${pad(now0.getDate())}  ${hm(now0)}  ―  ${N} COMBO`;
+  // 余韻：タップするか、しばらくたつとゆっくり戻る
+  let lastT = 0, exitAt = null, wantExit = false;
+  f.addEventListener("click", () => { if (lastT > 6) wantExit = true; });
   playFx((T) => {
     q(".dim").style.opacity = T < .4 ? 0 : .9 * gcl((T - .4) / .4);
     const n = T < .8 ? 0 : Math.round(N * (1 - (1 - gcl((T - .8) / 1.7)) ** 2));
@@ -3567,10 +3603,15 @@ function gameClear() {
     const sh = q(".shine"); sh.style.opacity = T > 3.4 && T < 4.2 ? 1 : 0; sh.style.left = (-300 + (innerWidth + 500) * gcl((T - 3.4) / .8)) + "px";
     const au = q(".aura"); au.style.opacity = T < 2.5 ? 0 : gcl((T - 2.5) / .6) * (.85 + .15 * Math.sin(T * 2.4)); au.style.transform = `scale(${.6 + .4 * gease((T - 2.5) / 1.0) + .04 * Math.sin(T * 2.4)})`;
     dEl.forEach((e, i) => { const p = dust[i], u = T - 2.6 - p.d; if (u < 0) return;
-      e.style.opacity = (.4 + .6 * Math.abs(Math.sin(u * 3 + p.ph))) * gcl(u / .4); e.style.transform = `translate(${p.x + Math.sin(u * 1.8 + p.ph) * p.sw}px,${H + 40 - p.sp * u * 1.6}px) scale(${p.s})`; });
-    q(".ty").style.opacity = gcl((T - 5.2) / .6);
-    if (T > 8.0) { const k = gcl((T - 8.0) / 1.2); f.style.opacity = 1 - k; const g = $("gen"); if (g) g.style.opacity = 1 - k; }
-    return T < 9.2;
+      e.style.opacity = (.4 + .6 * Math.abs(Math.sin(u * 3 + p.ph))) * gcl(u / .4); e.style.transform = `translate(${p.x + Math.sin(u * 1.8 + p.ph) * p.sw}px,${H + 40 - ((p.sp * u * 1.6) % (H + 80))}px) scale(${p.s})`; });
+    lastT = T;
+    q(".ty").style.opacity = gcl((T - 5.5) / 1.2);
+    q(".rec").style.opacity = gcl((T - 8.0) / 1.5);
+    q(".hint").style.opacity = T < 12 ? 0 : .5 + .5 * Math.sin((T - 12) * 1.6);
+    if (T > 6) f.classList.add("tap");
+    if (exitAt === null && (wantExit || T > 45)) exitAt = T;
+    if (exitAt !== null) { const k = gcl((T - exitAt) / 2.5); f.style.opacity = 1 - k; const g = $("gen"); if (g) g.style.opacity = 1 - k; return k < 1; }
+    return true;
   }, () => {
     f.remove(); const g = $("gen"); if (g) g.remove();
     GAME.gen = false; GAME.busy = false; GAME.combo = 0; genQ = null; feverEnd(true);
@@ -3713,6 +3754,53 @@ $("time").addEventListener("click", (e) => {
 
 tick(); setInterval(tick, 1000);
 renderClear();
+if (DEMO) setTimeout(setupDemo, 300);   // 欄の切り替えの準備が終わってから
+function setupDemo() {
+  document.body.classList.add("demo");
+  clearInterval(slideTimer); showSlide(slideOrder().indexOf("quiz"));
+  const d = document.createElement("div"); d.id = "demo";
+  d.innerHTML = `<div class="st"><span id="dmSt"></span><button class="tg" data-a="min">たたむ</button></div>
+    <div class="row"><small>回答</small><button class="ok" data-a="ok">正解する</button><button class="ng" data-a="ng">不正解にする</button><button data-a="next">次の問題</button></div>
+    <div class="row"><small>ここから始める</small><button data-j="4">4コンボ</button><button data-j="9">9コンボ</button><button data-j="19">19コンボ</button><button data-j="39">39コンボ</button><button data-j="59">59コンボ</button><button data-j="79">79コンボ</button><button data-j="99">99コンボ</button><button data-a="reset">リセット</button></div>`;
+  document.body.appendChild(d);
+  d.addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.j) { demoJump(+b.dataset.j); return; }
+    const a = b.dataset.a;
+    if (a === "ok" || a === "ng") demoTap(a === "ok");
+    if (a === "next") { if (!GAME.gen) { if (!$("modal").hidden) { onModalClose = null; closeModal(); } nextQuiz(); } }
+    if (a === "reset") demoReset();
+    if (a === "min") { d.classList.toggle("min"); b.textContent = d.classList.contains("min") ? "ひらく" : "たたむ"; }
+  });
+  setInterval(() => {
+    const m = gameMem(), mode = GAME.gen ? "クイズジェネレーター" : GAME.busy ? "演出中" : GAME.fever ? "フィーバー中" : "通常";
+    $("dmSt").textContent = `COMBO ${GAME.combo}　／　${mode}　／　最高 ${m.best || 0}`;
+  }, 250);
+}
+// その場の問題に、正解（または不正解）の選択肢をタップしたことにする
+function demoTap(ok) {
+  if (GAME.busy) return;
+  if (GAME.gen) { if (genQ && !genQ.done) { const el = document.querySelector(`#gen .chs [data-o="${ok ? 0 : 1}"]`); if (el) el.click(); } return; }
+  if (!$("modal").hidden) { onModalClose = null; closeModal(); }
+  if (!quiz || quiz.done) { startQuiz(); slideShownAt = Date.now(); }
+  const el = document.querySelector(`#quizBox [data-o="${ok ? 0 : 1}"]`); if (el) el.click();
+}
+function demoReset() {
+  fxToken++; clearInterval(genTimer); genQ = null;
+  ["gen", "ms", "gend", "pz"].forEach((id) => { const e = $(id); if (e) e.remove(); });
+  $("fit").style.transform = ""; $("fit").style.filter = "";
+  feverEnd(true); GAME.combo = 0; GAME.gen = false; GAME.busy = false; GAME.fever = false;
+  if (!$("modal").hidden) { onModalClose = null; closeModal(); }
+  renderComboBadge(); startQuiz();
+}
+// 指定したコンボ数の状態から始める（10以上はフィーバー、20以上はジェネレーター）
+function demoJump(n) {
+  demoReset();
+  GAME.combo = n; GAME.lastAt = Date.now();
+  if (n >= GM.genAt) { genOpen(); genNext(); }
+  else if (n >= GM.feverAt) feverStart();
+  renderComboBadge();
+}
 loadHolidays().then(renderTrain);
 setInterval(() => { if (holidaysLoadedOn !== ymd(new Date())) loadHolidays(); }, 10 * 60e3);
 loadTrainStatus(); setInterval(loadTrainStatus, CONFIG.train.statusRefreshMin * 60e3);
@@ -3735,7 +3823,7 @@ setInterval(autoFit, 60e3);
 /* ---------- 新しい版の自動反映 ----------
    GitHubのファイルを読み直し、下の BOARD_BUILD（版の印）が変わっていたらページを読み直す。
    詳細ウィンドウを開いている間は待つ */
-const BOARD_BUILD = "20261104-1800";
+const BOARD_BUILD = "20261104-1730";
 async function checkUpdate() {
   try {
     const r = await fetch(location.pathname + "?v=" + Date.now(), { cache: "no-store" });
