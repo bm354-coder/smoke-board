@@ -475,6 +475,105 @@ html,body{height:100%;overflow:hidden;color:var(--text);font-family:var(--jp);-w
 .w3 .scale i{flex:1;height:6px;background:linear-gradient(90deg,#1b4d9c,#1f8fa8,#3aa36b,#d9a53a,#e0533d)}
 .zw .wmsg{color:var(--sub);font-size:15px;padding:40px 0;text-align:center}
 
+/* ---- 連続正解ゲーム（コンボ・フィーバー・ジェネレーター・クリア） ---- */
+.fortune{position:relative}
+.cbadge{display:inline-flex;align-items:baseline;gap:4px;margin-left:12px;padding:1px 10px;font-family:var(--num);font-size:13px;font-weight:800;letter-spacing:.08em;color:#030207;background:var(--cc);box-shadow:0 0 12px var(--cc)}
+.cbadge[hidden]{display:none}
+.cbadge small{font-family:var(--mono);font-size:10px;letter-spacing:.2em}
+/* コンボ：斜めの帯が横切る */
+.cfxB{position:absolute;inset:0;z-index:20;pointer-events:none;overflow:hidden}
+.cfxB .band{position:absolute;left:-10%;right:-10%;top:50%;height:120px;margin-top:-60px;transform:skewY(-8deg);background:linear-gradient(90deg,transparent,rgba(3,2,7,.92) 12%,rgba(3,2,7,.92) 88%,transparent);
+  border-top:3px solid var(--cc);border-bottom:3px solid var(--cc);box-shadow:0 0 24px var(--cc);animation:bBand 1.5s cubic-bezier(.7,0,.3,1) both}
+.cfxB .lines{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 40px,rgba(255,255,255,.12) 40px 42px);animation:bLines .3s linear infinite}
+.cfxB .inn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:18px;transform:skewY(8deg)}
+.cfxB .inn b{font-family:var(--num);font-weight:900;font-size:92px;line-height:1;color:var(--cc);text-shadow:0 0 20px var(--cc);animation:bNum 1.5s ease-out both}
+.cfxB .inn strong{font-family:var(--num);font-weight:900;font-size:46px;letter-spacing:.12em;color:#fff}
+@keyframes bBand{0%{transform:skewY(-8deg) translateX(-110%)}22%{transform:skewY(-8deg) translateX(0)}78%{transform:skewY(-8deg) translateX(0)}100%{transform:skewY(-8deg) translateX(110%)}}
+@keyframes bLines{from{background-position:0 0}to{background-position:-84px 0}}
+@keyframes bNum{0%,20%{transform:scale(2.2);opacity:0}30%{transform:scale(.9);opacity:1}38%{transform:scale(1.05)}46%,100%{transform:scale(1)}}
+.fortune.cglow{animation:cGlow 1.5s ease-out both}
+@keyframes cGlow{0%{box-shadow:0 0 0 2px var(--cc),0 0 40px var(--cc)}100%{box-shadow:0 0 0 1px transparent,0 0 0 transparent}}
+/* フィーバー（金色） */
+#fvr{position:fixed;inset:0;z-index:700;pointer-events:none;overflow:hidden}
+#fvr .tint{position:absolute;inset:0;background:#ffcc33;mix-blend-mode:color;animation:fvTint 4s ease both}
+#fvr .flash{position:absolute;inset:0;background:#fff;animation:fvFlash .6s ease-out both}
+#fvr .sweep{position:absolute;top:-20%;bottom:-20%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,240,180,.45),transparent);transform:skewX(-20deg);animation:fvSweep 1.6s ease-in-out 1.2s both}
+#fvr .ban{position:absolute;left:-20%;right:-20%;top:42%;height:150px;transform:rotate(-6deg);background:repeating-linear-gradient(45deg,#ffcc33 0 26px,#ff9f1a 26px 52px);box-shadow:0 0 40px #ffcc33;display:flex;align-items:center;justify-content:center;animation:fvBan 2.4s cubic-bezier(.7,0,.3,1) .3s both}
+#fvr .ban b{font-family:var(--num);font-weight:900;font-size:112px;letter-spacing:.2em;color:#1a0f00;text-shadow:4px 4px 0 #fff3c4}
+#fvr .mq{position:absolute;left:0;right:0;top:0;height:34px;background:linear-gradient(90deg,#ff9f1a,#ffcc33,#ff9f1a);display:flex;align-items:center;overflow:hidden;animation:fvMq .5s ease 2.6s both}
+#fvr .mq div{white-space:nowrap;font-family:var(--num);font-weight:900;font-size:18px;letter-spacing:.3em;color:#1a0f00;animation:fvRun 14s linear infinite}
+#fvr .edge{position:absolute;inset:0;box-shadow:inset 0 0 0 4px #ffcc33,inset 0 0 40px rgba(255,204,51,.6);animation:fvIn .6s ease 2.6s both}
+@keyframes fvTint{0%{opacity:0}15%{opacity:.75}60%{opacity:.55}100%{opacity:.32}}
+@keyframes fvFlash{from{opacity:.9}to{opacity:0}}
+@keyframes fvSweep{from{left:-40%}to{left:120%}}
+@keyframes fvBan{0%{transform:rotate(-6deg) translateX(-120%)}25%{transform:rotate(-6deg) translateX(0)}75%{transform:rotate(-6deg) translateX(0)}100%{transform:rotate(-6deg) translateX(120%)}}
+@keyframes fvMq{from{transform:translateY(-100%)}to{transform:none}}
+@keyframes fvRun{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes fvIn{from{opacity:0}to{opacity:1}}
+/* ぷちゅん（フリーズ） */
+#pz{position:fixed;inset:0;z-index:960;overflow:hidden}
+#pz > *{position:absolute;inset:0;opacity:0}
+#pz .blk{background:#000}
+#pz .line{inset:auto 0;top:50%;height:4px;margin-top:-2px;background:#fff;box-shadow:0 0 24px #fff}
+#pz .inv{backdrop-filter:invert(1) grayscale(1) contrast(1.4);-webkit-backdrop-filter:invert(1) grayscale(1) contrast(1.4)}
+#pz .wf{background:#fff}
+#pz .big{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#pz .big b{font-family:var(--num);font-weight:900;font-size:200px;line-height:1;color:#000}
+#pz .big span{font-family:var(--num);font-weight:900;font-size:40px;letter-spacing:.4em;color:#000}
+/* クイズジェネレーター */
+#gen{position:fixed;inset:0;z-index:950;overflow:hidden;background:#05030a;color:#fff;font-family:var(--jp);--gc:#ffcc33;--gd:#ff9f1a;--gr:255,204,51}
+#gen .gbox{position:absolute;left:0;top:0;width:1180px;height:780px;transform-origin:0 0}
+#gen .g1{position:absolute;inset:0;display:flex;flex-direction:column;padding:22px 34px 20px}
+#gen .spot{position:absolute;inset:-30%;background:conic-gradient(from 0deg,rgba(var(--gr),0),rgba(var(--gr),.16) 8%,rgba(var(--gr),0) 16%,rgba(255,61,127,.12) 30%,rgba(var(--gr),0) 40%,rgba(var(--gr),.16) 58%,rgba(var(--gr),0) 66%,rgba(5,217,232,.12) 80%,rgba(var(--gr),0) 90%);animation:gSpin 18s linear infinite}
+@keyframes gSpin{to{transform:rotate(360deg)}}
+#gen .top{position:relative;display:flex;align-items:center;justify-content:space-between}
+#gen .tl{display:flex;align-items:center}
+#gen .logo{font-family:var(--num);font-weight:900;font-size:30px;letter-spacing:.14em;background:linear-gradient(90deg,#fff,var(--gc),var(--gd));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 10px rgba(var(--gr),.6))}
+#gen .logo small{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.5em;color:var(--gc);-webkit-text-fill-color:var(--gc)}
+#gen .stg{font-family:var(--mono);font-size:13px;letter-spacing:.35em;color:var(--gc);margin-left:18px;border:1px solid rgba(var(--gr),.6);padding:2px 10px}
+#gen .cmb{display:flex;align-items:baseline;gap:8px;font-family:var(--num);font-weight:900}
+#gen .cmb b{display:inline-block;font-size:64px;line-height:1;color:var(--gc);text-shadow:0 0 20px rgba(var(--gr),.7)}
+#gen .cmb b.pop{animation:gPop .5s ease-out}
+@keyframes gPop{0%{transform:scale(1.6)}100%{transform:scale(1)}}
+#gen .cmb span{font-size:20px;letter-spacing:.2em}
+#gen .qbox{position:relative;margin-top:16px;padding:22px 30px 24px;border:2px solid var(--gc);background:linear-gradient(180deg,rgba(var(--gr),.12),rgba(var(--gr),.03));box-shadow:0 0 30px rgba(var(--gr),.25)}
+#gen .meta{display:flex;gap:12px;font-size:14px;font-weight:700;color:var(--gc);margin-bottom:10px}
+#gen .meta span{border:1px solid rgba(var(--gr),.6);padding:1px 10px}
+#gen .q{font-size:38px;font-weight:900;line-height:1.35}
+#gen .q.lg{font-size:31px}
+#gen .chs{position:relative;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;margin-top:22px;flex:1;min-height:0}
+#gen .chs div{display:flex;align-items:center;gap:18px;padding:0 22px;font-size:30px;font-weight:900;background:rgba(255,255,255,.05);border:2px solid var(--c);box-shadow:inset 6px 0 0 var(--c);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .2s,transform .2s}
+#gen .chs div b{font-family:var(--num);font-size:30px;color:var(--c)}
+#gen .chs div.ok{background:rgba(61,255,139,.22);border-color:#3dff8b;box-shadow:0 0 30px rgba(61,255,139,.6),inset 6px 0 0 #3dff8b;transform:scale(1.02)}
+#gen .chs div.ng{background:rgba(255,61,61,.25);border-color:#ff3d3d;box-shadow:inset 6px 0 0 #ff3d3d}
+#gen .chs div.dim{opacity:.3}
+#gen .bot{position:relative;display:flex;align-items:center;gap:16px;margin-top:18px;font-size:14px;font-weight:700;color:var(--sub)}
+#gen .bar{flex:1;height:12px;background:rgba(255,255,255,.08)}
+#gen .bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--gd),var(--gc));box-shadow:0 0 10px var(--gc)}
+#gen .msg{position:absolute;left:0;right:0;bottom:64px;text-align:center;font-size:22px;font-weight:900;color:#fff;text-shadow:0 0 10px #000;pointer-events:none}
+/* ステージアップ */
+#ms{position:fixed;inset:0;z-index:965;pointer-events:none;overflow:hidden}
+#ms .dim{position:absolute;inset:0;background:rgba(0,0,0,.75);opacity:0}
+#ms .bars{position:absolute;left:-10%;right:-10%;top:50%;height:260px;margin-top:-130px;background:repeating-linear-gradient(90deg,transparent 0 60px,rgba(255,255,255,.08) 60px 64px),linear-gradient(90deg,transparent,rgba(var(--mr),.35),transparent);border-top:3px solid var(--mc);border-bottom:3px solid var(--mc);transform:scaleY(0);box-shadow:0 0 40px rgba(var(--mr),.6)}
+#ms .txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+#ms .txt b{font-family:var(--num);font-weight:900;font-size:130px;line-height:1;color:#fff;text-shadow:0 0 20px var(--mc),0 0 50px var(--mc)}
+#ms .txt span{font-family:var(--num);font-weight:900;font-size:34px;letter-spacing:.35em;color:var(--mc);margin-top:8px}
+#ms .txt em{font-style:normal;font-size:20px;font-weight:700;color:#fff;margin-top:10px;letter-spacing:.1em}
+/* クリア */
+#gend{position:fixed;inset:0;z-index:970;pointer-events:none;overflow:hidden}
+#gend .dim{position:absolute;inset:0;background:#03020a;opacity:0}
+#gend .wf{position:absolute;inset:0;background:#fff;opacity:0}
+#gend .aura{position:absolute;left:50%;top:50%;width:900px;height:900px;margin:-450px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,90,.55),rgba(255,170,40,.18) 38%,transparent 68%);opacity:0}
+#gend .rg{position:absolute;left:50%;top:50%;width:200px;height:200px;margin:-100px;border-radius:50%;border:6px solid #ffcc33;box-shadow:0 0 30px #ffcc33;opacity:0}
+#gend .cnt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+#gend .cnt b{font-family:var(--num);font-weight:900;font-size:240px;line-height:1;background:linear-gradient(180deg,#fff6c8,#ffcc33 50%,#c07a00);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px rgba(255,204,51,.7))}
+#gend .cnt small{font-family:var(--num);font-weight:900;font-size:40px;letter-spacing:.4em;color:#fff;margin-top:6px}
+#gend .cnt em{font-style:normal;font-family:var(--num);font-weight:900;font-size:56px;letter-spacing:.3em;color:#fff;text-shadow:0 0 20px #ffcc33;margin-bottom:6px;opacity:0}
+#gend .shine{position:absolute;top:0;bottom:0;width:180px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);opacity:0}
+#gend .dust{position:absolute;left:0;top:0;width:6px;height:6px;border-radius:50%;background:#fff3c4;box-shadow:0 0 8px #ffcc33,0 0 16px rgba(255,204,51,.6);opacity:0}
+#gend .ty{position:absolute;left:0;right:0;bottom:90px;text-align:center;font-family:var(--mono);font-size:22px;letter-spacing:.6em;color:#fff3c4;opacity:0}
+.clrb{display:inline-flex;align-items:center;margin-left:14px;padding:2px 12px;font-family:var(--num);font-weight:900;font-size:15px;letter-spacing:.2em;color:#1a0f00;background:linear-gradient(90deg,#fff6c8,#ffcc33);box-shadow:0 0 12px #ffcc33;vertical-align:middle}
+
 /* ---- 隠し画面 ---- */
 #time{touch-action:manipulation}
 #time .sec{position:relative}
@@ -831,6 +930,9 @@ const CONFIG = {
   // ニュース欄を時間で切り替える："wsj"（WSJ日本版）/ "today"（今日は何の日）/ "market"（為替・暗号資産）/ "giga"（GIGAZINE）
   //   並べた順に切り替わる。スワイプでも切り替え可。詳細を開いている間は止まる
   newsSlides: { order: ["wsj", "today", "market"], seconds: 20 },
+  // 連続正解のゲーム：5コンボから演出、10でフィーバー、20でクイズジェネレーター、以後20ごとにステージアップ、100でクリア
+  // stageSec＝ジェネレーターの各ステージで答えられる秒数。idleTimeouts＝ジェネレーターで何問続けて時間切れなら終わるか
+  game: { comboFrom: 5, feverAt: 10, genAt: 20, stageEvery: 20, clearAt: 100, stageSec: [18, 14, 11, 8], idleTimeouts: 3, feverIdleMin: 10 },
   // 隠し画面（時計の秒を2秒以内に5回タップ）。moveIn＝入居日。
   // countFromOne を true にすると入居日を「1日目」として数える（false＝経過日数）
   hidden: { moveIn: "2024-08-10", countFromOne: true, taps: 5, idleCloseSec: 60 },
@@ -1396,7 +1498,7 @@ function loadMarket() {
   });
 }
 
-/* ---------- 今日は何の日（1995〜2014年ごろのアニメ・ギャルゲ／エロゲ・ラノベ） ---------- */
+/* ---------- 今日は何の日（1995〜2014年ごろのアニメ・ゲーム・ラノベ） ---------- */
 // [月-日, 種類, 年（なければ空）, 内容]。自由に追加・修正できます
 const OTAKU_DAYS = [
   ["01-03", "誕生日", "", "若瀬いずみ（らき☆すた）"],
@@ -1880,6 +1982,7 @@ function showSlide(i, dir = 1) {
   if (k === "sky") renderSky();
   if (k === "count") renderCount();
   if (k === "quiz") startQuiz();
+  renderComboBadge();
 }
 let slideShownAt = Date.now(), quizHold = 0;
 function slideDuration(k) { return (k === "quiz" ? CONFIG.slides.quizSeconds || 30 : CONFIG.slides.seconds) * 1000; }
@@ -1888,7 +1991,9 @@ function startSlides() {
   if (slideOrder().length > 1) slideTimer = setInterval(() => {
     if (!$("modal").hidden || hidOpen) { slideShownAt = Date.now(); return; }
     const k = slideOrder()[slideIdx];
-    if (Date.now() - slideShownAt >= slideDuration(k) + quizHold) showSlide(slideIdx + 1);
+    if (Date.now() - slideShownAt >= slideDuration(k) + quizHold) {
+      if (GAME.fever && k === "quiz") { startQuiz(); slideShownAt = Date.now(); quizHold = 0; } else showSlide(slideIdx + 1);
+    }
   }, 500);
 }
 
@@ -2052,7 +2157,7 @@ function renderCount() {
 
 /* ---------- アニメクイズ ----------
    a[0] が正解。問題は自由に追加・修正できます */
-/* 1995〜2014年ごろのアニメ・ギャルゲ／エロゲ・ラノベから出題（a[0]が正解、kは解説画面に出す豆知識）。自由に追加・修正できます */
+/* 1995〜2014年ごろのアニメ・ギャルゲ・ラノベから出題（a[0]が正解、kは解説画面に出す豆知識）。自由に追加・修正できます */
 const QUIZ = [
   {"g": "アニメ", "q": "『新世紀エヴァンゲリオン』のTV放送が始まった年は？", "a": ["1995年", "1994年", "1996年", "1997年"], "k": "1995年10月にテレビ東京系で放送が始まった全26話の作品。終盤の展開が大きな議論を呼び、1997年に劇場版『Air/まごころを、君に』が作られた。"},
   {"g": "アニメ", "q": "『エヴァ』TV版の監督は？", "a": ["庵野秀明", "押井守", "今敏", "渡辺信一郎"], "k": "庵野秀明は『トップをねらえ！』『ふしぎの海のナディア』も監督した。のちに実写映画『シン・ゴジラ』（2016年）の総監督も務めている。"},
@@ -2273,183 +2378,183 @@ const QUIZ = [
   {"g": "アニメ", "q": "『ハイキュー!!』日向翔陽が入る高校のバレー部は？", "a": ["烏野高校", "青葉城西高校", "音駒高校", "白鳥沢学園"], "k": "アニメは2014年に放送が始まった。"},
   {"g": "アニメ", "q": "『のんのんびより』宮内れんげのあいさつは？", "a": ["にゃんぱすー", "ごきげんよう", "はわわ", "あうー"], "k": "田舎の分校が舞台の日常もの。2013年放送。"},
   {"g": "アニメ", "q": "『PSYCHO-PASS』の主人公・常守朱が所属する部署は？", "a": ["公安局刑事課一係", "公安9課", "特車2課", "ネルフ作戦部"], "k": "「シビュラシステム」に管理された社会が舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』（1997）の開発ブランドは？", "a": ["Leaf", "Key", "エルフ", "アリスソフト"], "k": "1997年発売。のちに家庭用ゲーム機版やアニメ版も作られ、学園恋愛ゲームの定番になった。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』のメイドロボ・マルチの型番は？", "a": ["HMX-12", "HMX-13", "RX-78", "EVA-01"], "k": "マルチは来栖川電工の試作メイドロボ。同じ時期に作られた高性能機がHMX-13のセリオ。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』で主人公の幼なじみは？", "a": ["神岸あかり", "長岡志保", "来栖川芹香", "保科智子"], "k": "神岸あかりは主人公・藤田浩之の幼なじみ。料理が得意。"},
-  {"g": "ギャルゲ・エロゲ", "q": "Leafの「ビジュアルノベル」シリーズ第1弾は？", "a": ["雫", "痕", "To Heart", "WHITE ALBUM"], "k": "1996年発売。『雫』『痕』『To Heart』と続いたLeafの「ビジュアルノベル」シリーズの第1作。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『下級生』（1996）の開発ブランドは？", "a": ["エルフ", "Leaf", "アリスソフト", "F&C"], "k": "1996年発売。日付ごとのイベントで恋が進む恋愛シミュレーション。のちにOVA化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『この世の果てで恋を唄う少女YU-NO』の開発ブランドは？", "a": ["エルフ", "Leaf", "KID", "âge"], "k": "1996年発売、シナリオは菅野ひろゆき。分岐を地図のように管理する「A.D.M.S.」というシステムが特徴。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ランス』シリーズの開発ブランドは？", "a": ["アリスソフト", "エルフ", "Leaf", "ニトロプラス"], "k": "第1作は1989年。主人公ランスの「俺様」な性格が特徴で、2018年の『ランス10』でシリーズが完結した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ONE 〜輝く季節へ〜』の開発ブランドは？", "a": ["Tactics", "Key", "Leaf", "ねこねこソフト"], "k": "1998年発売。麻枝准らはこのあとKeyを立ち上げ、『Kanon』を作った。"},
-  {"g": "ギャルゲ・エロゲ", "q": "Keyの『Kanon』が発売された年は？", "a": ["1999年", "1997年", "2000年", "2002年"], "k": "1999年6月発売。雪の街が舞台の「泣きゲー」で、2002年と2006年の2回アニメ化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』の主人公は？", "a": ["相沢祐一", "岡崎朋也", "国崎往人", "折原浩平"], "k": "7年ぶりに雪の街を訪れた高校生。いとこの水瀬名雪の家に住むことになる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』月宮あゆの口癖は？", "a": ["うぐぅ", "あうー", "えぅー", "わふー"], "k": "月宮あゆはたい焼きが大好き。背中に羽のついたリュックを背負っている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』川澄舞の「はい」の言い方は？", "a": ["はちみつくまさん", "ぽんぽこたぬきさん", "にょ", "がお"], "k": "「いいえ」のときは「ぽんぽこたぬきさん」。牛丼が好き。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』で「あうー」が口癖のヒロインは？", "a": ["沢渡真琴", "美坂栞", "水瀬名雪", "倉田佐祐理"], "k": "沢渡真琴は、祐一に恨みを持つ記憶喪失の少女。肉まんが好き。"},
-  {"g": "ギャルゲ・エロゲ", "q": "Keyの『AIR』が発売された年は？", "a": ["2000年", "1998年", "2002年", "2004年"], "k": "2000年9月発売。夏の海辺の町が舞台。2005年に京都アニメーションがアニメ化した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』の主人公は？", "a": ["国崎往人", "相沢祐一", "岡崎朋也", "直枝理樹"], "k": "国崎往人は、手を触れずに人形を動かす芸で旅をしている。カラスの「そら」も重要な役で登場する。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』神尾観鈴の口癖は？", "a": ["が、がお", "うぐぅ", "わふー", "あうー"], "k": "神尾観鈴は困ると「が、がお」と言い、そのたびに往人に叩かれる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』のOP曲「鳥の詩」を歌ったのは？", "a": ["Lia", "KOTOKO", "いとうかなこ", "茶太"], "k": "作曲は折戸伸治、作詞は麻枝准。編曲はI'veの高瀬一矢。今もKey作品を代表する曲として歌われている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』『CLANNAD』のメインシナリオライターは？", "a": ["麻枝准", "奈須きのこ", "虚淵玄", "竜騎士07"], "k": "麻枝准は『ONE』『Kanon』にも参加。のちにアニメ『Angel Beats!』『Charlotte』の原作・脚本も担当した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CLANNAD』の主人公は？", "a": ["岡崎朋也", "春原陽平", "相沢祐一", "国崎往人"], "k": "2004年発売。後半の「アフターストーリー」の評価が高く、「CLANNADは人生」という言葉まで生まれた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『リトルバスターズ！』で「わふー」が口癖のヒロインは？", "a": ["能美クドリャフカ", "神北小毬", "三枝葉留佳", "西園美魚"], "k": "愛称はクド。『リトルバスターズ！』は2007年発売で、2012年にアニメ化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』は最初どんな形で発表された？", "a": ["同人ゲーム", "家庭用ゲーム", "商業PCゲーム", "携帯アプリ"], "k": "2000年の冬コミで同人ゲームとして頒布された。サークルTYPE-MOONは、のちに商業ブランドになった。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』の主人公は？", "a": ["遠野志貴", "衛宮士郎", "両儀式", "黒桐幹也"], "k": "物の「死の線」が見える直死の魔眼を持つ。普段は「魔眼殺し」のメガネで見えないようにしている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』のヒロイン・アルクェイドの正体は？", "a": ["真祖の吸血鬼", "魔術師", "代行者", "人造人間"], "k": "アルクェイドは生まれつきの吸血鬼「真祖」で、血を吸う衝動をおさえて生きている。2003年にアニメ『真月譚 月姫』が放送された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』の開発ブランドは？", "a": ["TYPE-MOON", "ニトロプラス", "Key", "Leaf"], "k": "2004年発売。のちにスマホゲーム『Fate/Grand Order』など、多くの派生作品が生まれた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』で衛宮士郎のサーヴァントのクラスは？", "a": ["セイバー", "アーチャー", "ランサー", "ライダー"], "k": "セイバーの正体はアーサー王（アルトリア）。「問おう、貴方が私のマスターか」の登場シーンが有名。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』で遠坂凛のサーヴァントのクラスは？", "a": ["アーチャー", "セイバー", "キャスター", "アサシン"], "k": "アーチャーは赤い外套の弓兵。皮肉屋で、その正体が物語の大きな謎になっている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』『Fate』のシナリオライターは？", "a": ["奈須きのこ", "虚淵玄", "麻枝准", "丸戸史明"], "k": "奈須きのこはTYPE-MOONの中心人物。イラストレーターの武内崇とともにサークルを立ち上げた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『空の境界』両儀式の持つ魔眼は？", "a": ["直死の魔眼", "写輪眼", "邪王真眼", "千里眼"], "k": "物の「死」を線や点として見る目。『空の境界』は奈須きのこの小説で、2007年から劇場アニメ7部作として公開された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "ニトロプラスのデビュー作は？", "a": ["Phantom", "沙耶の唄", "斬魔大聖デモンベイン", "塵骸魔京"], "k": "2000年発売の『Phantom -PHANTOM OF INFERNO-』。シナリオは虚淵玄で、殺し屋に仕立てられる青年の話。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『沙耶の唄』のシナリオライターは？", "a": ["虚淵玄", "奈須きのこ", "竜騎士07", "田中ロミオ"], "k": "2003年発売。虚淵玄はのちに『魔法少女まどか☆マギカ』の脚本や、『Fate/Zero』の原作を手がけた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『君が望む永遠』の開発ブランドは？", "a": ["âge", "ニトロプラス", "Key", "KID"], "k": "2001年発売。恋愛の三角関係を正面から描き、プレイヤーの間で大きな議論になった。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『マブラヴ オルタネイティヴ』で人類が戦う敵は？", "a": ["BETA", "使徒", "ネウロイ", "ワーム"], "k": "BETAは人類に敵対する地球外の生命体。「Beings of the Extra Terrestrial origin which is Adversary of human race」の頭文字。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『D.C. 〜ダ・カーポ〜』の舞台の島の名前は？", "a": ["初音島", "六軒島", "島鉄島", "神咲島"], "k": "一年中桜が咲く島。主人公の朝倉純一は、他人の夢を見る力と、手から和菓子を出す力を持っている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『D.C.』の舞台の島の名物は？", "a": ["一年中枯れない桜", "沈まない太陽", "鳴りやまない鐘", "枯れない向日葵"], "k": "島で起きる不思議な出来事は、この桜が中心になっている。2003年にアニメ化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『D.C. 〜ダ・カーポ〜』の開発ブランドは？", "a": ["CIRCUS", "Navel", "Key", "âge"], "k": "2002年発売。人気シリーズになり、『D.C.II』などの続編が続いた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『SHUFFLE!』の開発ブランドは？", "a": ["Navel", "CIRCUS", "minori", "戯画"], "k": "2004年発売。神界・魔界・人間界が行き来できるようになった世界の話。原画は西又葵。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ef - a fairy tale of the two.』の開発ブランドは？", "a": ["minori", "Navel", "Key", "CIRCUS"], "k": "2006年に前編を発売。2007年にシャフトがアニメ化した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Ever17』の舞台は？", "a": ["海中テーマパーク", "宇宙ステーション", "孤島の洋館", "雪山の山荘"], "k": "海中テーマパーク「LeMU（レミュウ）」が浸水事故を起こし、閉じ込められる話。2002年発売、シナリオは打越鋼太郎。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Piaキャロットへようこそ!!』の舞台は？", "a": ["ファミリーレストラン", "メイド喫茶", "コンビニ", "旅館"], "k": "1996年に第1作。夏休みにファミレス「Piaキャロット」でアルバイトする話で、店の制服の人気が高い。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『車輪の国、向日葵の少女』の開発ブランドは？", "a": ["あかべぇそふとつぅ", "ニトロプラス", "Key", "Navel"], "k": "2005年発売、シナリオはるーすぼーい。罪を犯した人に「義務」が課される国が舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ときめきメモリアル』で告白すると結ばれる伝説がある場所は？", "a": ["伝説の樹の下", "伝説の鐘の前", "屋上", "校門の前"], "k": "1994年発売（PCエンジン）。卒業の日に伝説の樹の下で女の子から告白されると、永遠に幸せになれるという伝説。"},
-  {"g": "ギャルゲ・エロゲ", "q": "ゲーム・アニメ音楽で知られる「I've」の拠点がある都市は？", "a": ["札幌", "福岡", "大阪", "名古屋"], "k": "I'veにはKOTOKO、川田まみ、島みやえい子らが所属した。PCゲームからアニメの主題歌まで多く手がけた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらしのなく頃に』の制作サークルは？", "a": ["07th Expansion", "上海アリス幻樂団", "TYPE-MOON", "黄昏フロンティア"], "k": "07th Expansionは竜騎士07のサークル。2002年から同人ゲームとして発表され、2006年にアニメ化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』竜宮レナの有名な叫びは？", "a": ["嘘だッ！！", "にぱー☆", "うぐぅ", "エル・プサイ・コングルゥ"], "k": "レナの普段の口ぐせは「はぅ〜」「かぁいいよぉ」。そのギャップでこのセリフが強く印象に残った。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』の舞台の村は？", "a": ["雛見沢村", "六軒島", "初音島", "見滝原"], "k": "雛見沢村は架空の村で、岐阜県の白川郷がモデルとされる。昭和58年6月に起きる連続怪死事件を描く。"},
-  {"g": "ギャルゲ・エロゲ", "q": "雛見沢村で毎年行われるお祭りは？", "a": ["綿流し", "鬼祭り", "灯籠流し", "火渡り"], "k": "毎年6月に行われる祭り。その夜に「オヤシロさまの祟り」とされる事件が起きる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『うみねこのなく頃に』の舞台の島は？", "a": ["六軒島", "初音島", "鬼ヶ島", "猫島"], "k": "六軒島は右代宮家が所有する島。1986年10月の親族会議の最中に連続殺人が起きる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『痕』の舞台の温泉地は？", "a": ["隆山", "雛見沢", "初音島", "鳴風"], "k": "1996年発売のLeafのビジュアルノベル。柏木家の4姉妹と、一族に流れる「鬼」の血の物語。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『痕』で主人公が訪れる親戚の家の名字は？", "a": ["柏木", "遠野", "来栖川", "右代宮"], "k": "主人公の柏木耕一は、亡くなった叔父の家で4人のいとこと夏を過ごす。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『雫』の主人公は？", "a": ["長瀬祐介", "柏木耕一", "藤田浩之", "藤井冬弥"], "k": "選択肢はすべてLeaf作品の主人公。耕一は『痕』、浩之は『To Heart』、冬弥は『WHITE ALBUM』。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『雫』『痕』『To Heart』の原画を担当したのは？", "a": ["水無月徹", "樋上いたる", "武内崇", "西又葵"], "k": "90年代のLeafの絵柄を作った原画家。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』『AIR』のキャラクターデザインを担当したのは？", "a": ["樋上いたる", "水無月徹", "武内崇", "七尾奈留"], "k": "大きな目の独特な絵柄で知られる、初期Keyの原画家。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『WHITE ALBUM』（1998年）で主人公の恋人のアイドルは？", "a": ["森川由綺", "緒方理奈", "澤倉美咲", "観月マナ"], "k": "アイドルとして売れていく恋人と、会えない時間に揺れる冬の物語。緒方理奈はトップアイドル。"},
-  {"g": "ギャルゲ・エロゲ", "q": "Leafの『こみっくパーティー』の題材は？", "a": ["同人誌即売会", "メイド喫茶", "声優養成所", "甲子園"], "k": "1999年発売。主人公が同人誌を描いて即売会に参加していく。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『うたわれるもの』（2002年）の主人公は？", "a": ["ハクオロ", "エルルゥ", "オボロ", "カルラ"], "k": "記憶を失い、外せない仮面をつけた男。Leafのシミュレーションと物語を組み合わせた作品。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ToHeart2』で主人公を「タカくん」と呼ぶ年下の幼なじみは？", "a": ["柚原このみ", "向坂環", "小牧愛佳", "十波由真"], "k": "2004年発売。主人公は河野貴明。環も幼なじみだが年上。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』来栖川芹香の趣味は？", "a": ["オカルト", "料理", "格闘技", "鉄道"], "k": "小さな声で話す、魔術が好きなお嬢様。妹の綾香は格闘技が得意。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』で関西弁を話すヒロインは？", "a": ["保科智子", "長岡志保", "姫川琴音", "松原葵"], "k": "神戸から転校してきた委員長。最初はクラスになじめずにいる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』マルチの口ぐせは？", "a": ["はわわ", "うぐぅ", "あうー", "が、がお"], "k": "ドジだけど一生懸命なメイドロボ。「はわわ」はドジキャラの定番の言葉になった。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』の主人公は？", "a": ["藤田浩之", "相沢祐一", "折原浩平", "河野貴明"], "k": "河野貴明は続編『ToHeart2』の主人公。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『planetarian』のロボットの少女の名前は？", "a": ["ほしのゆめみ", "マルチ", "セリオ", "ちぃ"], "k": "2004年発売のKey作品。廃墟の街のプラネタリウムで、お客を待ち続けるロボットの話。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CLANNAD』伊吹風子が配って回る手作りの物は？", "a": ["ヒトデの木彫り", "星形のクッキー", "折り鶴", "押し花"], "k": "お姉さんの結婚式を祝ってもらうために配っている。本人はヒトデが大好き。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CLANNAD』藤林杏が投げつける物は？", "a": ["辞書", "ハリセン", "釘バット", "牛乳"], "k": "杏は気が強く、春原陽平によく辞書を投げつける。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CLANNAD』坂上智代が目指す役職は？", "a": ["生徒会長", "部長", "風紀委員", "番長"], "k": "けんかがとても強い転校生。ある目的のために生徒会長を目指す。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CLANNAD』古河渚の家の仕事は？", "a": ["パン屋", "喫茶店", "本屋", "神社"], "k": "古河パン。母の早苗さんが作る独創的なパンが、作中でよくネタになる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CLANNAD』で渚が大好きなキャラクターは？", "a": ["だんご大家族", "ボン太くん", "ゲキ・ガンガー", "くんくん"], "k": "京アニのアニメ版ではEDテーマ「だんご大家族」にもなった。"},
-  {"g": "ギャルゲ・エロゲ", "q": "アニメ『CLANNAD』（TV版）の制作会社は？", "a": ["京都アニメーション", "東映アニメーション", "J.C.STAFF", "シャフト"], "k": "2007年放送。同じ年の劇場版は東映アニメーションが制作した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『リトルバスターズ！』の主人公は？", "a": ["直枝理樹", "棗恭介", "井ノ原真人", "宮沢謙吾"], "k": "2007年発売。リーダーの恭介が、仲間を集めて野球チームを作ろうと言い出す。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『リトルバスターズ！』でみんなが始める球技は？", "a": ["野球", "サッカー", "バスケットボール", "ドッジボール"], "k": "ヒロインたちを仲間に誘って、野球チームのメンバーを集めていく。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『リトルバスターズ！』棗鈴がいつも一緒にいる動物は？", "a": ["猫", "犬", "カラス", "ペンギン"], "k": "鈴は人見知りだが猫にはとても好かれていて、たくさんの猫の世話をしている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』で千年前を描く章の名前は？", "a": ["SUMMER", "DREAM", "AIR", "AFTER"], "k": "DREAM・SUMMER・AIRの3章構成。SUMMERは平安時代のような世界が舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』遠野美凪が人に配るものは？", "a": ["お米券", "ヒトデの木彫り", "たい焼き", "肉まん"], "k": "「進呈」と言って手渡す。ヒトデの木彫りは『CLANNAD』の風子。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』神尾観鈴が好きなジュースは？", "a": ["どろり濃厚ピーチ味", "ぷるぷるピーチ味", "つぶつぶオレンジ", "とろとろバナナ味"], "k": "往人はまずいと言うが、観鈴はこれが大好き。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』で国崎往人が探しているのは？", "a": ["空にいる翼を持つ少女", "海の底の人魚", "森に住む魔女", "月に住む姫"], "k": "母から聞かされた「空にいる少女」を探して旅をしている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』の舞台のモデルとされる地域は？", "a": ["和歌山県", "静岡県", "香川県", "石川県"], "k": "和歌山県の美浜町あたりがモデルとされ、ファンが訪れる場所になっている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』美坂栞が好きな食べ物は？", "a": ["アイスクリーム", "たい焼き", "牛丼", "肉まん"], "k": "冬でもアイスを食べている。体が弱く、学校を休んでいる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』水瀬秋子さんが一瞬で言う返事は？", "a": ["了承", "問題ない", "却下", "はちみつくまさん"], "k": "1秒で「了承」と答えるのがお約束。手作りの「謎ジャム」も有名。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』水瀬名雪が入っている部活は？", "a": ["陸上部", "剣道部", "吹奏楽部", "料理部"], "k": "部長を務めている。朝がとても弱い。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』川澄舞が夜の学校で戦っている相手は？", "a": ["魔物", "使徒", "幽霊", "吸血鬼"], "k": "剣を持って、夜の校舎に現れる「魔物」と一人で戦っている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』沢渡真琴の正体は？", "a": ["狐", "猫", "狸", "犬"], "k": "祐一が昔助けた、ものみの丘の狐。"},
-  {"g": "ギャルゲ・エロゲ", "q": "Keyのブランドを持つ会社は？", "a": ["ビジュアルアーツ", "アクアプラス", "ブロッコリー", "KID"], "k": "大阪に本社がある会社。多くのPCゲームブランドを抱えている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "Leafのブランドを持つ会社は？", "a": ["アクアプラス", "ビジュアルアーツ", "ブロッコリー", "5pb."], "k": "『うたわれるもの』や『WHITE ALBUM2』などもこの会社から出ている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ONE ～輝く季節へ～』の主人公は？", "a": ["折原浩平", "相沢祐一", "藤田浩之", "国崎往人"], "k": "「えいえんのせかい」が物語の大きな鍵になる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ONE』で主人公を毎朝起こしに来る幼なじみは？", "a": ["長森瑞佳", "神岸あかり", "水瀬名雪", "朝倉音夢"], "k": "面倒見のいい幼なじみ。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』遠野志貴の妹は？", "a": ["遠野秋葉", "琥珀", "翡翠", "シエル"], "k": "遠野家の当主。琥珀と翡翠は遠野家に仕える双子のメイド。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』シエル先輩の好物は？", "a": ["カレー", "ピザ", "牛丼", "たい焼き"], "k": "カレー好きはTYPE-MOON作品で定番のネタになっている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』の格闘ゲームのタイトルは？", "a": ["MELTY BLOOD", "ギルティギア", "アルカナハート", "ブレイブルー"], "k": "TYPE-MOONと同人サークル「渡辺製作所」が共同で作り、のちにゲームセンターにも登場した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』衛宮士郎が目指しているものは？", "a": ["正義の味方", "魔術師の頂点", "世界一の剣士", "聖杯の守り手"], "k": "養父・衛宮切嗣から受け継いだ夢。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate』でマスターとサーヴァントが戦う儀式の名前は？", "a": ["聖杯戦争", "試験召喚戦争", "円卓会議", "バトルロワイヤル"], "k": "勝ち残った者は、願いをかなえる「聖杯」を手に入れられる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』で間桐桜がヒロインのルートは？", "a": ["Heaven's Feel", "Fate", "Unlimited Blade Works", "hollow ataraxia"], "k": "Fateルートはセイバー、UBWルートは凛がヒロイン。HFは2017年から劇場版3部作になった。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate』でマスターの手にある令呪の数は？", "a": ["3画", "1画", "5画", "7画"], "k": "サーヴァントに絶対の命令を出せる印。1回使うごとに1画消える。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate』の聖杯戦争に呼ばれるサーヴァントの数は？", "a": ["7騎", "5騎", "12騎", "3騎"], "k": "セイバー・アーチャー・ランサー・ライダー・キャスター・アサシン・バーサーカーの7クラス。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』のランサーの正体は？", "a": ["クー・フーリン", "ヘラクレス", "メドゥーサ", "佐々木小次郎"], "k": "アイルランドの英雄。必ず心臓を貫く槍「ゲイ・ボルク」を持つ。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate』イリヤスフィールのサーヴァントのクラスは？", "a": ["バーサーカー", "ライダー", "キャスター", "アサシン"], "k": "正体はギリシャ神話の英雄ヘラクレス。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』で衛宮士郎が昔入っていた部活は？", "a": ["弓道部", "剣道部", "陸上部", "美術部"], "k": "弓の腕は抜群だった。後輩の間桐桜も弓道部。"},
-  {"g": "ギャルゲ・エロゲ", "q": "2006年のアニメ『Fate/stay night』の制作会社は？", "a": ["スタジオディーン", "ufotable", "京都アニメーション", "シャフト"], "k": "のちにufotableが『UBW』と『HF』を新たにアニメ化した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "劇場版『空の境界』の制作会社は？", "a": ["ufotable", "スタジオディーン", "シャフト", "京都アニメーション"], "k": "2007年から7章（のちに追加あり）で公開された。のちに『Fate/Zero』も手がける。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『斬魔大聖デモンベイン』の題材になった神話は？", "a": ["クトゥルフ神話", "北欧神話", "ギリシャ神話", "日本神話"], "k": "2003年発売、ニトロプラス。魔導書が少女の姿をした「アル・アジフ」が登場する。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『斬魔大聖デモンベイン』の主人公は？", "a": ["大十字九郎", "吾妻玲二", "孔濤羅", "匂坂郁紀"], "k": "貧乏な探偵。魔導書アル・アジフと出会い、鬼械神（デウス・マキナ）デモンベインに乗る。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Phantom』の主人公は？", "a": ["吾妻玲二", "大十字九郎", "孔濤羅", "匂坂郁紀"], "k": "記憶を奪われ、暗殺者「ツヴァイ」に仕立てられる日本人の青年。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『鬼哭街』の舞台の都市は？", "a": ["上海", "香港", "九龍", "台北"], "k": "2002年発売、シナリオは虚淵玄。近未来の上海で、剣士が妹の仇を追う。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『沙耶の唄』で主人公の目に周りの人間はどう見える？", "a": ["肉の塊の化け物", "骸骨", "人形", "影"], "k": "事故の後遺症で世界がおぞましく見える中、少女・沙耶だけが美しく見える。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『君が望む永遠』の主人公は？", "a": ["鳴海孝之", "白銀武", "伊藤誠", "岡崎朋也"], "k": "ヒロインの涼宮遥と速瀬水月の間で揺れる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『君が望む永遠』涼宮遥が好きな絵本は？", "a": ["マヤウルのおくりもの", "泣いた赤鬼", "星の王子さま", "100万回生きたねこ"], "k": "作中の架空の絵本。遥は事故のあと、3年間眠り続ける。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『マブラヴ』シリーズの主人公は？", "a": ["白銀武", "鳴海孝之", "伊藤誠", "平賀才人"], "k": "学園ものの『マブラヴ』から、異星生命体と戦う『オルタネイティヴ』へ続く。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『マブラヴ オルタネイティヴ』の人型兵器の名前は？", "a": ["戦術機", "モビルスーツ", "ナイトメアフレーム", "エステバリス"], "k": "人類がBETAと戦うための人型兵器。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『School Days』の開発ブランドは？", "a": ["0verflow", "Leaf", "Key", "âge"], "k": "アニメ版の最終回が放送直前に差し替えられ、代わりの映像の「Nice boat.」が話題になった。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『School Days』の主人公は？", "a": ["伊藤誠", "鳴海孝之", "白銀武", "桂言葉"], "k": "ヒロインの桂言葉と西園寺世界の間で揺れる。結末の過激さで知られる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Ever17』の開発会社は？", "a": ["KID", "Key", "âge", "CIRCUS"], "k": "「Infinity」シリーズの第2作。第1作は『Never7』。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ときめきメモリアル』のメインヒロインは？", "a": ["藤崎詩織", "虹野沙希", "鏡魅羅", "館林見晴"], "k": "主人公の幼なじみ。勉強も運動も見た目もすべて高い数値が求められる、最難関のヒロイン。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ときめきメモリアル』の発売元は？", "a": ["コナミ", "セガ", "ナムコ", "スクウェア"], "k": "1994年にPCエンジンで発売。大ヒットしてシリーズ化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ときメモ』でほかの女の子を放っておくと現れるものは？", "a": ["爆弾", "雷", "黒猫", "鬼"], "k": "「爆弾」が爆発すると、ほかの女の子たちの評判まで下がってしまう。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ときめきメモリアル』の舞台の高校は？", "a": ["きらめき高校", "ひびきの高校", "陵桜学園", "風見学園"], "k": "続編『ときメモ2』の舞台はひびきの高校。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『センチメンタルグラフティ』のヒロインの人数は？", "a": ["12人", "9人", "7人", "13人"], "k": "全国12の都市に住む12人の女の子に会いに行くゲーム。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『この世の果てで恋を唄う少女YU-NO』の主人公は？", "a": ["有馬たくや", "遠野志貴", "相沢祐一", "白銀武"], "k": "父が残した装置で、並行世界を行き来する。2019年にTVアニメ化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ランス』シリーズで主人公についていく少女は？", "a": ["シィル・プライン", "マリア", "魔想志津香", "見当かなみ"], "k": "ランスの奴隷として、いつも振り回されながらついていく魔法使い。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『鬼畜王ランス』でランスが王になる国は？", "a": ["リーザス", "ゼス", "ヘルマン", "JAPAN"], "k": "1996年発売。王になったランスが大陸の統一を目指す。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『戦国ランス』の舞台になる国は？", "a": ["JAPAN", "リーザス", "ゼス", "ヘルマン"], "k": "2006年発売。日本の戦国時代をもとにした国「JAPAN」で天下統一を目指す。"},
-  {"g": "ギャルゲ・エロゲ", "q": "アリスソフト『大悪司』の舞台の都市は？", "a": ["大阪", "東京", "京都", "名古屋"], "k": "2001年発売。大阪の街を地図の上で奪い合う、勢力争いのゲーム。"},
-  {"g": "ギャルゲ・エロゲ", "q": "アリスソフトの本社がある都市は？", "a": ["大阪", "札幌", "東京", "福岡"], "k": "アリスソフトは大阪の会社。『ランス』シリーズで知られる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『D.C.』朝倉音夢と主人公の関係は？", "a": ["義理の妹", "幼なじみ", "担任の先生", "いとこ"], "k": "主人公・朝倉純一の血のつながらない妹。いとこは芳乃さくら。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『SHUFFLE!』の主人公は？", "a": ["土見稟", "朝倉純一", "鳴海孝之", "直枝理樹"], "k": "神界の王女シアと魔界の王女ネリネが、そろって主人公の家の隣に引っ越してくる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ef』シリーズの舞台の町は？", "a": ["音羽", "初音島", "竜宮島", "雛見沢"], "k": "いくつもの恋の物語が、同じ町の中で交差していく。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『車輪の国、向日葵の少女』の主人公は？", "a": ["森田賢一", "鳴海孝之", "白銀武", "土見稟"], "k": "罪を犯した人を見守る「特別高等人」を目指す青年。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CROSS†CHANNEL』のシナリオライターは？", "a": ["田中ロミオ", "虚淵玄", "麻枝准", "竜騎士07"], "k": "2003年発売。のちにライトノベル『人類は衰退しました』も書いた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『夜明け前より瑠璃色な』のヒロイン、フィーナの出身は？", "a": ["月の王国", "火星", "異世界", "海底都市"], "k": "2005年発売、オーガスト。月の王国の王女が、地球の主人公の家にホームステイする。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『パルフェ』のシナリオライターは？", "a": ["丸戸史明", "田中ロミオ", "麻枝准", "奈須きのこ"], "k": "2005年発売、喫茶店が舞台。丸戸史明はのちに『冴えない彼女の育てかた』を書いた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『とらいあんぐるハート3』で高町なのはは主人公の何？", "a": ["妹", "娘", "幼なじみ", "先輩"], "k": "主人公は高町恭也。このおまけシナリオから『リリカルなのは』が生まれた。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『シスター・プリンセス』で兄を「兄チャマ」と呼ぶ妹は？", "a": ["四葉", "雛子", "千影", "衛"], "k": "12人の妹は兄の呼び方がそれぞれ違う。四葉は名探偵にあこがれている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『サクラ大戦』の舞台の時代の元号は？", "a": ["太正", "大正", "明治", "昭和"], "k": "実在の「大正」ではなく、架空の「太正」。帝国華撃団が帝都を守る。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『サクラ大戦』の主人公は？", "a": ["大神一郎", "真宮寺さくら", "神崎すみれ", "米田一基"], "k": "海軍の少尉。帝国華撃団・花組の隊長として着任する。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらしのなく頃に』の主人公は？", "a": ["前原圭一", "右代宮戦人", "竜宮レナ", "北条悟史"], "k": "雛見沢村に引っ越してきた少年。戦人は『うみねこ』の主人公。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』で「にぱー☆」「みぃ」が口ぐせなのは？", "a": ["古手梨花", "北条沙都子", "園崎魅音", "竜宮レナ"], "k": "古手神社の巫女。村の謎に深くかかわっている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』北条沙都子が得意なものは？", "a": ["トラップ", "料理", "将棋", "射撃"], "k": "部活の遊びでも山の中でも、トラップで相手を追い詰める。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』羽入の口ぐせは？", "a": ["あぅあぅ", "にぱー", "はぅ〜", "うぐぅ"], "k": "後半で登場する少女。古手梨花といつも一緒にいる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらしのなく頃に』の最初のエピソードは？", "a": ["鬼隠し編", "綿流し編", "祟殺し編", "皆殺し編"], "k": "前半の4話は「出題編」、後半の謎を解いていく話は「解答編」と呼ばれる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『うみねこのなく頃に』の主人公は？", "a": ["右代宮戦人", "前原圭一", "右代宮朱志香", "右代宮譲治"], "k": "6年ぶりに親族会議に参加した少年。魔女の存在を否定し続ける。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『うみねこ』の「黄金の魔女」の名前は？", "a": ["ベアトリーチェ", "ベルンカステル", "ラムダデルタ", "ヱリカ"], "k": "六軒島の連続殺人は魔女の仕業か人間の仕業か、を推理で争う。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CHAOS;HEAD』の舞台の街は？", "a": ["渋谷", "秋葉原", "池袋", "新宿"], "k": "2008年発売。「科学アドベンチャーシリーズ」の第1作で、次の作品が『STEINS;GATE』。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『STEINS;GATE』岡部倫太郎が名乗る名前は？", "a": ["鳳凰院凶真", "闇野カゲロウ", "黒羽ジン", "魔王ゼロ"], "k": "2009年発売、秋葉原が舞台。自称「狂気のマッドサイエンティスト」。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『恋姫†無双』の題材は？", "a": ["三国志", "戦国時代", "水滸伝", "西遊記"], "k": "2007年発売。三国志の武将たちが女の子になっている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『アイドルマスター』の主人公たちの事務所は？", "a": ["765プロ", "961プロ", "346プロ", "876プロ"], "k": "2005年にゲームセンターで始まった。961プロはライバルの事務所。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ラブプラス』が発売されたゲーム機は？", "a": ["ニンテンドーDS", "PSP", "PS2", "ゲームボーイ"], "k": "2009年発売、コナミ。静岡県の熱海とのコラボ企画も話題になった。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『アマガミ』の主人公は？", "a": ["橘純一", "朝倉純一", "鳴海孝之", "河野貴明"], "k": "2009年にPS2で発売。名前が『D.C.』の朝倉純一とよく似ているので注意。"},
-  {"g": "ギャルゲ・エロゲ", "q": "Keyの『Kanon』が最初にアニメ化された年は？", "a": ["2002年", "1999年", "2006年", "2010年"], "k": "最初は東映アニメーションが制作。2006年に京都アニメーションが改めてアニメ化した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『BALDR FORCE』の主な遊び方は？", "a": ["ロボットのアクション", "カードバトル", "パズル", "音楽ゲーム"], "k": "2002年発売、戯画。電脳空間でロボットを操って戦う、アクションとAVGの組み合わせ。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『To Heart』のメイドロボ・セリオの型番は？", "a": ["HMX-13", "HMX-12", "HMX-17", "RX-78"], "k": "マルチ（HMX-12）と同じ時期に作られた高性能機。サテライトサービスで能力を受け取る。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』の舞台の季節は？", "a": ["冬", "春", "夏", "秋"], "k": "雪の積もる街が舞台。『AIR』は夏が舞台で、季節の対比でも語られる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『AIR』のOP曲の名前は？", "a": ["鳥の詩", "夏影", "青空", "Last regrets"], "k": "「夏影」「青空」もAIRの曲。「Last regrets」は『Kanon』のOP。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Kanon』のOP曲の名前は？", "a": ["Last regrets", "鳥の詩", "メグメル", "Little Busters!"], "k": "「メグメル」は『CLANNAD』、「Little Busters!」は『リトルバスターズ！』のOP。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CLANNAD』のOP曲の名前は？", "a": ["メグメル", "鳥の詩", "Last regrets", "だんご大家族"], "k": "ゲーム版のOP。歌はeufonius。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』のヒロイン・アルクェイドの髪の色は？", "a": ["金髪", "黒髪", "銀髪", "赤毛"], "k": "金髪で白いセーターを着た姿がよく知られている。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Fate/stay night』の舞台の街は？", "a": ["冬木市", "三咲町", "雛見沢", "初音島"], "k": "三咲町は『月姫』の舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『月姫』の舞台の街は？", "a": ["三咲町", "冬木市", "観布子市", "初音島"], "k": "冬木市は『Fate』の舞台、観布子市は『空の境界』の舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『STEINS;GATE』の舞台の街は？", "a": ["秋葉原", "渋谷", "池袋", "中野"], "k": "秋葉原の雑居ビルにある「未来ガジェット研究所」が拠点。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『STEINS;GATE』で過去にメールを送る装置の通称は？", "a": ["電話レンジ（仮）", "タイムリープマシン", "ダイバージェンスメーター", "IBN5100"], "k": "電子レンジを改造した装置。のちにタイムリープマシンへ発展する。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『うみねこのなく頃に』の制作サークルは？", "a": ["07th Expansion", "TYPE-MOON", "上海アリス幻樂団", "黄昏フロンティア"], "k": "『ひぐらし』と同じ竜騎士07のサークル。2007年から発表された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ひぐらし』の物語の時代は？", "a": ["昭和58年", "昭和48年", "平成元年", "平成10年"], "k": "1983年6月の雛見沢村が舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "Keyの『Rewrite』（2011年）の主人公は？", "a": ["天王寺瑚太朗", "岡崎朋也", "直枝理樹", "相沢祐一"], "k": "メインシナリオは田中ロミオ。竜騎士07もシナリオに参加した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Rewrite』の舞台の街は？", "a": ["風祭市", "初音島", "音羽", "竜宮島"], "k": "緑化が進んだ地方都市が舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『Rewrite』にシナリオで参加した『ひぐらし』の作者は？", "a": ["竜騎士07", "虚淵玄", "奈須きのこ", "丸戸史明"], "k": "メインの田中ロミオと共に、ルートの一部を担当した。"},
-  {"g": "ギャルゲ・エロゲ", "q": "TYPE-MOON『魔法使いの夜』（2012年）の主人公の少女は？", "a": ["蒼崎青子", "久遠寺有珠", "両儀式", "遠坂凛"], "k": "1980年代後半の三咲町が舞台。シナリオは奈須きのこ。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『素晴らしき日々 ～不連続存在～』（2010年）の開発ブランドは？", "a": ["ケロQ", "ニトロプラス", "Key", "âge"], "k": "シナリオはSCA-自。哲学的な内容で評価が高い。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『グリザイアの果実』（2011年）の開発ブランドは？", "a": ["フロントウイング", "ゆずソフト", "オーガスト", "Navel"], "k": "主人公の風見雄二が、問題を抱えた少女たちの学園に転入する。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『グリザイアの果実』の主人公は？", "a": ["風見雄二", "天王寺瑚太朗", "北原春希", "森田賢一"], "k": "2014年にアニメ化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『穢翼のユースティア』（2011年）の開発ブランドは？", "a": ["オーガスト", "CIRCUS", "ゆずソフト", "âge"], "k": "浮遊都市を舞台にしたダークファンタジー。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『恋と選挙とチョコレート』（2010年）の開発ブランドは？", "a": ["sprite", "ゆずソフト", "Navel", "minori"], "k": "生徒会選挙を舞台にした学園もの。2012年にアニメ化。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『DRACU-RIOT!』（2013年）の開発ブランドは？", "a": ["ゆずソフト", "オーガスト", "sprite", "フロントウイング"], "k": "吸血鬼の住む人工島が舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『ROBOTICS;NOTES』（2012年）の舞台の島は？", "a": ["種子島", "六軒島", "竜宮島", "初音島"], "k": "科学アドベンチャーシリーズの一つ。ロボット部の高校生たちの物語。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『CHAOS;CHILD』（2014年）の舞台の街は？", "a": ["渋谷", "秋葉原", "種子島", "池袋"], "k": "『CHAOS;HEAD』の6年後の渋谷が舞台。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『WHITE ALBUM2』（2010年〜）の主人公は？", "a": ["北原春希", "藤井冬弥", "鳴海孝之", "藤田浩之"], "k": "Leafの作品。シナリオは丸戸史明。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『WHITE ALBUM2』でピアノの天才少女は？", "a": ["冬馬かずさ", "小木曽雪菜", "森川由綺", "緒方理奈"], "k": "学園祭のバンドをきっかけに、三角関係の物語が始まる。"},
-  {"g": "ギャルゲ・エロゲ", "q": "ニトロプラス『装甲悪鬼村正』（2009年）のシナリオライターは？", "a": ["奈良原一鉄", "虚淵玄", "下倉バイオ", "鋼屋ジン"], "k": "鎧（劔冑）をまとった武者たちの戦いを描く。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『アイドルマスター シンデレラガールズ』（2011年）が最初に配信されたのは？", "a": ["Mobage", "GREE", "LINE", "Steam"], "k": "ソーシャルゲームとして始まり、のちにアニメ化された。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『艦隊これくしょん -艦これ-』でプレイヤーは何と呼ばれる？", "a": ["提督", "プロデューサー", "マスター", "指揮官"], "k": "2013年4月に運営開始。艦船を少女の姿にした「艦娘」を集める。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『STEINS;GATE』でメールを過去に送ることを何と呼ぶ？", "a": ["Dメール", "タイムリープ", "リーディング・シュタイナー", "世界線変動"], "k": "「Dメール」は過去へのメール。記憶を過去へ送るのがタイムリープ。"},
-  {"g": "ギャルゲ・エロゲ", "q": "『STEINS;GATE』岡部倫太郎が持つ、世界の変化を覚えていられる力は？", "a": ["リーディング・シュタイナー", "直死の魔眼", "幻想殺し", "死に戻り"], "k": "ほかの人が忘れても、岡部だけが前の世界線の記憶を持ち続ける。"},
+  {"g": "ギャルゲ", "q": "『To Heart』（1997）の開発ブランドは？", "a": ["Leaf", "Key", "エルフ", "アリスソフト"], "k": "1997年発売。のちに家庭用ゲーム機版やアニメ版も作られ、学園恋愛ゲームの定番になった。"},
+  {"g": "ギャルゲ", "q": "『To Heart』のメイドロボ・マルチの型番は？", "a": ["HMX-12", "HMX-13", "RX-78", "EVA-01"], "k": "マルチは来栖川電工の試作メイドロボ。同じ時期に作られた高性能機がHMX-13のセリオ。"},
+  {"g": "ギャルゲ", "q": "『To Heart』で主人公の幼なじみは？", "a": ["神岸あかり", "長岡志保", "来栖川芹香", "保科智子"], "k": "神岸あかりは主人公・藤田浩之の幼なじみ。料理が得意。"},
+  {"g": "ギャルゲ", "q": "Leafの「ビジュアルノベル」シリーズ第1弾は？", "a": ["雫", "痕", "To Heart", "WHITE ALBUM"], "k": "1996年発売。『雫』『痕』『To Heart』と続いたLeafの「ビジュアルノベル」シリーズの第1作。"},
+  {"g": "ギャルゲ", "q": "『下級生』（1996）の開発ブランドは？", "a": ["エルフ", "Leaf", "アリスソフト", "F&C"], "k": "1996年発売。日付ごとのイベントで恋が進む恋愛シミュレーション。のちにOVA化された。"},
+  {"g": "ギャルゲ", "q": "『この世の果てで恋を唄う少女YU-NO』の開発ブランドは？", "a": ["エルフ", "Leaf", "KID", "âge"], "k": "1996年発売、シナリオは菅野ひろゆき。分岐を地図のように管理する「A.D.M.S.」というシステムが特徴。"},
+  {"g": "ギャルゲ", "q": "『ランス』シリーズの開発ブランドは？", "a": ["アリスソフト", "エルフ", "Leaf", "ニトロプラス"], "k": "第1作は1989年。主人公ランスの「俺様」な性格が特徴で、2018年の『ランス10』でシリーズが完結した。"},
+  {"g": "ギャルゲ", "q": "『ONE 〜輝く季節へ〜』の開発ブランドは？", "a": ["Tactics", "Key", "Leaf", "ねこねこソフト"], "k": "1998年発売。麻枝准らはこのあとKeyを立ち上げ、『Kanon』を作った。"},
+  {"g": "ギャルゲ", "q": "Keyの『Kanon』が発売された年は？", "a": ["1999年", "1997年", "2000年", "2002年"], "k": "1999年6月発売。雪の街が舞台の「泣きゲー」で、2002年と2006年の2回アニメ化された。"},
+  {"g": "ギャルゲ", "q": "『Kanon』の主人公は？", "a": ["相沢祐一", "岡崎朋也", "国崎往人", "折原浩平"], "k": "7年ぶりに雪の街を訪れた高校生。いとこの水瀬名雪の家に住むことになる。"},
+  {"g": "ギャルゲ", "q": "『Kanon』月宮あゆの口癖は？", "a": ["うぐぅ", "あうー", "えぅー", "わふー"], "k": "月宮あゆはたい焼きが大好き。背中に羽のついたリュックを背負っている。"},
+  {"g": "ギャルゲ", "q": "『Kanon』川澄舞の「はい」の言い方は？", "a": ["はちみつくまさん", "ぽんぽこたぬきさん", "にょ", "がお"], "k": "「いいえ」のときは「ぽんぽこたぬきさん」。牛丼が好き。"},
+  {"g": "ギャルゲ", "q": "『Kanon』で「あうー」が口癖のヒロインは？", "a": ["沢渡真琴", "美坂栞", "水瀬名雪", "倉田佐祐理"], "k": "沢渡真琴は、祐一に恨みを持つ記憶喪失の少女。肉まんが好き。"},
+  {"g": "ギャルゲ", "q": "Keyの『AIR』が発売された年は？", "a": ["2000年", "1998年", "2002年", "2004年"], "k": "2000年9月発売。夏の海辺の町が舞台。2005年に京都アニメーションがアニメ化した。"},
+  {"g": "ギャルゲ", "q": "『AIR』の主人公は？", "a": ["国崎往人", "相沢祐一", "岡崎朋也", "直枝理樹"], "k": "国崎往人は、手を触れずに人形を動かす芸で旅をしている。カラスの「そら」も重要な役で登場する。"},
+  {"g": "ギャルゲ", "q": "『AIR』神尾観鈴の口癖は？", "a": ["が、がお", "うぐぅ", "わふー", "あうー"], "k": "神尾観鈴は困ると「が、がお」と言い、そのたびに往人に叩かれる。"},
+  {"g": "ギャルゲ", "q": "『AIR』のOP曲「鳥の詩」を歌ったのは？", "a": ["Lia", "KOTOKO", "いとうかなこ", "茶太"], "k": "作曲は折戸伸治、作詞は麻枝准。編曲はI'veの高瀬一矢。今もKey作品を代表する曲として歌われている。"},
+  {"g": "ギャルゲ", "q": "『AIR』『CLANNAD』のメインシナリオライターは？", "a": ["麻枝准", "奈須きのこ", "虚淵玄", "竜騎士07"], "k": "麻枝准は『ONE』『Kanon』にも参加。のちにアニメ『Angel Beats!』『Charlotte』の原作・脚本も担当した。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』の主人公は？", "a": ["岡崎朋也", "春原陽平", "相沢祐一", "国崎往人"], "k": "2004年発売。後半の「アフターストーリー」の評価が高く、「CLANNADは人生」という言葉まで生まれた。"},
+  {"g": "ギャルゲ", "q": "『リトルバスターズ！』で「わふー」が口癖のヒロインは？", "a": ["能美クドリャフカ", "神北小毬", "三枝葉留佳", "西園美魚"], "k": "愛称はクド。『リトルバスターズ！』は2007年発売で、2012年にアニメ化された。"},
+  {"g": "ギャルゲ", "q": "『月姫』は最初どんな形で発表された？", "a": ["同人ゲーム", "家庭用ゲーム", "商業PCゲーム", "携帯アプリ"], "k": "2000年の冬コミで同人ゲームとして頒布された。サークルTYPE-MOONは、のちに商業ブランドになった。"},
+  {"g": "ギャルゲ", "q": "『月姫』の主人公は？", "a": ["遠野志貴", "衛宮士郎", "両儀式", "黒桐幹也"], "k": "物の「死の線」が見える直死の魔眼を持つ。普段は「魔眼殺し」のメガネで見えないようにしている。"},
+  {"g": "ギャルゲ", "q": "『月姫』のヒロイン・アルクェイドの正体は？", "a": ["真祖の吸血鬼", "魔術師", "代行者", "人造人間"], "k": "アルクェイドは生まれつきの吸血鬼「真祖」で、血を吸う衝動をおさえて生きている。2003年にアニメ『真月譚 月姫』が放送された。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』の開発ブランドは？", "a": ["TYPE-MOON", "ニトロプラス", "Key", "Leaf"], "k": "2004年発売。のちにスマホゲーム『Fate/Grand Order』など、多くの派生作品が生まれた。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で衛宮士郎のサーヴァントのクラスは？", "a": ["セイバー", "アーチャー", "ランサー", "ライダー"], "k": "セイバーの正体はアーサー王（アルトリア）。「問おう、貴方が私のマスターか」の登場シーンが有名。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で遠坂凛のサーヴァントのクラスは？", "a": ["アーチャー", "セイバー", "キャスター", "アサシン"], "k": "アーチャーは赤い外套の弓兵。皮肉屋で、その正体が物語の大きな謎になっている。"},
+  {"g": "ギャルゲ", "q": "『月姫』『Fate』のシナリオライターは？", "a": ["奈須きのこ", "虚淵玄", "麻枝准", "丸戸史明"], "k": "奈須きのこはTYPE-MOONの中心人物。イラストレーターの武内崇とともにサークルを立ち上げた。"},
+  {"g": "ギャルゲ", "q": "『空の境界』両儀式の持つ魔眼は？", "a": ["直死の魔眼", "写輪眼", "邪王真眼", "千里眼"], "k": "物の「死」を線や点として見る目。『空の境界』は奈須きのこの小説で、2007年から劇場アニメ7部作として公開された。"},
+  {"g": "ギャルゲ", "q": "ニトロプラスのデビュー作は？", "a": ["Phantom", "沙耶の唄", "斬魔大聖デモンベイン", "塵骸魔京"], "k": "2000年発売の『Phantom -PHANTOM OF INFERNO-』。シナリオは虚淵玄で、殺し屋に仕立てられる青年の話。"},
+  {"g": "ギャルゲ", "q": "『沙耶の唄』のシナリオライターは？", "a": ["虚淵玄", "奈須きのこ", "竜騎士07", "田中ロミオ"], "k": "2003年発売。虚淵玄はのちに『魔法少女まどか☆マギカ』の脚本や、『Fate/Zero』の原作を手がけた。"},
+  {"g": "ギャルゲ", "q": "『君が望む永遠』の開発ブランドは？", "a": ["âge", "ニトロプラス", "Key", "KID"], "k": "2001年発売。恋愛の三角関係を正面から描き、プレイヤーの間で大きな議論になった。"},
+  {"g": "ギャルゲ", "q": "『マブラヴ オルタネイティヴ』で人類が戦う敵は？", "a": ["BETA", "使徒", "ネウロイ", "ワーム"], "k": "BETAは人類に敵対する地球外の生命体。「Beings of the Extra Terrestrial origin which is Adversary of human race」の頭文字。"},
+  {"g": "ギャルゲ", "q": "『D.C. 〜ダ・カーポ〜』の舞台の島の名前は？", "a": ["初音島", "六軒島", "島鉄島", "神咲島"], "k": "一年中桜が咲く島。主人公の朝倉純一は、他人の夢を見る力と、手から和菓子を出す力を持っている。"},
+  {"g": "ギャルゲ", "q": "『D.C.』の舞台の島の名物は？", "a": ["一年中枯れない桜", "沈まない太陽", "鳴りやまない鐘", "枯れない向日葵"], "k": "島で起きる不思議な出来事は、この桜が中心になっている。2003年にアニメ化された。"},
+  {"g": "ギャルゲ", "q": "『D.C. 〜ダ・カーポ〜』の開発ブランドは？", "a": ["CIRCUS", "Navel", "Key", "âge"], "k": "2002年発売。人気シリーズになり、『D.C.II』などの続編が続いた。"},
+  {"g": "ギャルゲ", "q": "『SHUFFLE!』の開発ブランドは？", "a": ["Navel", "CIRCUS", "minori", "戯画"], "k": "2004年発売。神界・魔界・人間界が行き来できるようになった世界の話。原画は西又葵。"},
+  {"g": "ギャルゲ", "q": "『ef - a fairy tale of the two.』の開発ブランドは？", "a": ["minori", "Navel", "Key", "CIRCUS"], "k": "2006年に前編を発売。2007年にシャフトがアニメ化した。"},
+  {"g": "ギャルゲ", "q": "『Ever17』の舞台は？", "a": ["海中テーマパーク", "宇宙ステーション", "孤島の洋館", "雪山の山荘"], "k": "海中テーマパーク「LeMU（レミュウ）」が浸水事故を起こし、閉じ込められる話。2002年発売、シナリオは打越鋼太郎。"},
+  {"g": "ギャルゲ", "q": "『Piaキャロットへようこそ!!』の舞台は？", "a": ["ファミリーレストラン", "メイド喫茶", "コンビニ", "旅館"], "k": "1996年に第1作。夏休みにファミレス「Piaキャロット」でアルバイトする話で、店の制服の人気が高い。"},
+  {"g": "ギャルゲ", "q": "『車輪の国、向日葵の少女』の開発ブランドは？", "a": ["あかべぇそふとつぅ", "ニトロプラス", "Key", "Navel"], "k": "2005年発売、シナリオはるーすぼーい。罪を犯した人に「義務」が課される国が舞台。"},
+  {"g": "ギャルゲ", "q": "『ときめきメモリアル』で告白すると結ばれる伝説がある場所は？", "a": ["伝説の樹の下", "伝説の鐘の前", "屋上", "校門の前"], "k": "1994年発売（PCエンジン）。卒業の日に伝説の樹の下で女の子から告白されると、永遠に幸せになれるという伝説。"},
+  {"g": "ギャルゲ", "q": "ゲーム・アニメ音楽で知られる「I've」の拠点がある都市は？", "a": ["札幌", "福岡", "大阪", "名古屋"], "k": "I'veにはKOTOKO、川田まみ、島みやえい子らが所属した。PCゲームからアニメの主題歌まで多く手がけた。"},
+  {"g": "ギャルゲ", "q": "『ひぐらしのなく頃に』の制作サークルは？", "a": ["07th Expansion", "上海アリス幻樂団", "TYPE-MOON", "黄昏フロンティア"], "k": "07th Expansionは竜騎士07のサークル。2002年から同人ゲームとして発表され、2006年にアニメ化された。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』竜宮レナの有名な叫びは？", "a": ["嘘だッ！！", "にぱー☆", "うぐぅ", "エル・プサイ・コングルゥ"], "k": "レナの普段の口ぐせは「はぅ〜」「かぁいいよぉ」。そのギャップでこのセリフが強く印象に残った。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』の舞台の村は？", "a": ["雛見沢村", "六軒島", "初音島", "見滝原"], "k": "雛見沢村は架空の村で、岐阜県の白川郷がモデルとされる。昭和58年6月に起きる連続怪死事件を描く。"},
+  {"g": "ギャルゲ", "q": "雛見沢村で毎年行われるお祭りは？", "a": ["綿流し", "鬼祭り", "灯籠流し", "火渡り"], "k": "毎年6月に行われる祭り。その夜に「オヤシロさまの祟り」とされる事件が起きる。"},
+  {"g": "ギャルゲ", "q": "『うみねこのなく頃に』の舞台の島は？", "a": ["六軒島", "初音島", "鬼ヶ島", "猫島"], "k": "六軒島は右代宮家が所有する島。1986年10月の親族会議の最中に連続殺人が起きる。"},
+  {"g": "ギャルゲ", "q": "『痕』の舞台の温泉地は？", "a": ["隆山", "雛見沢", "初音島", "鳴風"], "k": "1996年発売のLeafのビジュアルノベル。柏木家の4姉妹と、一族に流れる「鬼」の血の物語。"},
+  {"g": "ギャルゲ", "q": "『痕』で主人公が訪れる親戚の家の名字は？", "a": ["柏木", "遠野", "来栖川", "右代宮"], "k": "主人公の柏木耕一は、亡くなった叔父の家で4人のいとこと夏を過ごす。"},
+  {"g": "ギャルゲ", "q": "『雫』の主人公は？", "a": ["長瀬祐介", "柏木耕一", "藤田浩之", "藤井冬弥"], "k": "選択肢はすべてLeaf作品の主人公。耕一は『痕』、浩之は『To Heart』、冬弥は『WHITE ALBUM』。"},
+  {"g": "ギャルゲ", "q": "『雫』『痕』『To Heart』の原画を担当したのは？", "a": ["水無月徹", "樋上いたる", "武内崇", "西又葵"], "k": "90年代のLeafの絵柄を作った原画家。"},
+  {"g": "ギャルゲ", "q": "『Kanon』『AIR』のキャラクターデザインを担当したのは？", "a": ["樋上いたる", "水無月徹", "武内崇", "七尾奈留"], "k": "大きな目の独特な絵柄で知られる、初期Keyの原画家。"},
+  {"g": "ギャルゲ", "q": "『WHITE ALBUM』（1998年）で主人公の恋人のアイドルは？", "a": ["森川由綺", "緒方理奈", "澤倉美咲", "観月マナ"], "k": "アイドルとして売れていく恋人と、会えない時間に揺れる冬の物語。緒方理奈はトップアイドル。"},
+  {"g": "ギャルゲ", "q": "Leafの『こみっくパーティー』の題材は？", "a": ["同人誌即売会", "メイド喫茶", "声優養成所", "甲子園"], "k": "1999年発売。主人公が同人誌を描いて即売会に参加していく。"},
+  {"g": "ギャルゲ", "q": "『うたわれるもの』（2002年）の主人公は？", "a": ["ハクオロ", "エルルゥ", "オボロ", "カルラ"], "k": "記憶を失い、外せない仮面をつけた男。Leafのシミュレーションと物語を組み合わせた作品。"},
+  {"g": "ギャルゲ", "q": "『ToHeart2』で主人公を「タカくん」と呼ぶ年下の幼なじみは？", "a": ["柚原このみ", "向坂環", "小牧愛佳", "十波由真"], "k": "2004年発売。主人公は河野貴明。環も幼なじみだが年上。"},
+  {"g": "ギャルゲ", "q": "『To Heart』来栖川芹香の趣味は？", "a": ["オカルト", "料理", "格闘技", "鉄道"], "k": "小さな声で話す、魔術が好きなお嬢様。妹の綾香は格闘技が得意。"},
+  {"g": "ギャルゲ", "q": "『To Heart』で関西弁を話すヒロインは？", "a": ["保科智子", "長岡志保", "姫川琴音", "松原葵"], "k": "神戸から転校してきた委員長。最初はクラスになじめずにいる。"},
+  {"g": "ギャルゲ", "q": "『To Heart』マルチの口ぐせは？", "a": ["はわわ", "うぐぅ", "あうー", "が、がお"], "k": "ドジだけど一生懸命なメイドロボ。「はわわ」はドジキャラの定番の言葉になった。"},
+  {"g": "ギャルゲ", "q": "『To Heart』の主人公は？", "a": ["藤田浩之", "相沢祐一", "折原浩平", "河野貴明"], "k": "河野貴明は続編『ToHeart2』の主人公。"},
+  {"g": "ギャルゲ", "q": "『planetarian』のロボットの少女の名前は？", "a": ["ほしのゆめみ", "マルチ", "セリオ", "ちぃ"], "k": "2004年発売のKey作品。廃墟の街のプラネタリウムで、お客を待ち続けるロボットの話。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』伊吹風子が配って回る手作りの物は？", "a": ["ヒトデの木彫り", "星形のクッキー", "折り鶴", "押し花"], "k": "お姉さんの結婚式を祝ってもらうために配っている。本人はヒトデが大好き。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』藤林杏が投げつける物は？", "a": ["辞書", "ハリセン", "釘バット", "牛乳"], "k": "杏は気が強く、春原陽平によく辞書を投げつける。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』坂上智代が目指す役職は？", "a": ["生徒会長", "部長", "風紀委員", "番長"], "k": "けんかがとても強い転校生。ある目的のために生徒会長を目指す。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』古河渚の家の仕事は？", "a": ["パン屋", "喫茶店", "本屋", "神社"], "k": "古河パン。母の早苗さんが作る独創的なパンが、作中でよくネタになる。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』で渚が大好きなキャラクターは？", "a": ["だんご大家族", "ボン太くん", "ゲキ・ガンガー", "くんくん"], "k": "京アニのアニメ版ではEDテーマ「だんご大家族」にもなった。"},
+  {"g": "ギャルゲ", "q": "アニメ『CLANNAD』（TV版）の制作会社は？", "a": ["京都アニメーション", "東映アニメーション", "J.C.STAFF", "シャフト"], "k": "2007年放送。同じ年の劇場版は東映アニメーションが制作した。"},
+  {"g": "ギャルゲ", "q": "『リトルバスターズ！』の主人公は？", "a": ["直枝理樹", "棗恭介", "井ノ原真人", "宮沢謙吾"], "k": "2007年発売。リーダーの恭介が、仲間を集めて野球チームを作ろうと言い出す。"},
+  {"g": "ギャルゲ", "q": "『リトルバスターズ！』でみんなが始める球技は？", "a": ["野球", "サッカー", "バスケットボール", "ドッジボール"], "k": "ヒロインたちを仲間に誘って、野球チームのメンバーを集めていく。"},
+  {"g": "ギャルゲ", "q": "『リトルバスターズ！』棗鈴がいつも一緒にいる動物は？", "a": ["猫", "犬", "カラス", "ペンギン"], "k": "鈴は人見知りだが猫にはとても好かれていて、たくさんの猫の世話をしている。"},
+  {"g": "ギャルゲ", "q": "『AIR』で千年前を描く章の名前は？", "a": ["SUMMER", "DREAM", "AIR", "AFTER"], "k": "DREAM・SUMMER・AIRの3章構成。SUMMERは平安時代のような世界が舞台。"},
+  {"g": "ギャルゲ", "q": "『AIR』遠野美凪が人に配るものは？", "a": ["お米券", "ヒトデの木彫り", "たい焼き", "肉まん"], "k": "「進呈」と言って手渡す。ヒトデの木彫りは『CLANNAD』の風子。"},
+  {"g": "ギャルゲ", "q": "『AIR』神尾観鈴が好きなジュースは？", "a": ["どろり濃厚ピーチ味", "ぷるぷるピーチ味", "つぶつぶオレンジ", "とろとろバナナ味"], "k": "往人はまずいと言うが、観鈴はこれが大好き。"},
+  {"g": "ギャルゲ", "q": "『AIR』で国崎往人が探しているのは？", "a": ["空にいる翼を持つ少女", "海の底の人魚", "森に住む魔女", "月に住む姫"], "k": "母から聞かされた「空にいる少女」を探して旅をしている。"},
+  {"g": "ギャルゲ", "q": "『AIR』の舞台のモデルとされる地域は？", "a": ["和歌山県", "静岡県", "香川県", "石川県"], "k": "和歌山県の美浜町あたりがモデルとされ、ファンが訪れる場所になっている。"},
+  {"g": "ギャルゲ", "q": "『Kanon』美坂栞が好きな食べ物は？", "a": ["アイスクリーム", "たい焼き", "牛丼", "肉まん"], "k": "冬でもアイスを食べている。体が弱く、学校を休んでいる。"},
+  {"g": "ギャルゲ", "q": "『Kanon』水瀬秋子さんが一瞬で言う返事は？", "a": ["了承", "問題ない", "却下", "はちみつくまさん"], "k": "1秒で「了承」と答えるのがお約束。手作りの「謎ジャム」も有名。"},
+  {"g": "ギャルゲ", "q": "『Kanon』水瀬名雪が入っている部活は？", "a": ["陸上部", "剣道部", "吹奏楽部", "料理部"], "k": "部長を務めている。朝がとても弱い。"},
+  {"g": "ギャルゲ", "q": "『Kanon』川澄舞が夜の学校で戦っている相手は？", "a": ["魔物", "使徒", "幽霊", "吸血鬼"], "k": "剣を持って、夜の校舎に現れる「魔物」と一人で戦っている。"},
+  {"g": "ギャルゲ", "q": "『Kanon』沢渡真琴の正体は？", "a": ["狐", "猫", "狸", "犬"], "k": "祐一が昔助けた、ものみの丘の狐。"},
+  {"g": "ギャルゲ", "q": "Keyのブランドを持つ会社は？", "a": ["ビジュアルアーツ", "アクアプラス", "ブロッコリー", "KID"], "k": "大阪に本社がある会社。多くのPCゲームブランドを抱えている。"},
+  {"g": "ギャルゲ", "q": "Leafのブランドを持つ会社は？", "a": ["アクアプラス", "ビジュアルアーツ", "ブロッコリー", "5pb."], "k": "『うたわれるもの』や『WHITE ALBUM2』などもこの会社から出ている。"},
+  {"g": "ギャルゲ", "q": "『ONE ～輝く季節へ～』の主人公は？", "a": ["折原浩平", "相沢祐一", "藤田浩之", "国崎往人"], "k": "「えいえんのせかい」が物語の大きな鍵になる。"},
+  {"g": "ギャルゲ", "q": "『ONE』で主人公を毎朝起こしに来る幼なじみは？", "a": ["長森瑞佳", "神岸あかり", "水瀬名雪", "朝倉音夢"], "k": "面倒見のいい幼なじみ。"},
+  {"g": "ギャルゲ", "q": "『月姫』遠野志貴の妹は？", "a": ["遠野秋葉", "琥珀", "翡翠", "シエル"], "k": "遠野家の当主。琥珀と翡翠は遠野家に仕える双子のメイド。"},
+  {"g": "ギャルゲ", "q": "『月姫』シエル先輩の好物は？", "a": ["カレー", "ピザ", "牛丼", "たい焼き"], "k": "カレー好きはTYPE-MOON作品で定番のネタになっている。"},
+  {"g": "ギャルゲ", "q": "『月姫』の格闘ゲームのタイトルは？", "a": ["MELTY BLOOD", "ギルティギア", "アルカナハート", "ブレイブルー"], "k": "TYPE-MOONと同人サークル「渡辺製作所」が共同で作り、のちにゲームセンターにも登場した。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』衛宮士郎が目指しているものは？", "a": ["正義の味方", "魔術師の頂点", "世界一の剣士", "聖杯の守り手"], "k": "養父・衛宮切嗣から受け継いだ夢。"},
+  {"g": "ギャルゲ", "q": "『Fate』でマスターとサーヴァントが戦う儀式の名前は？", "a": ["聖杯戦争", "試験召喚戦争", "円卓会議", "バトルロワイヤル"], "k": "勝ち残った者は、願いをかなえる「聖杯」を手に入れられる。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で間桐桜がヒロインのルートは？", "a": ["Heaven's Feel", "Fate", "Unlimited Blade Works", "hollow ataraxia"], "k": "Fateルートはセイバー、UBWルートは凛がヒロイン。HFは2017年から劇場版3部作になった。"},
+  {"g": "ギャルゲ", "q": "『Fate』でマスターの手にある令呪の数は？", "a": ["3画", "1画", "5画", "7画"], "k": "サーヴァントに絶対の命令を出せる印。1回使うごとに1画消える。"},
+  {"g": "ギャルゲ", "q": "『Fate』の聖杯戦争に呼ばれるサーヴァントの数は？", "a": ["7騎", "5騎", "12騎", "3騎"], "k": "セイバー・アーチャー・ランサー・ライダー・キャスター・アサシン・バーサーカーの7クラス。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』のランサーの正体は？", "a": ["クー・フーリン", "ヘラクレス", "メドゥーサ", "佐々木小次郎"], "k": "アイルランドの英雄。必ず心臓を貫く槍「ゲイ・ボルク」を持つ。"},
+  {"g": "ギャルゲ", "q": "『Fate』イリヤスフィールのサーヴァントのクラスは？", "a": ["バーサーカー", "ライダー", "キャスター", "アサシン"], "k": "正体はギリシャ神話の英雄ヘラクレス。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で衛宮士郎が昔入っていた部活は？", "a": ["弓道部", "剣道部", "陸上部", "美術部"], "k": "弓の腕は抜群だった。後輩の間桐桜も弓道部。"},
+  {"g": "ギャルゲ", "q": "2006年のアニメ『Fate/stay night』の制作会社は？", "a": ["スタジオディーン", "ufotable", "京都アニメーション", "シャフト"], "k": "のちにufotableが『UBW』と『HF』を新たにアニメ化した。"},
+  {"g": "ギャルゲ", "q": "劇場版『空の境界』の制作会社は？", "a": ["ufotable", "スタジオディーン", "シャフト", "京都アニメーション"], "k": "2007年から7章（のちに追加あり）で公開された。のちに『Fate/Zero』も手がける。"},
+  {"g": "ギャルゲ", "q": "『斬魔大聖デモンベイン』の題材になった神話は？", "a": ["クトゥルフ神話", "北欧神話", "ギリシャ神話", "日本神話"], "k": "2003年発売、ニトロプラス。魔導書が少女の姿をした「アル・アジフ」が登場する。"},
+  {"g": "ギャルゲ", "q": "『斬魔大聖デモンベイン』の主人公は？", "a": ["大十字九郎", "吾妻玲二", "孔濤羅", "匂坂郁紀"], "k": "貧乏な探偵。魔導書アル・アジフと出会い、鬼械神（デウス・マキナ）デモンベインに乗る。"},
+  {"g": "ギャルゲ", "q": "『Phantom』の主人公は？", "a": ["吾妻玲二", "大十字九郎", "孔濤羅", "匂坂郁紀"], "k": "記憶を奪われ、暗殺者「ツヴァイ」に仕立てられる日本人の青年。"},
+  {"g": "ギャルゲ", "q": "『鬼哭街』の舞台の都市は？", "a": ["上海", "香港", "九龍", "台北"], "k": "2002年発売、シナリオは虚淵玄。近未来の上海で、剣士が妹の仇を追う。"},
+  {"g": "ギャルゲ", "q": "『沙耶の唄』で主人公の目に周りの人間はどう見える？", "a": ["肉の塊の化け物", "骸骨", "人形", "影"], "k": "事故の後遺症で世界がおぞましく見える中、少女・沙耶だけが美しく見える。"},
+  {"g": "ギャルゲ", "q": "『君が望む永遠』の主人公は？", "a": ["鳴海孝之", "白銀武", "伊藤誠", "岡崎朋也"], "k": "ヒロインの涼宮遥と速瀬水月の間で揺れる。"},
+  {"g": "ギャルゲ", "q": "『君が望む永遠』涼宮遥が好きな絵本は？", "a": ["マヤウルのおくりもの", "泣いた赤鬼", "星の王子さま", "100万回生きたねこ"], "k": "作中の架空の絵本。遥は事故のあと、3年間眠り続ける。"},
+  {"g": "ギャルゲ", "q": "『マブラヴ』シリーズの主人公は？", "a": ["白銀武", "鳴海孝之", "伊藤誠", "平賀才人"], "k": "学園ものの『マブラヴ』から、異星生命体と戦う『オルタネイティヴ』へ続く。"},
+  {"g": "ギャルゲ", "q": "『マブラヴ オルタネイティヴ』の人型兵器の名前は？", "a": ["戦術機", "モビルスーツ", "ナイトメアフレーム", "エステバリス"], "k": "人類がBETAと戦うための人型兵器。"},
+  {"g": "ギャルゲ", "q": "『School Days』の開発ブランドは？", "a": ["0verflow", "Leaf", "Key", "âge"], "k": "アニメ版の最終回が放送直前に差し替えられ、代わりの映像の「Nice boat.」が話題になった。"},
+  {"g": "ギャルゲ", "q": "『School Days』の主人公は？", "a": ["伊藤誠", "鳴海孝之", "白銀武", "桂言葉"], "k": "ヒロインの桂言葉と西園寺世界の間で揺れる。結末の過激さで知られる。"},
+  {"g": "ギャルゲ", "q": "『Ever17』の開発会社は？", "a": ["KID", "Key", "âge", "CIRCUS"], "k": "「Infinity」シリーズの第2作。第1作は『Never7』。"},
+  {"g": "ギャルゲ", "q": "『ときめきメモリアル』のメインヒロインは？", "a": ["藤崎詩織", "虹野沙希", "鏡魅羅", "館林見晴"], "k": "主人公の幼なじみ。勉強も運動も見た目もすべて高い数値が求められる、最難関のヒロイン。"},
+  {"g": "ギャルゲ", "q": "『ときめきメモリアル』の発売元は？", "a": ["コナミ", "セガ", "ナムコ", "スクウェア"], "k": "1994年にPCエンジンで発売。大ヒットしてシリーズ化された。"},
+  {"g": "ギャルゲ", "q": "『ときメモ』でほかの女の子を放っておくと現れるものは？", "a": ["爆弾", "雷", "黒猫", "鬼"], "k": "「爆弾」が爆発すると、ほかの女の子たちの評判まで下がってしまう。"},
+  {"g": "ギャルゲ", "q": "『ときめきメモリアル』の舞台の高校は？", "a": ["きらめき高校", "ひびきの高校", "陵桜学園", "風見学園"], "k": "続編『ときメモ2』の舞台はひびきの高校。"},
+  {"g": "ギャルゲ", "q": "『センチメンタルグラフティ』のヒロインの人数は？", "a": ["12人", "9人", "7人", "13人"], "k": "全国12の都市に住む12人の女の子に会いに行くゲーム。"},
+  {"g": "ギャルゲ", "q": "『この世の果てで恋を唄う少女YU-NO』の主人公は？", "a": ["有馬たくや", "遠野志貴", "相沢祐一", "白銀武"], "k": "父が残した装置で、並行世界を行き来する。2019年にTVアニメ化された。"},
+  {"g": "ギャルゲ", "q": "『ランス』シリーズで主人公についていく少女は？", "a": ["シィル・プライン", "マリア", "魔想志津香", "見当かなみ"], "k": "ランスの奴隷として、いつも振り回されながらついていく魔法使い。"},
+  {"g": "ギャルゲ", "q": "『鬼畜王ランス』でランスが王になる国は？", "a": ["リーザス", "ゼス", "ヘルマン", "JAPAN"], "k": "1996年発売。王になったランスが大陸の統一を目指す。"},
+  {"g": "ギャルゲ", "q": "『戦国ランス』の舞台になる国は？", "a": ["JAPAN", "リーザス", "ゼス", "ヘルマン"], "k": "2006年発売。日本の戦国時代をもとにした国「JAPAN」で天下統一を目指す。"},
+  {"g": "ギャルゲ", "q": "アリスソフト『大悪司』の舞台の都市は？", "a": ["大阪", "東京", "京都", "名古屋"], "k": "2001年発売。大阪の街を地図の上で奪い合う、勢力争いのゲーム。"},
+  {"g": "ギャルゲ", "q": "アリスソフトの本社がある都市は？", "a": ["大阪", "札幌", "東京", "福岡"], "k": "アリスソフトは大阪の会社。『ランス』シリーズで知られる。"},
+  {"g": "ギャルゲ", "q": "『D.C.』朝倉音夢と主人公の関係は？", "a": ["義理の妹", "幼なじみ", "担任の先生", "いとこ"], "k": "主人公・朝倉純一の血のつながらない妹。いとこは芳乃さくら。"},
+  {"g": "ギャルゲ", "q": "『SHUFFLE!』の主人公は？", "a": ["土見稟", "朝倉純一", "鳴海孝之", "直枝理樹"], "k": "神界の王女シアと魔界の王女ネリネが、そろって主人公の家の隣に引っ越してくる。"},
+  {"g": "ギャルゲ", "q": "『ef』シリーズの舞台の町は？", "a": ["音羽", "初音島", "竜宮島", "雛見沢"], "k": "いくつもの恋の物語が、同じ町の中で交差していく。"},
+  {"g": "ギャルゲ", "q": "『車輪の国、向日葵の少女』の主人公は？", "a": ["森田賢一", "鳴海孝之", "白銀武", "土見稟"], "k": "罪を犯した人を見守る「特別高等人」を目指す青年。"},
+  {"g": "ギャルゲ", "q": "『CROSS†CHANNEL』のシナリオライターは？", "a": ["田中ロミオ", "虚淵玄", "麻枝准", "竜騎士07"], "k": "2003年発売。のちにライトノベル『人類は衰退しました』も書いた。"},
+  {"g": "ギャルゲ", "q": "『夜明け前より瑠璃色な』のヒロイン、フィーナの出身は？", "a": ["月の王国", "火星", "異世界", "海底都市"], "k": "2005年発売、オーガスト。月の王国の王女が、地球の主人公の家にホームステイする。"},
+  {"g": "ギャルゲ", "q": "『パルフェ』のシナリオライターは？", "a": ["丸戸史明", "田中ロミオ", "麻枝准", "奈須きのこ"], "k": "2005年発売、喫茶店が舞台。丸戸史明はのちに『冴えない彼女の育てかた』を書いた。"},
+  {"g": "ギャルゲ", "q": "『とらいあんぐるハート3』で高町なのはは主人公の何？", "a": ["妹", "娘", "幼なじみ", "先輩"], "k": "主人公は高町恭也。このおまけシナリオから『リリカルなのは』が生まれた。"},
+  {"g": "ギャルゲ", "q": "『シスター・プリンセス』で兄を「兄チャマ」と呼ぶ妹は？", "a": ["四葉", "雛子", "千影", "衛"], "k": "12人の妹は兄の呼び方がそれぞれ違う。四葉は名探偵にあこがれている。"},
+  {"g": "ギャルゲ", "q": "『サクラ大戦』の舞台の時代の元号は？", "a": ["太正", "大正", "明治", "昭和"], "k": "実在の「大正」ではなく、架空の「太正」。帝国華撃団が帝都を守る。"},
+  {"g": "ギャルゲ", "q": "『サクラ大戦』の主人公は？", "a": ["大神一郎", "真宮寺さくら", "神崎すみれ", "米田一基"], "k": "海軍の少尉。帝国華撃団・花組の隊長として着任する。"},
+  {"g": "ギャルゲ", "q": "『ひぐらしのなく頃に』の主人公は？", "a": ["前原圭一", "右代宮戦人", "竜宮レナ", "北条悟史"], "k": "雛見沢村に引っ越してきた少年。戦人は『うみねこ』の主人公。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』で「にぱー☆」「みぃ」が口ぐせなのは？", "a": ["古手梨花", "北条沙都子", "園崎魅音", "竜宮レナ"], "k": "古手神社の巫女。村の謎に深くかかわっている。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』北条沙都子が得意なものは？", "a": ["トラップ", "料理", "将棋", "射撃"], "k": "部活の遊びでも山の中でも、トラップで相手を追い詰める。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』羽入の口ぐせは？", "a": ["あぅあぅ", "にぱー", "はぅ〜", "うぐぅ"], "k": "後半で登場する少女。古手梨花といつも一緒にいる。"},
+  {"g": "ギャルゲ", "q": "『ひぐらしのなく頃に』の最初のエピソードは？", "a": ["鬼隠し編", "綿流し編", "祟殺し編", "皆殺し編"], "k": "前半の4話は「出題編」、後半の謎を解いていく話は「解答編」と呼ばれる。"},
+  {"g": "ギャルゲ", "q": "『うみねこのなく頃に』の主人公は？", "a": ["右代宮戦人", "前原圭一", "右代宮朱志香", "右代宮譲治"], "k": "6年ぶりに親族会議に参加した少年。魔女の存在を否定し続ける。"},
+  {"g": "ギャルゲ", "q": "『うみねこ』の「黄金の魔女」の名前は？", "a": ["ベアトリーチェ", "ベルンカステル", "ラムダデルタ", "ヱリカ"], "k": "六軒島の連続殺人は魔女の仕業か人間の仕業か、を推理で争う。"},
+  {"g": "ギャルゲ", "q": "『CHAOS;HEAD』の舞台の街は？", "a": ["渋谷", "秋葉原", "池袋", "新宿"], "k": "2008年発売。「科学アドベンチャーシリーズ」の第1作で、次の作品が『STEINS;GATE』。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』岡部倫太郎が名乗る名前は？", "a": ["鳳凰院凶真", "闇野カゲロウ", "黒羽ジン", "魔王ゼロ"], "k": "2009年発売、秋葉原が舞台。自称「狂気のマッドサイエンティスト」。"},
+  {"g": "ギャルゲ", "q": "『恋姫†無双』の題材は？", "a": ["三国志", "戦国時代", "水滸伝", "西遊記"], "k": "2007年発売。三国志の武将たちが女の子になっている。"},
+  {"g": "ギャルゲ", "q": "『アイドルマスター』の主人公たちの事務所は？", "a": ["765プロ", "961プロ", "346プロ", "876プロ"], "k": "2005年にゲームセンターで始まった。961プロはライバルの事務所。"},
+  {"g": "ギャルゲ", "q": "『ラブプラス』が発売されたゲーム機は？", "a": ["ニンテンドーDS", "PSP", "PS2", "ゲームボーイ"], "k": "2009年発売、コナミ。静岡県の熱海とのコラボ企画も話題になった。"},
+  {"g": "ギャルゲ", "q": "『アマガミ』の主人公は？", "a": ["橘純一", "朝倉純一", "鳴海孝之", "河野貴明"], "k": "2009年にPS2で発売。名前が『D.C.』の朝倉純一とよく似ているので注意。"},
+  {"g": "ギャルゲ", "q": "Keyの『Kanon』が最初にアニメ化された年は？", "a": ["2002年", "1999年", "2006年", "2010年"], "k": "最初は東映アニメーションが制作。2006年に京都アニメーションが改めてアニメ化した。"},
+  {"g": "ギャルゲ", "q": "『BALDR FORCE』の主な遊び方は？", "a": ["ロボットのアクション", "カードバトル", "パズル", "音楽ゲーム"], "k": "2002年発売、戯画。電脳空間でロボットを操って戦う、アクションとAVGの組み合わせ。"},
+  {"g": "ギャルゲ", "q": "『To Heart』のメイドロボ・セリオの型番は？", "a": ["HMX-13", "HMX-12", "HMX-17", "RX-78"], "k": "マルチ（HMX-12）と同じ時期に作られた高性能機。サテライトサービスで能力を受け取る。"},
+  {"g": "ギャルゲ", "q": "『Kanon』の舞台の季節は？", "a": ["冬", "春", "夏", "秋"], "k": "雪の積もる街が舞台。『AIR』は夏が舞台で、季節の対比でも語られる。"},
+  {"g": "ギャルゲ", "q": "『AIR』のOP曲の名前は？", "a": ["鳥の詩", "夏影", "青空", "Last regrets"], "k": "「夏影」「青空」もAIRの曲。「Last regrets」は『Kanon』のOP。"},
+  {"g": "ギャルゲ", "q": "『Kanon』のOP曲の名前は？", "a": ["Last regrets", "鳥の詩", "メグメル", "Little Busters!"], "k": "「メグメル」は『CLANNAD』、「Little Busters!」は『リトルバスターズ！』のOP。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』のOP曲の名前は？", "a": ["メグメル", "鳥の詩", "Last regrets", "だんご大家族"], "k": "ゲーム版のOP。歌はeufonius。"},
+  {"g": "ギャルゲ", "q": "『月姫』のヒロイン・アルクェイドの髪の色は？", "a": ["金髪", "黒髪", "銀髪", "赤毛"], "k": "金髪で白いセーターを着た姿がよく知られている。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』の舞台の街は？", "a": ["冬木市", "三咲町", "雛見沢", "初音島"], "k": "三咲町は『月姫』の舞台。"},
+  {"g": "ギャルゲ", "q": "『月姫』の舞台の街は？", "a": ["三咲町", "冬木市", "観布子市", "初音島"], "k": "冬木市は『Fate』の舞台、観布子市は『空の境界』の舞台。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』の舞台の街は？", "a": ["秋葉原", "渋谷", "池袋", "中野"], "k": "秋葉原の雑居ビルにある「未来ガジェット研究所」が拠点。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』で過去にメールを送る装置の通称は？", "a": ["電話レンジ（仮）", "タイムリープマシン", "ダイバージェンスメーター", "IBN5100"], "k": "電子レンジを改造した装置。のちにタイムリープマシンへ発展する。"},
+  {"g": "ギャルゲ", "q": "『うみねこのなく頃に』の制作サークルは？", "a": ["07th Expansion", "TYPE-MOON", "上海アリス幻樂団", "黄昏フロンティア"], "k": "『ひぐらし』と同じ竜騎士07のサークル。2007年から発表された。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』の物語の時代は？", "a": ["昭和58年", "昭和48年", "平成元年", "平成10年"], "k": "1983年6月の雛見沢村が舞台。"},
+  {"g": "ギャルゲ", "q": "Keyの『Rewrite』（2011年）の主人公は？", "a": ["天王寺瑚太朗", "岡崎朋也", "直枝理樹", "相沢祐一"], "k": "メインシナリオは田中ロミオ。竜騎士07もシナリオに参加した。"},
+  {"g": "ギャルゲ", "q": "『Rewrite』の舞台の街は？", "a": ["風祭市", "初音島", "音羽", "竜宮島"], "k": "緑化が進んだ地方都市が舞台。"},
+  {"g": "ギャルゲ", "q": "『Rewrite』にシナリオで参加した『ひぐらし』の作者は？", "a": ["竜騎士07", "虚淵玄", "奈須きのこ", "丸戸史明"], "k": "メインの田中ロミオと共に、ルートの一部を担当した。"},
+  {"g": "ギャルゲ", "q": "TYPE-MOON『魔法使いの夜』（2012年）の主人公の少女は？", "a": ["蒼崎青子", "久遠寺有珠", "両儀式", "遠坂凛"], "k": "1980年代後半の三咲町が舞台。シナリオは奈須きのこ。"},
+  {"g": "ギャルゲ", "q": "『素晴らしき日々 ～不連続存在～』（2010年）の開発ブランドは？", "a": ["ケロQ", "ニトロプラス", "Key", "âge"], "k": "シナリオはSCA-自。哲学的な内容で評価が高い。"},
+  {"g": "ギャルゲ", "q": "『グリザイアの果実』（2011年）の開発ブランドは？", "a": ["フロントウイング", "ゆずソフト", "オーガスト", "Navel"], "k": "主人公の風見雄二が、問題を抱えた少女たちの学園に転入する。"},
+  {"g": "ギャルゲ", "q": "『グリザイアの果実』の主人公は？", "a": ["風見雄二", "天王寺瑚太朗", "北原春希", "森田賢一"], "k": "2014年にアニメ化された。"},
+  {"g": "ギャルゲ", "q": "『穢翼のユースティア』（2011年）の開発ブランドは？", "a": ["オーガスト", "CIRCUS", "ゆずソフト", "âge"], "k": "浮遊都市を舞台にしたダークファンタジー。"},
+  {"g": "ギャルゲ", "q": "『恋と選挙とチョコレート』（2010年）の開発ブランドは？", "a": ["sprite", "ゆずソフト", "Navel", "minori"], "k": "生徒会選挙を舞台にした学園もの。2012年にアニメ化。"},
+  {"g": "ギャルゲ", "q": "『DRACU-RIOT!』（2013年）の開発ブランドは？", "a": ["ゆずソフト", "オーガスト", "sprite", "フロントウイング"], "k": "吸血鬼の住む人工島が舞台。"},
+  {"g": "ギャルゲ", "q": "『ROBOTICS;NOTES』（2012年）の舞台の島は？", "a": ["種子島", "六軒島", "竜宮島", "初音島"], "k": "科学アドベンチャーシリーズの一つ。ロボット部の高校生たちの物語。"},
+  {"g": "ギャルゲ", "q": "『CHAOS;CHILD』（2014年）の舞台の街は？", "a": ["渋谷", "秋葉原", "種子島", "池袋"], "k": "『CHAOS;HEAD』の6年後の渋谷が舞台。"},
+  {"g": "ギャルゲ", "q": "『WHITE ALBUM2』（2010年〜）の主人公は？", "a": ["北原春希", "藤井冬弥", "鳴海孝之", "藤田浩之"], "k": "Leafの作品。シナリオは丸戸史明。"},
+  {"g": "ギャルゲ", "q": "『WHITE ALBUM2』でピアノの天才少女は？", "a": ["冬馬かずさ", "小木曽雪菜", "森川由綺", "緒方理奈"], "k": "学園祭のバンドをきっかけに、三角関係の物語が始まる。"},
+  {"g": "ギャルゲ", "q": "ニトロプラス『装甲悪鬼村正』（2009年）のシナリオライターは？", "a": ["奈良原一鉄", "虚淵玄", "下倉バイオ", "鋼屋ジン"], "k": "鎧（劔冑）をまとった武者たちの戦いを描く。"},
+  {"g": "ギャルゲ", "q": "『アイドルマスター シンデレラガールズ』（2011年）が最初に配信されたのは？", "a": ["Mobage", "GREE", "LINE", "Steam"], "k": "ソーシャルゲームとして始まり、のちにアニメ化された。"},
+  {"g": "ギャルゲ", "q": "『艦隊これくしょん -艦これ-』でプレイヤーは何と呼ばれる？", "a": ["提督", "プロデューサー", "マスター", "指揮官"], "k": "2013年4月に運営開始。艦船を少女の姿にした「艦娘」を集める。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』でメールを過去に送ることを何と呼ぶ？", "a": ["Dメール", "タイムリープ", "リーディング・シュタイナー", "世界線変動"], "k": "「Dメール」は過去へのメール。記憶を過去へ送るのがタイムリープ。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』岡部倫太郎が持つ、世界の変化を覚えていられる力は？", "a": ["リーディング・シュタイナー", "直死の魔眼", "幻想殺し", "死に戻り"], "k": "ほかの人が忘れても、岡部だけが前の世界線の記憶を持ち続ける。"},
   {"g": "ラノベ", "q": "『ブギーポップは笑わない』の作者は？", "a": ["上遠野浩平", "秋山瑞人", "時雨沢恵一", "高橋弥七郎"], "k": "上遠野浩平は1998年に第4回電撃ゲーム小説大賞を受賞してデビュー。のちのライトノベルに大きな影響を与えたと言われる。"},
   {"g": "ラノベ", "q": "『ブギーポップ』のイラストを担当したのは？", "a": ["緒方剛志", "いとうのいぢ", "黒星紅白", "竹"], "k": "緒方剛志の独特の線と色づかいが、作品の雰囲気を作った。"},
   {"g": "ラノベ", "q": "ブギーポップが「浮かび上がる」少女の名前は？", "a": ["宮下藤花", "霧間凪", "末真和子", "竹田啓司"], "k": "宮下藤花は普通の女子高生。ブギーポップが表に出ているときのことは、本人は覚えていない。"},
@@ -2634,7 +2739,510 @@ const QUIZ = [
   {"g": "ラノベ", "q": "『アクセル・ワールド』の加速世界の対戦ゲームの名前は？", "a": ["ブレイン・バースト", "ソードアート・オンライン", "エルダー・テイル", "ガンゲイル・オンライン"], "k": "黒雪姫から渡されたアプリで、ハルユキは加速世界の戦いに入る。"},
   {"g": "ラノベ", "q": "『IS〈インフィニット・ストラトス〉』でISを動かせる唯一の男子は？", "a": ["織斑一夏", "平賀才人", "吉井明久", "上条当麻"], "k": "女性しか動かせないはずのパワードスーツを、なぜか動かせてしまう。"},
   {"g": "ラノベ", "q": "『境界線上のホライゾン』の作者は？", "a": ["川上稔", "三雲岳斗", "橘公司", "渡航"], "k": "1冊1000ページを超える巻があるほどの分厚さで知られる。電撃文庫。"},
-  {"g": "ラノベ", "q": "『ソードアート・オンライン』第1巻が刊行された年は？", "a": ["2009年", "2005年", "2011年", "2013年"], "k": "もとはウェブ公開。電撃文庫から2009年4月に第1巻が出た。"}
+  {"g": "ラノベ", "q": "『ソードアート・オンライン』第1巻が刊行された年は？", "a": ["2009年", "2005年", "2011年", "2013年"], "k": "もとはウェブ公開。電撃文庫から2009年4月に第1巻が出た。"},
+  // ---- 2026年11月 追加分（502問） ----
+  {"g": "アニメ", "q": "『エスカフローネ』でファーネリア王国の若き王は？", "a": ["バァン", "アレン", "ディランドゥ", "フォルケン"], "k": "バァン・ファーネルは機体エスカフローネに乗る。アレン・シェザールは「天空の騎士」と呼ばれる剣士。"},
+  {"g": "アニメ", "q": "『lain』で人々がつながる電子の世界の呼び名は？", "a": ["ワイヤード", "マトリックス", "グリッド", "サイバース"], "k": "作中ではネットワークを「ワイヤード」と呼ぶ。現実とワイヤードの境目がしだいにあいまいになっていく。"},
+  {"g": "アニメ", "q": "『名探偵コナン』で江戸川コナンの正体は？", "a": ["工藤新一", "服部平次", "毛利小五郎", "阿笠博士"], "k": "高校生探偵の工藤新一が、黒ずくめの組織に毒薬を飲まされて子どもの姿になった。TVアニメは1996年に始まった。"},
+  {"g": "アニメ", "q": "『名探偵コナン』でコナンが居候している家の主人は？", "a": ["毛利小五郎", "阿笠博士", "目暮十三", "工藤優作"], "k": "コナンは幼なじみの毛利蘭の父で探偵の小五郎の家に居候し、麻酔銃で眠らせた小五郎の声で推理を披露する。"},
+  {"g": "アニメ", "q": "『ONE PIECE』でルフィが食べた悪魔の実は？", "a": ["ゴムゴムの実", "メラメラの実", "バラバラの実", "ゴロゴロの実"], "k": "体がゴムのように伸びる能力を得た代わりに、泳げなくなった。TVアニメは1999年に始まった。"},
+  {"g": "アニメ", "q": "『ONE PIECE』でロロノア・ゾロの剣の流派は？", "a": ["三刀流", "二天一流", "北辰一刀流", "飛天御剣流"], "k": "刀を両手と口にくわえて3本使う。飛天御剣流は『るろうに剣心』の緋村剣心の流派。"},
+  {"g": "アニメ", "q": "『ONE PIECE』でルフィが海賊の印として大切にしている帽子は？", "a": ["麦わら帽子", "テンガロンハット", "ベレー帽", "シルクハット"], "k": "子どものころ、赤髪のシャンクスから預かった麦わら帽子。一味は「麦わらの一味」と呼ばれる。"},
+  {"g": "アニメ", "q": "『NARUTO』でカカシの左目に宿っている瞳術は？", "a": ["写輪眼", "白眼", "輪廻眼", "邪眼"], "k": "写輪眼はうちは一族の瞳術。カカシは亡き友うちはオビトから譲り受けた。白眼は日向一族のもの。"},
+  {"g": "アニメ", "q": "『鋼の錬金術師』で錬金術の基本とされる原則は？", "a": ["等価交換", "質量保存", "因果応報", "一子相伝"], "k": "「何かを得るためには、それと同等の代価が必要になる」という原則。物語の大きなテーマにもなっている。"},
+  {"g": "アニメ", "q": "『DEATH NOTE』で死神リュークの大好物は？", "a": ["リンゴ", "バナナ", "ブドウ", "イチゴ"], "k": "人間界のリンゴを「ジューシー」と気に入っている。リンゴを食べられないと禁断症状のように体をねじる。"},
+  {"g": "アニメ", "q": "『DEATH NOTE』で世間が夜神月につけた呼び名は？", "a": ["キラ", "エル", "ニア", "メロ"], "k": "犯罪者を次々と心臓麻痺で死なせる謎の存在を、人々は「キラ（killer）」と呼んだ。Lは月を追う名探偵。"},
+  {"g": "アニメ", "q": "『犬夜叉』でかごめが砕いてしまった玉は？", "a": ["四魂の玉", "八尺瓊勾玉", "如意宝珠", "龍の珠"], "k": "持ち主の力を高める四魂の玉。かごめが射た矢で砕けて散らばり、かけらを集める旅が始まる。"},
+  {"g": "アニメ", "q": "『犬夜叉』で犬夜叉の兄・殺生丸の父の正体は？", "a": ["大妖怪", "人間の侍", "陰陽師", "天狗"], "k": "2人の父は強大な犬の大妖怪。犬夜叉は人間の母を持つ半妖、殺生丸は純粋な妖怪。"},
+  {"g": "アニメ", "q": "『テニスの王子様』で越前リョーマの口ぐせは？", "a": ["まだまだだね", "油断せずに行こう", "俺様の美技に酔いな", "テニスって楽しいじゃん"], "k": "リョーマは青春学園の1年生レギュラー。「油断せずに行こう」は部長の手塚国光のセリフ。"},
+  {"g": "アニメ", "q": "『遊☆戯☆王DM』で武藤遊戯の切り札のモンスターは？", "a": ["ブラック・マジシャン", "青眼の白龍", "真紅眼の黒竜", "人造人間サイコ・ショッカー"], "k": "ブラック・マジシャンは遊戯の代名詞。青眼の白龍は海馬瀬人、真紅眼の黒竜は城之内克也のカード。"},
+  {"g": "アニメ", "q": "『遊☆戯☆王DM』で海馬瀬人のエースは？", "a": ["青眼の白龍", "ブラック・マジシャン", "オシリスの天空竜", "エクゾディア"], "k": "海馬は世界に3枚しかない青眼の白龍をすべて持っている。その3体が合体すると「青眼の究極竜」になる。"},
+  {"g": "アニメ", "q": "『ポケモン』のロケット団でムサシ・コジロウと組むポケモンは？", "a": ["ニャース", "ペルシアン", "ソーナンス", "アーボ"], "k": "ニャースは人間の言葉を話すポケモン。「なんだかんだと聞かれたら」で始まる名乗りが有名。"},
+  {"g": "アニメ", "q": "『おジャ魔女どれみ』で春風どれみの呪文の始まりは？", "a": ["ピリカピリララ", "パメルクラルク", "テクマクマヤコン", "ピピルマピピルマ"], "k": "「ピリカピリララ ポポリナペペルト」。テクマクマヤコンは『ひみつのアッコちゃん』の呪文。"},
+  {"g": "アニメ", "q": "『新機動戦記ガンダムW』でヒイロ・ユイの有名なセリフは？", "a": ["お前を殺す", "俺がガンダムだ", "認めたくないものだな", "坊やだからさ"], "k": "第1話でリリーナに向けて言う。「俺がガンダムだ」は『ガンダム00』の刹那のセリフ。"},
+  {"g": "アニメ", "q": "『ガンダムSEED DESTINY』の主人公は？", "a": ["シン・アスカ", "キラ・ヤマト", "アスラン・ザラ", "ムウ・ラ・フラガ"], "k": "2004年放送の続編。家族を戦争で失った少年シンが、ザフトのパイロットとしてインパルスガンダムに乗る。"},
+  {"g": "アニメ", "q": "『マクロス7』で熱気バサラのバンド名は？", "a": ["Fire Bomber", "Gamlin's", "Walküre", "Planet Dance"], "k": "1994〜95年放送。バサラは「俺の歌を聴けぇ！」と戦場で歌う。Walküreは『マクロスΔ』のユニット。"},
+  {"g": "アニメ", "q": "『エウレカセブン』でレントンが熱中する、空中を板で滑る遊びは？", "a": ["リフ", "サーフィン", "エアボード", "スカイダイブ"], "k": "トラパーという粒子の波に乗る「リフ」。人型機体ニルヴァーシュもボードで空を滑る。"},
+  {"g": "アニメ", "q": "『もののけ姫』の主人公の少年は？", "a": ["アシタカ", "パズー", "ハク", "ハウル"], "k": "1997年公開。タタリ神の呪いを受けたエミシの村の少年アシタカが、西へ旅をする。"},
+  {"g": "アニメ", "q": "『もののけ姫』で山犬に育てられた少女サンが住む森の主は？", "a": ["シシ神", "トトロ", "オーム", "カオナシ"], "k": "シシ神は命を与えたり奪ったりする森の神。夜は巨大な「デイダラボッチ」の姿になる。"},
+  {"g": "アニメ", "q": "『千と千尋の神隠し』で湯屋を経営する魔女は？", "a": ["湯婆婆", "銭婆", "荒地の魔女", "ドーラ"], "k": "2001年公開。千尋は湯婆婆に名前を奪われ「千」として働く。銭婆は湯婆婆の双子の姉。"},
+  {"g": "アニメ", "q": "『千と千尋』で千尋を助ける少年ハクの正体は？", "a": ["川の神", "山の神", "風の精", "竜の王子"], "k": "ハクの正体は「ニギハヤミコハクヌシ」という川の神。千尋は幼いころその川に落ちたことがあった。"},
+  {"g": "アニメ", "q": "『ハウルの動く城』で城を動かしている火の悪魔は？", "a": ["カルシファー", "カブ", "マルクル", "ヒン"], "k": "2004年公開。カルシファーはハウルと契約した火の悪魔。カブは案山子、マルクルはハウルの弟子。"},
+  {"g": "アニメ", "q": "『崖の上のポニョ』でポニョが好きになる少年は？", "a": ["宗介", "翔", "雄一", "健太"], "k": "2008年公開。魚の子ポニョは、海辺の町に住む5歳の宗介に会い、人間になりたいと願う。"},
+  {"g": "アニメ", "q": "『耳をすませば』で雫が出会う人形の猫の名前は？", "a": ["バロン", "ムーン", "ジジ", "ルナ"], "k": "1995年公開。骨董店「地球屋」にある猫の人形バロン。ムーンは雫が電車で出会う太った猫。"},
+  {"g": "アニメ", "q": "『秒速5センチメートル』の主人公は？", "a": ["遠野貴樹", "立花瀧", "秋月孝雄", "寺尾昇"], "k": "2007年公開、監督は新海誠。タイトルは桜の花びらが落ちる速さを表している。"},
+  {"g": "アニメ", "q": "『言の葉の庭』で2人が雨の日に出会う場所は？", "a": ["新宿御苑", "上野公園", "代々木公園", "井の頭公園"], "k": "2013年公開、新海誠監督。靴職人を目指す高校生・孝雄と年上の女性が、雨の朝の日本庭園で出会う。"},
+  {"g": "アニメ", "q": "『ほしのこえ』で宇宙と地球に離れた2人が使う連絡手段は？", "a": ["携帯メール", "手紙", "無線", "テレパシー"], "k": "2002年公開。新海誠がほぼ一人で作った短編。距離が離れるほどメールが届くまでの時間が延びていく。"},
+  {"g": "アニメ", "q": "『時をかける少女』（2006年版）で過去に戻れるようになる主人公は？", "a": ["紺野真琴", "芳山和子", "間宮千昭", "津田功介"], "k": "細田守監督。真琴は「タイムリープ」の力を気軽に使ってしまう。芳山和子は原作小説の主人公で、真琴の叔母。"},
+  {"g": "アニメ", "q": "『サマーウォーズ』で世界中の人が使う仮想世界の名前は？", "a": ["OZ", "ワイヤード", "オアシス", "メタバース"], "k": "2009年公開、細田守監督。仮想世界OZがAIに乗っ取られ、現実の社会も大混乱になる。"},
+  {"g": "アニメ", "q": "『サマーウォーズ』で夏希がAIとの決戦で挑むゲームは？", "a": ["花札", "将棋", "囲碁", "麻雀"], "k": "夏希は花札の「こいこい」で戦い、世界中の人々から力を借りる。"},
+  {"g": "アニメ", "q": "『おおかみこどもの雨と雪』で2人の子を育てる母親は？", "a": ["花", "雪", "雨", "真琴"], "k": "2012年公開、細田守監督。おおかみおとこと恋をした花が、おおかみこどもの姉の雪と弟の雨を育てる。"},
+  {"g": "アニメ", "q": "『パーフェクトブルー』の主人公・未麻の元の職業は？", "a": ["アイドル", "女優", "歌手兼モデル", "アナウンサー"], "k": "1998年公開、今敏監督。アイドルをやめて女優に転身した未麻のまわりで、奇妙な事件が起こる。"},
+  {"g": "アニメ", "q": "『パプリカ』で「パプリカ」として夢の中で活躍する人物は？", "a": ["千葉敦子", "霧越未麻", "藤原千代子", "島寅太郎"], "k": "2006年公開、今敏監督。原作は筒井康隆。研究者の千葉敦子が、夢の中では少女パプリカになる。"},
+  {"g": "アニメ", "q": "『千年女優』の主人公は？", "a": ["藤原千代子", "千葉敦子", "霧越未麻", "花"], "k": "2002年公開、今敏監督。引退した大女優・千代子の思い出が、出演した映画と重なりながら語られる。"},
+  {"g": "アニメ", "q": "『Angel Beats!』で死後の世界で戦う団体の略称は？", "a": ["SSS", "SOS団", "SSR", "NERV"], "k": "「死んだ世界戦線」の略。2010年放送、原作・脚本は麻枝准。"},
+  {"g": "アニメ", "q": "『Angel Beats!』で「天使」と呼ばれる生徒会長は？", "a": ["立華かなで", "仲村ゆり", "ユイ", "岩沢まさみ"], "k": "戦線と敵対する生徒会長。仲村ゆりは戦線のリーダー、ユイと岩沢は陽動部隊のバンドのメンバー。"},
+  {"g": "アニメ", "q": "『Angel Beats!』の陽動部隊でもあるバンドの名前は？", "a": ["Girls Dead Monster", "放課後ティータイム", "Fire Bomber", "μ's"], "k": "略称は「ガルデモ」。ライブで生徒の目を集め、その間に戦線が作戦を行う。"},
+  {"g": "アニメ", "q": "『まどか☆マギカ』のキュゥべえの種族名は？", "a": ["インキュベーター", "ワルプルギス", "ソウルジェム", "グリーフシード"], "k": "キュゥべえは少女と契約して魔法少女にする存在。その目的は宇宙のエネルギー問題の解決だった。"},
+  {"g": "アニメ", "q": "『進撃の巨人』でエレンたちが入る、壁の外を調べる組織は？", "a": ["調査兵団", "駐屯兵団", "憲兵団", "訓練兵団"], "k": "2013年にTVアニメ化。調査兵団は巨人の領域へ出ていく兵団で、団長はエルヴィン。"},
+  {"g": "アニメ", "q": "『キルラキル』で纏流子が使う武器は？", "a": ["片太刀バサミ", "斬魄刀", "ドミネーター", "野太刀"], "k": "巨大なハサミの片方の形をした剣。父を殺した犯人を探して本能字学園に乗りこむ。2013年放送。"},
+  {"g": "アニメ", "q": "『キルラキル』で流子が着る、意思を持つセーラー服の名前は？", "a": ["鮮血", "純潔", "縛斬", "極制服"], "k": "鮮血は話すことができる「神衣（かむい）」。生徒会長・鬼龍院皐月の神衣は「純潔」。"},
+  {"g": "アニメ", "q": "『黒子のバスケ』で帝光中学の天才5人の呼び名は？", "a": ["キセキの世代", "黄金世代", "無冠の五将", "奇跡の5人"], "k": "黒子テツヤは「幻の6人目」と呼ばれた。2012年にTVアニメ化。"},
+  {"g": "アニメ", "q": "『ごちうさ』でチノの頭に乗っているうさぎの名前は？", "a": ["ティッピー", "あんこ", "ワイルドギース", "ピョン吉"], "k": "ティッピーの中には、チノの祖父の魂が入っている。あんこは甘兎庵のうさぎ。"},
+  {"g": "アニメ", "q": "『Fate/Zero』で衛宮切嗣が召喚したサーヴァントは？", "a": ["セイバー", "アーチャー", "ランサー", "キャスター"], "k": "第四次聖杯戦争が舞台。切嗣は士郎の養父。セイバーは後の『Fate/stay night』でも士郎のサーヴァントになる。"},
+  {"g": "アニメ", "q": "『ひだまりスケッチ』で主人公たちが暮らすアパートは？", "a": ["ひだまり荘", "さくら荘", "めぞん一刻", "トキワ荘"], "k": "やまぶき高校の美術科に通う生徒たちが暮らすアパート。主人公はゆの。2007年に最初のアニメが放送された。"},
+  {"g": "アニメ", "q": "『銀魂』で坂田銀時が営む何でも屋の名前は？", "a": ["万事屋", "新選組", "真選組", "攘夷屋"], "k": "万事屋銀ちゃん。新八と神楽が一緒に働く。真選組は近藤勲や土方十四郎が属する警察組織。"},
+  {"g": "アニメ", "q": "『銀魂』で神楽の種族は？", "a": ["夜兎族", "天人族", "茶斗蘭星人", "辰羅族"], "k": "夜兎族は宇宙最強といわれる戦闘種族で、日光に弱いため傘をさしている。"},
+  {"g": "アニメ", "q": "『銀魂』で坂田銀時が毎週読んでいる雑誌は？", "a": ["週刊少年ジャンプ", "週刊少年マガジン", "週刊少年サンデー", "月刊少年ガンガン"], "k": "銀時はいい大人になってもジャンプを愛読している。原作も週刊少年ジャンプで連載された。"},
+  {"g": "アニメ", "q": "『家庭教師ヒットマンREBORN!』でリボーンの正体は？", "a": ["赤ん坊の殺し屋", "喋るネコ", "伝説のボクサー", "マフィアの執事"], "k": "見た目は赤ん坊だが一流のヒットマン。ダメな中学生・沢田綱吉をマフィアのボスに育てに来た。"},
+  {"g": "アニメ", "q": "『REBORN!』でツナが10代目を継ぐマフィアは？", "a": ["ボンゴレファミリー", "キャバッローネ", "ミルフィオーレ", "ヴァリアー"], "k": "ボンゴレファミリーはイタリアの名門マフィア。ミルフィオーレは未来編の敵、ヴァリアーはボンゴレの暗殺部隊。"},
+  {"g": "アニメ", "q": "『のだめカンタービレ』でのだめの本名は？", "a": ["野田恵", "野田恵子", "野田めぐみ", "野田明美"], "k": "2007年にアニメ化。ピアノ科の野田恵と、指揮者を目指す千秋真一の物語。"},
+  {"g": "アニメ", "q": "『のだめ』で千秋真一が目指している職業は？", "a": ["指揮者", "ピアニスト", "作曲家", "バイオリニスト"], "k": "千秋はピアノもバイオリンも弾けるが、目標は指揮者。飛行機恐怖症のせいで海外へ行けずにいた。"},
+  {"g": "アニメ", "q": "『ちはやふる』で綾瀬千早が打ち込む競技は？", "a": ["競技かるた", "弓道", "書道", "百人一首の暗唱"], "k": "2011年にアニメ化。小倉百人一首を使う競技かるた。タイトルは在原業平の歌「ちはやぶる」から。"},
+  {"g": "アニメ", "q": "『Free!』で七瀬遙のこだわりは？", "a": ["フリーしか泳がない", "背泳ぎしか泳がない", "海でしか泳がない", "夜にしか泳がない"], "k": "2013年放送、京都アニメーション制作。遙は自由形（フリー）にこだわる水泳少年。"},
+  {"g": "アニメ", "q": "『シンフォギア』で立花響が身にまとうギアの元になった聖遺物は？", "a": ["ガングニール", "天羽々斬", "イチイバル", "アガートラーム"], "k": "2012年放送。響は歌の力で聖遺物「ガングニール」のギアをまとう。天羽々斬は風鳴翼のギア。"},
+  {"g": "アニメ", "q": "『黒執事』でセバスチャンの決めゼリフは？", "a": ["あくまで執事ですから", "お嬢様、お手をどうぞ", "執事たるもの当然です", "仰せのままに"], "k": "2008年放送。名門ファントムハイヴ家の当主シエルに仕える悪魔の執事。「悪魔」と「あくまで」をかけたセリフ。"},
+  {"g": "アニメ", "q": "『ソウルイーター』で職人と武器が通う学校の略称は？", "a": ["死武専", "神学校", "武偵高", "帝光中"], "k": "「死神武器職人専門学校」の略。マカと武器のソウルたちが通う。2008年放送。"},
+  {"g": "アニメ", "q": "『ブラック・ラグーン』でロックが働く運び屋の会社は？", "a": ["ラグーン商会", "ホテル・モスクワ", "三合会", "ローワン商会"], "k": "ロックは日本の商社員だったが、ロアナプラの運び屋ラグーン商会の一員になる。2006年放送。"},
+  {"g": "アニメ", "q": "『ブラック・ラグーン』でレヴィの異名は？", "a": ["トゥーハンド", "ホワイトフェザー", "ブラッディ", "ストレイドッグ"], "k": "2丁拳銃を使うことから「トゥーハンド（二挺拳銃）」と呼ばれている。"},
+  {"g": "アニメ", "q": "『サムライチャンプルー』でフウが探している侍の手がかりは？", "a": ["ひまわりの匂い", "桜の刺青", "赤い羽織", "白い髪"], "k": "2004年放送、渡辺信一郎監督。フウはムゲン、ジンと「ひまわりの匂いのする侍」を探す旅に出る。"},
+  {"g": "アニメ", "q": "『とっとこハム太郎』でハム太郎の口ぐせは？", "a": ["へけっ", "はわわ", "ですぅ", "にぱー"], "k": "2000年にアニメが始まった。ハム太郎の飼い主は小学生のロコちゃん。"},
+  {"g": "アニメ", "q": "『Yes!プリキュア5』の主人公は？", "a": ["夢原のぞみ", "花咲つぼみ", "星空みゆき", "美墨なぎさ"], "k": "2007年放送。のぞみはキュアドリームに変身する。花咲つぼみは『ハートキャッチ』、星空みゆきは『スマイル』の主人公。"},
+  {"g": "アニメ", "q": "『ハートキャッチプリキュア！』で花咲つぼみが変身するのは？", "a": ["キュアブロッサム", "キュアマリン", "キュアハッピー", "キュアピーチ"], "k": "2010年放送。親友の来海えりかはキュアマリン。キュアハッピーは『スマイル』、キュアピーチは『フレッシュ』の主人公。"},
+  {"g": "アニメ", "q": "『スマイルプリキュア！』で星空みゆきの口ぐせは？", "a": ["ウルトラハッピー", "ワクワクもんだぜ", "ぶっちゃけありえない", "気合いだ気合い"], "k": "2012年放送。「ぶっちゃけありえな〜い！」は初代『ふたりはプリキュア』の美墨なぎさの口ぐせ。"},
+  {"g": "アニメ", "q": "『ゆるゆり』で影の薄さが悩みの主人公は？", "a": ["赤座あかり", "歳納京子", "船見結衣", "吉川ちなつ"], "k": "2011年放送。七森中学の「ごらく部」が舞台。主人公なのに目立たないことがお約束のギャグになっている。"},
+  {"g": "アニメ", "q": "『ゆるゆり』で主人公たちが入っている部活は？", "a": ["ごらく部", "軽音部", "古典部", "隣人部"], "k": "茶道部の部室だった場所を勝手に使っている部活。隣人部は『僕は友達が少ない』の部活。"},
+  {"g": "アニメ", "q": "『日常』で東雲なのの背中についているのは？", "a": ["ネジ", "羽", "電池", "スイッチ"], "k": "2011年放送、京都アニメーション制作。なのは「はかせ」が作ったロボットで、背中の大きなネジを気にしている。"},
+  {"g": "アニメ", "q": "『WORKING!!』の舞台になるファミレスは？", "a": ["ワグナリア", "ラビットハウス", "アンティーク", "喜翆荘"], "k": "2010年放送。北海道のファミレス「ワグナリア」で働く、個性の強い店員たちのコメディ。"},
+  {"g": "アニメ", "q": "『WORKING!!』で伊波まひるが男性にしてしまうことは？", "a": ["殴ってしまう", "泣いてしまう", "逃げてしまう", "笑ってしまう"], "k": "極度の男性恐怖症で、男性が近づくと反射的に殴ってしまう。主人公の小鳥遊宗太がいつも被害にあう。"},
+  {"g": "アニメ", "q": "『みなみけ』の南家三姉妹で次女は？", "a": ["夏奈", "春香", "千秋", "冬美"], "k": "2007年放送。長女・春香、次女・夏奈、三女・千秋の三姉妹の日常を描く。"},
+  {"g": "アニメ", "q": "『銀の匙』で八軒勇吾が入学する農業高校は？", "a": ["大蝦夷農業高校", "烏野高校", "大洗女子学園", "秀知院学園"], "k": "2013年にアニメ化、原作は『鋼の錬金術師』の荒川弘。北海道の農業高校が舞台。"},
+  {"g": "アニメ", "q": "『宇宙兄弟』で宇宙飛行士を目指す兄は？", "a": ["南波六太", "南波日々人", "真壁ケンジ", "伊東せりか"], "k": "2012年にアニメ化。先に宇宙飛行士になった弟・日々人を追って、兄の六太も宇宙を目指す。"},
+  {"g": "アニメ", "q": "『四月は君の嘘』で有馬公生が弾く楽器は？", "a": ["ピアノ", "バイオリン", "チェロ", "フルート"], "k": "2014年10月放送開始。母の死をきっかけにピアノが弾けなくなった公生が、バイオリニストの宮園かをりと出会う。"},
+  {"g": "アニメ", "q": "『妖怪ウォッチ』で交通事故にあって妖怪になったネコは？", "a": ["ジバニャン", "ウィスパー", "コマさん", "ブシニャン"], "k": "2014年にTVアニメ化。ジバニャンはトラックに立ち向かう地縛霊のネコ妖怪。ウィスパーはケータの執事妖怪。"},
+  {"g": "アニメ", "q": "『アイカツ！』の主人公は？", "a": ["星宮いちご", "霧矢あおい", "紫吹蘭", "大空あかり"], "k": "2012年放送。アイドル学校・スターライト学園に入ったいちごがトップアイドルを目指す。大空あかりは3年目のシリーズの主人公。"},
+  {"g": "アニメ", "q": "『ジョジョの奇妙な冒険』第1部の主人公は？", "a": ["ジョナサン・ジョースター", "ジョセフ・ジョースター", "空条承太郎", "東方仗助"], "k": "2012年にTVアニメ化。第1部のジョナサンは「波紋」の力で宿敵ディオと戦う。"},
+  {"g": "アニメ", "q": "『ジョジョ』第3部で空条承太郎のスタンドは？", "a": ["スタープラチナ", "ザ・ワールド", "クレイジー・ダイヤモンド", "ハーミットパープル"], "k": "承太郎のスタンドは「オラオラ」のラッシュで有名。ザ・ワールドはディオのスタンド。"},
+  {"g": "アニメ", "q": "『HUNTER×HUNTER』でゴンが探している父親は？", "a": ["ジン", "ネテロ", "シルバ", "クラピカ"], "k": "ゴンはハンターだった父ジンに会うためハンター試験を受ける。シルバはキルアの父。"},
+  {"g": "アニメ", "q": "『HUNTER×HUNTER』でキルアの家の家業は？", "a": ["暗殺", "盗賊", "鍛冶", "医者"], "k": "キルアは暗殺一家ゾルディック家の三男。家を飛び出してハンター試験でゴンと出会う。"},
+  {"g": "アニメ", "q": "『爆走兄弟レッツ&ゴー!!』で星馬豪のマシンは？", "a": ["マグナム", "ソニック", "ビートマグナム", "トライダガー"], "k": "1996年放送のミニ四駆アニメ。兄・烈のマシンはソニック。"},
+  {"g": "アニメ", "q": "『おじゃる丸』でおじゃる丸がいつも持っている大切な物は？", "a": ["しゃく", "扇子", "笛", "鞠"], "k": "1998年からNHKで放送。平安時代風の妖精界から来たおじゃる丸は、しゃく（笏）が大のお気に入り。"},
+  {"g": "アニメ", "q": "『神風怪盗ジャンヌ』でジャンヌに変身する少女は？", "a": ["日下部まろん", "東大寺都", "名古屋稚空", "春風どれみ"], "k": "1999年放送。まろんはジャンヌ・ダルクの生まれ変わりで、悪魔が取り憑いた美術品を回収する。"},
+  {"g": "アニメ", "q": "『こどものおもちゃ』の主人公・倉田紗南の職業は？", "a": ["子役タレント", "アイドル歌手", "漫画家", "モデル"], "k": "1996年放送。人気子役の紗南と、クラスの問題児・羽山秋人の物語。原作は小花美穂の漫画。"},
+  {"g": "アニメ", "q": "『ベイブレード』で木ノ宮タカオの聖獣は？", "a": ["ドラグーン", "ドランザー", "ドライガー", "ドラシエル"], "k": "2001年放送。タカオのドラグーンは青龍。カイのドランザーは朱雀、レイのドライガーは白虎、マックスのドラシエルは玄武。"},
+  {"g": "アニメ", "q": "『しゅごキャラ！』で日奈森あむが持つしゅごキャラの数は？", "a": ["4人", "3人", "5人", "2人"], "k": "2007年放送。ラン、ミキ、スゥの3人に、のちにダイヤが加わり4人になる。"},
+  {"g": "アニメ", "q": "『きらりん☆レボリューション』の主人公は？", "a": ["月島きらり", "日奈森あむ", "星宮いちご", "天海春香"], "k": "2006年放送。イケメンアイドルに会うため、きらりはアイドルを目指す。声は「モーニング娘。」の久住小春。"},
+  {"g": "アニメ", "q": "『金色のガッシュベル!!』でガッシュの最初の呪文は？", "a": ["ザケル", "バオウ", "ラシルド", "ジケルド"], "k": "2003年放送。パートナーの高嶺清麿が赤い本を読むと、ガッシュの口から電撃が出る。"},
+  {"g": "アニメ", "q": "『地獄先生ぬ〜べ〜』でぬ〜べ〜の左手に封じられているのは？", "a": ["鬼", "龍", "狐", "天狗"], "k": "1996年放送。ぬ〜べ〜こと鵺野鳴介は、左手に封じた「鬼の手」で生徒を悪霊から守る。"},
+  {"g": "アニメ", "q": "『ゲゲゲの鬼太郎』で鬼太郎の父親の姿は？", "a": ["目玉", "髪の毛", "ちゃんちゃんこ", "下駄"], "k": "「目玉おやじ」は目玉だけの姿になった鬼太郎の父。茶碗のお風呂に入る姿でも知られる。"},
+  {"g": "アニメ", "q": "『バクマン。』で2人の主人公が使うペンネームは？", "a": ["亜城木夢叶", "新妻エイジ", "川口たろう", "平丸一也"], "k": "2010年にアニメ化。真城最高と高木秋人の名前を組み合わせたペンネーム。新妻エイジはライバル漫画家。"},
+  {"g": "アニメ", "q": "『咲-Saki-』で宮永咲が打っていた、勝ちも負けもしない打ち方は？", "a": ["プラマイゼロ", "オーラス", "天和", "ノーテン"], "k": "2009年放送の麻雀アニメ。家族麻雀でお年玉を取られないよう、収支をゼロにする打ち方を身につけていた。"},
+  {"g": "アニメ", "q": "『きんいろモザイク』で大宮忍がホームステイした国は？", "a": ["イギリス", "アメリカ", "フランス", "ドイツ"], "k": "2013年放送。忍のホームステイ先の娘アリスが、のちに日本へ留学してくる。"},
+  {"g": "アニメ", "q": "『たまこまーけっと』で北白川たまこの家は何屋？", "a": ["餅屋", "パン屋", "豆腐屋", "花屋"], "k": "2013年放送、京都アニメーション制作。うさぎ山商店街の餅屋「たまや」の娘たまこと、しゃべる鳥デラの物語。"},
+  {"g": "アニメ", "q": "『境界の彼方』で栗山未来の口ぐせは？", "a": ["不愉快です", "わたし、気になります！", "やれやれ", "はわわ"], "k": "2013年放送。原作は京都アニメーション大賞の受賞作。メガネをかけた少女・未来の口ぐせ。"},
+  {"g": "アニメ", "q": "『花咲くいろは』で松前緒花が働く温泉旅館は？", "a": ["喜翆荘", "ワグナリア", "湯屋", "ひだまり荘"], "k": "2011年放送。金沢の湯乃鷺温泉にある祖母の旅館「喜翆荘」で、緒花は仲居として働き始める。"},
+  {"g": "アニメ", "q": "『凪のあすから』で光たちが生まれ育った海の村は？", "a": ["汐鹿生", "竜宮島", "雛見沢", "初音島"], "k": "2013年放送。海の中の村・汐鹿生に住む中学生が、陸の学校に通うことから物語が始まる。"},
+  {"g": "アニメ", "q": "『Another』で恐ろしい現象が起こるクラスは？", "a": ["夜見山北中の3年3組", "雛見沢分校", "私立聖ルカ学園", "県立北高1年5組"], "k": "2012年放送、原作は綾辻行人。転校生の榊原恒一は、眼帯の少女・見崎鳴と出会う。"},
+  {"g": "アニメ", "q": "『ノラガミ』で自分の神社を持たない神様は？", "a": ["夜ト", "毘沙門", "天神", "恵比寿"], "k": "2014年放送。5円で何でも引き受ける無名の神・夜トと、半妖になった少女ひよりの物語。"},
+  {"g": "アニメ", "q": "『東京喰種』で半喰種になる主人公は？", "a": ["金木研", "霧嶋董香", "月山習", "亜門鋼太朗"], "k": "2014年放送。大学生の金木は、喰種（グール）の臓器を移植され半喰種になる。"},
+  {"g": "アニメ", "q": "『イナズマイレブン』で円堂守がいるサッカー部の中学は？", "a": ["雷門中", "帝国学園", "烏野高校", "帝光中学"], "k": "2008年放送。円堂はゴールキーパーで、祖父の残した特訓ノートを大切にしている。"},
+  {"g": "アニメ", "q": "『Gガンダム』でドモン・カッシュの必殺技は？", "a": ["石破天驚拳", "かめはめ波", "北斗百裂拳", "牙突"], "k": "正確には「石破天驚ゴッドフィンガー」など。東方不敗マスター・アジアはドモンの師匠。1994〜95年放送。"},
+  {"g": "アニメ", "q": "『機動戦士ガンダム00』で刹那が所属する組織は？", "a": ["ソレスタルビーイング", "ネルフ", "ゼーレ", "ザフト"], "k": "武力で戦争をなくそうとする私設武装組織。ザフトは『ガンダムSEED』の勢力。"},
+  {"g": "アニメ", "q": "『グレンラガン』でシモンが掘り当てた小さなロボットは？", "a": ["ラガン", "グレン", "ダイグレン", "ガンメン"], "k": "シモンが地下で見つけた顔のような機体がラガン。カミナのグレンと合体してグレンラガンになる。"},
+  {"g": "アニメ", "q": "『けいおん！』で中野梓のあだ名は？", "a": ["あずにゃん", "あずさん", "ちゃん梓", "あずきち"], "k": "唯がつけたあだ名。ネコ耳をつけたことがきっかけ。梓は軽音部の後輩で、ギター担当。"},
+  {"g": "アニメ", "q": "『らき☆すた』で泉こなたが好きな食べ物の食べ方で話題にしたのは？", "a": ["チョココロネ", "メロンパン", "たい焼き", "ソフトクリーム"], "k": "第1話で「チョココロネはどっちから食べるか」を話題にする。2007年放送、京都アニメーション制作。"},
+  {"g": "アニメ", "q": "『あの花』で超平和バスターズのリーダーだったのは？", "a": ["じんたん", "ゆきあつ", "ぽっぽ", "つるこ"], "k": "じんたんこと宿海仁太。幽霊のめんまが現れ、ばらばらになっていた仲間がまた集まる。2011年放送。"},
+  {"g": "アニメ", "q": "『とある魔術の禁書目録』で上条当麻の右手の力は？", "a": ["幻想殺し", "一方通行", "超電磁砲", "未元物質"], "k": "異能の力なら神の奇跡でも打ち消す力。一方通行はアクセラレータの能力。"},
+  {"g": "アニメ", "q": "『魔法先生ネギま！』でネギが先生になる学園は？", "a": ["麻帆良学園", "私立聖ルカ学園", "秀知院学園", "スターライト学園"], "k": "10歳の魔法使いネギが、麻帆良学園女子中等部の担任になる。2005年にTVアニメ化。"},
+  {"g": "アニメ", "q": "『ストライクウィッチーズ』でウィッチが脚につける飛行装置は？", "a": ["ストライカーユニット", "ATフィールド", "IS", "ナイトメア"], "k": "魔法の力で動く脚の装置。2008年放送。ISは『インフィニット・ストラトス』のパワードスーツ。"},
+  {"g": "アニメ", "q": "『魔法少女まどか☆マギカ』で魔法少女の魂が入っている宝石は？", "a": ["ソウルジェム", "グリーフシード", "賢者の石", "四魂の玉"], "k": "ソウルジェムが濁りきると魔女になってしまう。グリーフシードは魔女が落とす、濁りを吸い取るもの。"},
+  {"g": "アニメ", "q": "『ゼーガペイン』で主人公たちが暮らす町は？", "a": ["舞浜", "竜宮島", "初音島", "大洗"], "k": "2006年放送。千葉県の舞浜が舞台。主人公の京は、実はこの世界が量子サーバーの中にあることを知る。"},
+  {"g": "アニメ", "q": "『ぱにぽにだっしゅ！』で11歳で先生をしている少女は？", "a": ["レベッカ宮本", "美浜ちよ", "ネギ・スプリングフィールド", "高町なのは"], "k": "2005年放送、シャフト制作。飛び級してアメリカから来た天才少女ベッキーが、桃月学園の先生になる。"},
+  {"g": "アニメ", "q": "『ギャラクシーエンジェル』で主人公たちの部隊の名前は？", "a": ["エンジェル隊", "ウィッチーズ", "ゼロ隊", "ロンド・ベル"], "k": "ミルフィーユたちトランスバール皇国軍の部隊。アニメ版はほぼ毎回ドタバタのギャグ。"},
+  {"g": "アニメ", "q": "『まほろまてぃっく』で美里優の家に来たメイドは？", "a": ["まほろ", "メイ", "ちぃ", "ルリ"], "k": "2001年放送。元戦闘用アンドロイドのまほろが、メイドとして優の家で暮らす。口ぐせは「えっちなのはいけないと思います」。"},
+  {"g": "アニメ", "q": "『灰羽連盟』で灰羽が頭の上に持っているものは？", "a": ["光の輪", "角", "花", "羽根の冠"], "k": "2002年放送、原作は安倍吉俊。灰羽は背中に灰色の羽、頭に光の輪を持つ不思議な存在。"},
+  {"g": "アニメ", "q": "『蟲師』の主人公は？", "a": ["ギンコ", "夏目貴志", "ナルト", "ヴァッシュ"], "k": "2005年にアニメ化。蟲と呼ばれる不思議な存在がかかわる出来事を、旅の蟲師ギンコが解決していく。"},
+  {"g": "アニメ", "q": "『夏目友人帳』で夏目貴志が祖母から受け継いだのは？", "a": ["友人帳", "死神の帳面", "四魂の玉", "クロウカード"], "k": "祖母レイコが妖怪の名前を集めた帳面。ニャンコ先生こと斑は、友人帳を狙って夏目の用心棒になった。"},
+  {"g": "アニメ", "q": "『東のエデン』で滝沢朗が持つ、100億円が入った携帯は？", "a": ["ノブレス携帯", "ギアス", "デスノート", "電脳メガネ"], "k": "2009年放送、神山健治監督。携帯を持つ12人のセレソンが、100億円で日本を救うことを求められる。"},
+  {"g": "アニメ", "q": "『ブレンパワード』で戦う人型の存在は？", "a": ["アンチボディ", "モビルスーツ", "エヴァンゲリオン", "ガンメン"], "k": "1998年放送、富野由悠季監督。生き物のような人型の存在「アンチボディ」が登場する。"},
+  {"g": "アニメ", "q": "『魔法少女リリカルなのは』の原作となったゲームは？", "a": ["とらいあんぐるハート3", "ToHeart", "Kanon", "シスター・プリンセス"], "k": "なのはは18禁PCゲーム『とらいあんぐるハート3』の登場人物の妹がもと。2004年にTVアニメが始まった。"},
+  {"g": "アニメ", "q": "『マクロスF』でランカ・リーの有名な決めポーズのあいさつは？", "a": ["キラッ☆", "にぱー", "へけっ", "ウルトラハッピー"], "k": "ランカの「キラッ☆」は放送当時に大流行した。歌は中島愛が担当した。"},
+  {"g": "アニメ", "q": "『けいおん！』の軽音部のバンド名は？", "a": ["放課後ティータイム", "ガルデモ", "μ's", "Fire Bomber"], "k": "部室でお茶とお菓子を楽しんでばかりいることから名づけられた。"},
+  {"g": "アニメ", "q": "『化物語』のアニメを制作したスタジオは？", "a": ["シャフト", "京都アニメーション", "ボンズ", "サンライズ"], "k": "2009年放送、監督は新房昭之。文字が一瞬だけ映る独特の演出で知られる。"},
+  {"g": "アニメ", "q": "『鋼の錬金術師』（2003年版・2009年版）を制作したスタジオは？", "a": ["ボンズ", "サンライズ", "マッドハウス", "GAINAX"], "k": "ボンズは『交響詩篇エウレカセブン』『カウボーイビバップ 天国の扉』なども制作した。"},
+  {"g": "アニメ", "q": "『サマーウォーズ』『時をかける少女』を制作したスタジオは？", "a": ["マッドハウス", "スタジオジブリ", "コミックス・ウェーブ", "ボンズ"], "k": "細田守監督の作品はマッドハウス制作。のちに細田監督はスタジオ地図を設立した。"},
+  {"g": "アニメ", "q": "『ヱヴァンゲリヲン新劇場版：序』が公開された年は？", "a": ["2007年", "2005年", "2009年", "2012年"], "k": "新劇場版の第1作。2009年に『破』、2012年に『Q』、2021年に『シン・エヴァンゲリオン劇場版』が公開された。"},
+  {"g": "アニメ", "q": "『エヴァ新劇場版：破』で初めて登場したパイロットは？", "a": ["真希波・マリ", "鈴原トウジ", "渚カヲル", "洞木ヒカリ"], "k": "2009年公開の『破』で初登場した新キャラクター。メガネをかけた少女で、エヴァ仮設5号機などに乗る。"},
+  {"g": "アニメ", "q": "『カウボーイビバップ』でスパイクが乗る小型の戦闘機は？", "a": ["ソードフィッシュII", "レッドテイル", "ハンマーヘッド", "ビバップ号"], "k": "スパイクの愛機。レッドテイルはフェイ、ハンマーヘッドはジェットの機体。ビバップ号は一行が暮らす宇宙船。"},
+  {"g": "アニメ", "q": "『ナデシコ』で戦艦ナデシコの艦長は？", "a": ["ミスマル・ユリカ", "ホシノ・ルリ", "エリナ", "メグミ・レイナード"], "k": "明るく天然な天才艦長。主人公テンカワ・アキトの幼なじみで、アキトのことを「王子様」と思っている。"},
+  {"g": "アニメ", "q": "『勇者王ガオガイガー』の主人公は？", "a": ["獅子王凱", "天海護", "大河幸太郎", "火麻激"], "k": "1997年放送。サイボーグとなった獅子王凱がガイガーに乗り、ガオガイガーへファイナルフュージョンする。"},
+  {"g": "アニメ", "q": "『るろうに剣心』で剣心が使う、刃と峰が逆になった刀は？", "a": ["逆刃刀", "斬鉄剣", "村正", "菊一文字"], "k": "人を斬らないという誓いの刀。峰の側に刃があるため、ふつうに振れば相手を斬らずに済む。"},
+  {"g": "アニメ", "q": "『GTO』の鬼塚英吉の過去は？", "a": ["元暴走族", "元プロ野球選手", "元警察官", "元ホスト"], "k": "元暴走族の鬼塚が教師になり、問題を抱えた生徒に体当たりでぶつかっていく。1999年にアニメ化。"},
+  {"g": "アニメ", "q": "『スレイヤーズ』でアメリアが王女をつとめる国は？", "a": ["セイルーン", "ゼフィーリア", "エルメキア", "リーザス"], "k": "アメリアは正義を愛するセイルーン王国の王女。ゼフィーリアはリナの故郷。"},
+  {"g": "アニメ", "q": "『らき☆すた』の柊かがみと柊つかさの関係は？", "a": ["双子の姉妹", "いとこ", "幼なじみ", "先輩と後輩"], "k": "かがみが姉、つかさが妹の双子。しっかり者のかがみと、おっとりしたつかさは性格が正反対。"},
+  {"g": "アニメ", "q": "『けいおん！』で秋山澪の担当楽器は？", "a": ["ベース", "ギター", "ドラム", "キーボード"], "k": "澪は恥ずかしがり屋のベーシスト。律がドラム、唯がギター、ムギがキーボードを担当している。"},
+  {"g": "アニメ", "q": "『まどか☆マギカ』で美樹さやかが願ったことは？", "a": ["幼なじみの腕を治す", "世界を救う", "家族の事故をなくす", "魔女を全滅させる"], "k": "さやかはバイオリンを弾けなくなった幼なじみ・上条恭介の腕を治すため、キュゥべえと契約した。"},
+  {"g": "アニメ", "q": "『まどか☆マギカ』の脚本を担当したのは？", "a": ["虚淵玄", "麻枝准", "奈須きのこ", "岡田麿里"], "k": "ニトロプラスの虚淵玄が脚本を書いた。救いのない展開が多いことから「虚淵」の名が広く知られるようになった。"},
+  {"g": "アニメ", "q": "『化物語』で神原駿河がかかわった怪異は？", "a": ["猿", "猫", "蛇", "蝸牛"], "k": "神原駿河は「レイニーデヴィル」と呼ばれる猿の手の怪異にかかわる。千石撫子は蛇、羽川翼は猫。"},
+  {"g": "アニメ", "q": "『化物語』で千石撫子がかかわった怪異は？", "a": ["蛇", "蟹", "猿", "猫"], "k": "撫子は呪いによって蛇に巻きつかれてしまう。阿良々木暦の妹の友だちで、暦を「暦お兄ちゃん」と呼ぶ。"},
+  {"g": "アニメ", "q": "『あの花』でめんまの本名は？", "a": ["本間芽衣子", "安城鳴子", "鶴見知利子", "宿海仁太"], "k": "幼いころに亡くなっためんまが、じんたんの前に現れる。安城鳴子は「あなる」、鶴見知利子は「つるこ」。"},
+  {"g": "アニメ", "q": "『進撃の巨人』でエレンの幼なじみの少女は？", "a": ["ミカサ", "アニ", "クリスタ", "サシャ"], "k": "ミカサ・アッカーマンはエレンを家族のように大切にしている。もう1人の幼なじみはアルミン。"},
+  {"g": "アニメ", "q": "『ラブライブ！』で高坂穂乃果の実家は？", "a": ["和菓子屋", "パン屋", "神社", "花屋"], "k": "穂乃果の家は老舗の和菓子屋「穂むら」。廃校の危機を救うため、スクールアイドルを始める。"},
+  {"g": "アニメ", "q": "『ガルパン』で西住みほたちが最初に乗る戦車は？", "a": ["IV号戦車", "ティーガーI", "シャーマン", "T-34"], "k": "あんこうチームのIV号戦車D型。のちに主砲などを強化して戦う。ティーガーIは黒森峰の西住まほが乗る。"},
+  {"g": "アニメ", "q": "『氷菓』の原作「古典部シリーズ」の作者は？", "a": ["米澤穂信", "綾辻行人", "西尾維新", "有川浩"], "k": "第1作『氷菓』は2001年に刊行された。日常の小さな謎を解くミステリーとして人気を集めた。"},
+  {"g": "アニメ", "q": "『PSYCHO-PASS』で執行官の狡噛慎也が追う宿敵は？", "a": ["槙島聖護", "宜野座伸元", "征陸智己", "常守朱"], "k": "犯罪係数が上がらない謎の男・槙島聖護。宜野座は監視官、征陸は執行官、常守朱は主人公の新人監視官。"},
+  {"g": "アニメ", "q": "『キルラキル』を制作したアニメスタジオは？", "a": ["TRIGGER", "GAINAX", "シャフト", "ボンズ"], "k": "2013年放送。『グレンラガン』の今石洋之監督たちがGAINAXから独立して作ったスタジオの、初のTVシリーズ。"},
+  {"g": "アニメ", "q": "『とある科学の超電磁砲』で御坂美琴が通う中学校は？", "a": ["常盤台中学", "長点上機学園", "とある高校", "霧ヶ丘女学院"], "k": "お嬢様学校の常盤台中学。白井黒子は美琴のルームメイトで、美琴を「お姉様」と呼ぶ。"},
+  {"g": "アニメ", "q": "『ARIA』でARIAカンパニーの社長は？", "a": ["猫", "ウンディーネ", "ロボット", "少女"], "k": "アリア社長は青い目を持つ「火星猫」。ネオ・ヴェネツィアの水先案内店では猫が社長になる習わしがある。"},
+  {"g": "アニメ", "q": "『ローゼンメイデン』で翠星石の語尾は？", "a": ["〜ですぅ", "〜なのだわ", "〜かしら", "〜なの"], "k": "翠星石は口が悪いけれど本当は優しい双子の姉。「〜なのだわ」は真紅、「〜かしら」は金糸雀の口調。"},
+  {"g": "アニメ", "q": "『コードギアス』で枢木スザクが乗る機体は？", "a": ["ランスロット", "紅蓮弐式", "ガウェイン", "月下"], "k": "ブリタニア軍の第7世代ナイトメアフレーム。紅蓮弐式は紅月カレン、ガウェインはルルーシュの機体。"},
+  {"g": "アニメ", "q": "『ガンダムSEED』でアスラン・ザラが所属する軍は？", "a": ["ザフト", "地球連合", "オーブ", "ネオ・ジオン"], "k": "コーディネイターの国プラントの軍。親友のキラとは敵同士として戦うことになる。"},
+  {"g": "アニメ", "q": "『ポケモン』でピカチュウが入るのを嫌がる物は？", "a": ["モンスターボール", "ポケモンセンター", "リュック", "カバン"], "k": "アニメのピカチュウはモンスターボールが苦手で、いつもサトシの肩や足元にいる。"},
+  {"g": "アニメ", "q": "『デジモンアドベンチャー』で選ばれし子どもたちが持つ機械は？", "a": ["デジヴァイス", "ポケモン図鑑", "電脳メガネ", "デュエルディスク"], "k": "デジヴァイスはパートナーのデジモンを進化させる力を持つ。1999年放送。"},
+  {"g": "アニメ", "q": "『ONE PIECE』でルフィの夢は？", "a": ["海賊王になる", "世界一の剣豪になる", "オールブルーを見つける", "世界地図を描く"], "k": "「海賊王に、おれはなる！」。世界一の剣豪はゾロ、オールブルーはサンジ、世界地図はナミの夢。"},
+  {"g": "アニメ", "q": "『NARUTO』でうずまきナルトの口ぐせは？", "a": ["だってばよ", "まだまだだね", "おろ？", "へけっ"], "k": "語尾に「〜だってばよ」をつけるのがナルトの口ぐせ。「おろ？」は『るろうに剣心』の剣心。"},
+  {"g": "アニメ", "q": "『BLEACH』で黒崎一護に死神の力を与えたのは？", "a": ["朽木ルキア", "朽木白哉", "浦原喜助", "四楓院夜一"], "k": "ルキアが一護に力を渡したことで、一護は死神代行として虚（ホロウ）と戦うことになる。"},
+  {"g": "アニメ", "q": "『DEATH NOTE』でLがいつも口にしているものは？", "a": ["甘いもの", "コーヒー", "リンゴ", "タバコ"], "k": "Lは独特の座り方で、ケーキや角砂糖などの甘いものばかり食べている。リンゴはリュークの好物。"},
+  {"g": "アニメ", "q": "『ヒカルの碁』でヒカルのライバルになる少年は？", "a": ["塔矢アキラ", "和谷義高", "伊角慎一郎", "越智康介"], "k": "名人・塔矢行洋の息子アキラ。ヒカル（実は佐為）に負けたことから、ヒカルを強く意識するようになる。"},
+  {"g": "アニメ", "q": "『テニスの王子様』で青春学園テニス部の部長は？", "a": ["手塚国光", "不二周助", "大石秀一郎", "跡部景吾"], "k": "冷静で圧倒的な実力を持つ部長。跡部景吾はライバル校・氷帝学園の部長。"},
+  {"g": "アニメ", "q": "『遊☆戯☆王』で武藤遊戯が組み立てた古代の秘宝は？", "a": ["千年パズル", "千年リング", "千年アイ", "千年ロッド"], "k": "千年パズルを完成させたことで、遊戯の中にもう1つの人格（王様）が宿った。"},
+  {"g": "アニメ", "q": "『鋼の錬金術師』でエドの右腕と左脚になっている機械の義手義足は？", "a": ["オートメイル", "ギアス", "アルター", "ストライカー"], "k": "幼なじみのウィンリィが整備している。エドは人体錬成の失敗で左脚を、弟の魂を定着させる代わりに右腕を失った。"},
+  {"g": "アニメ", "q": "『鋼の錬金術師』でエドのオートメイルを整備する幼なじみは？", "a": ["ウィンリィ", "リザ", "メイ", "ランファン"], "k": "ウィンリィ・ロックベルは機械鎧技師。リザ・ホークアイはマスタング大佐の部下。"},
+  {"g": "アニメ", "q": "『モノノ怪』でモノノ怪を斬る謎の主人公は？", "a": ["薬売り", "陰陽師", "坊主", "剣客"], "k": "2007年放送。モノノ怪の「形」「真」「理」がそろったとき、薬売りは退魔の剣を抜くことができる。"},
+  {"g": "アニメ", "q": "『ピンポン』で星野裕のあだ名は？", "a": ["ペコ", "スマイル", "ドラゴン", "アクマ"], "k": "2014年にTVアニメ化。ペコと、幼なじみの月本誠（スマイル）が卓球に打ち込む。原作は松本大洋。"},
+  {"g": "アニメ", "q": "『SHIROBAKO』で主人公たちが働くアニメ制作会社は？", "a": ["武蔵野アニメーション", "スタジオジブリ", "ガイナックス", "京都アニメーション"], "k": "2014年放送。高校のアニメ同好会の5人が、アニメ業界でそれぞれの夢を目指す。"},
+  {"g": "アニメ", "q": "『月刊少女野崎くん』で野崎梅太郎の正体は？", "a": ["少女漫画家", "小説家", "アイドル", "イラストレーター"], "k": "2014年放送。佐倉千代が告白した相手・野崎は、ペンネーム「夢野咲子」の人気少女漫画家だった。"},
+  {"g": "アニメ", "q": "『セーラームーン セーラースターズ』で登場するアイドル3人組の戦士は？", "a": ["セーラースターライツ", "アウターセンシ", "ダーク・キングダム", "アマゾン・トリオ"], "k": "1996年放送のシリーズ最終作。地球でアイドルグループ「スリーライツ」として活動している。"},
+  {"g": "アニメ", "q": "『クレしん オトナ帝国の逆襲』で大人たちを夢中にさせるのは？", "a": ["懐かしいにおい", "大量のお菓子", "新しいゲーム", "宇宙からの音楽"], "k": "2001年公開。20世紀の懐かしいにおいで大人たちが子どもに戻ってしまう。映画ファンの評価も高い作品。"},
+  {"g": "アニメ", "q": "2005年からのアニメ『ドラえもん』でドラえもんの声を担当するのは？", "a": ["水田わさび", "大山のぶ代", "大原めぐみ", "かかずゆみ"], "k": "2005年に声優陣が一新された。のび太は大原めぐみ、しずかちゃんはかかずゆみが担当している。"},
+  {"g": "アニメ", "q": "『ドキドキ！プリキュア』の主人公は？", "a": ["相田マナ", "愛乃めぐみ", "北条響", "桃園ラブ"], "k": "2013年放送。マナはキュアハートに変身する。愛乃めぐみは『ハピネスチャージ』、北条響は『スイート』の主人公。"},
+  {"g": "アニメ", "q": "『フレッシュプリキュア！』で桃園ラブが変身するのは？", "a": ["キュアピーチ", "キュアベリー", "キュアパイン", "キュアパッション"], "k": "2009年放送。ダンスが大好きなラブがキュアピーチになる。ベリーは美希、パインはブッキー（祈里）。"},
+  {"g": "アニメ", "q": "『スイートプリキュア♪』のテーマは？", "a": ["音楽", "ダンス", "お菓子", "宇宙"], "k": "2011年放送。北条響と南野奏が、音楽の力で伝説の楽譜を守る。キュアメロディとキュアリズムに変身する。"},
+  {"g": "アニメ", "q": "『風立ちぬ』の主人公・堀越二郎の仕事は？", "a": ["飛行機の設計", "鉄道の運転", "船の建造", "自動車の開発"], "k": "2013年公開、宮崎駿監督。実在の零戦の設計者・堀越二郎がモデル。主人公の声は庵野秀明が担当した。"},
+  {"g": "アニメ", "q": "『借りぐらしのアリエッティ』のアリエッティは何者？", "a": ["小人", "妖精", "魔女", "人形"], "k": "2010年公開。床下に住み、人間の物を少しずつ「借り」て暮らす小人の少女。"},
+  {"g": "アニメ", "q": "『コクリコ坂から』の舞台の都市は？", "a": ["横浜", "神戸", "函館", "長崎"], "k": "2011年公開、宮崎吾朗監督。1963年の横浜を舞台に、高校生の海と俊の恋を描く。"},
+  {"g": "アニメ", "q": "ジブリ映画『ゲド戦記』の監督は？", "a": ["宮崎吾朗", "宮崎駿", "高畑勲", "米林宏昌"], "k": "2006年公開。宮崎駿の長男・宮崎吾朗の監督第1作。原作はル＝グウィンのファンタジー小説。"},
+  {"g": "アニメ", "q": "『かぐや姫の物語』の監督は？", "a": ["高畑勲", "宮崎駿", "宮崎吾朗", "細田守"], "k": "2013年公開。『竹取物語』を、水彩画のようなやわらかな絵で描いた。高畑勲の最後の監督作品になった。"},
+  {"g": "アニメ", "q": "『猫の恩返し』で主人公のハルが連れていかれる国は？", "a": ["猫の国", "妖精の国", "海の底の国", "雲の上の国"], "k": "2002年公開。『耳をすませば』に登場した猫の人形バロンが、ハルを助けるために活躍する。"},
+  {"g": "アニメ", "q": "『ONE PIECE』でゾロの夢は？", "a": ["世界一の大剣豪", "海賊王", "世界中の海を見る", "伝説の海賊を倒す"], "k": "幼なじみ・くいなとの約束で、世界一の剣豪を目指している。目標は「鷹の目」のミホーク。"},
+  {"g": "アニメ", "q": "『ポケモン』でサトシのライバルだったオーキド博士の孫は？", "a": ["シゲル", "タケシ", "カスミ", "ケンジ"], "k": "シゲルはサトシと同じマサラタウン出身。タケシとカスミは旅の仲間で、それぞれジムリーダーだった。"},
+  {"g": "アニメ", "q": "『名探偵コナン』で「西の高校生探偵」と呼ばれるのは？", "a": ["服部平次", "工藤新一", "白馬探", "京極真"], "k": "大阪弁を話す服部平次。「東の工藤、西の服部」と並び称される。白馬探も高校生探偵として登場する。"},
+  {"g": "アニメ", "q": "『金田一少年の事件簿』で金田一の祖父は誰という設定？", "a": ["金田一耕助", "明智小五郎", "神津恭介", "浅見光彦"], "k": "横溝正史の小説に出てくる名探偵・金田一耕助が祖父という設定。決めゼリフ「じっちゃんの名にかけて」の由来。"},
+  {"g": "アニメ", "q": "『犬夜叉』で犬夜叉の首にかけられた数珠の役目は？", "a": ["言霊で動きを封じる", "魔力を高める", "姿を消す", "病気を治す"], "k": "かごめが「おすわり」と言うと、数珠の力で犬夜叉は地面にたたきつけられる。"},
+  {"g": "アニメ", "q": "『ちはやふる』で千早の幼なじみ2人は？", "a": ["太一と新", "奉太郎と里志", "竜児と北村", "公生と渡"], "k": "真島太一と綿谷新。小学生のころに3人で競技かるたを始めた。"},
+  {"g": "アニメ", "q": "『四月は君の嘘』で宮園かをりが弾く楽器は？", "a": ["バイオリン", "ピアノ", "フルート", "チェロ"], "k": "自由で型破りな演奏をするバイオリニスト。公生は彼女の伴奏者として、再びピアノに向き合う。"},
+  {"g": "アニメ", "q": "『魔法少女リリカルなのは』でフェイトの使い魔のオオカミは？", "a": ["アルフ", "ユーノ", "ザフィーラ", "リニス"], "k": "アルフはフェイトを守る狼の使い魔。ユーノはフェレットの姿の少年。ザフィーラは八神はやてを守る守護獣。"},
+  {"g": "アニメ", "q": "『とある魔術の禁書目録』でインデックスが所属する教会は？", "a": ["イギリス清教", "ローマ正教", "ロシア成教", "天草式"], "k": "インデックスはイギリス清教の「必要悪の教会（ネセサリウス）」に所属するシスター。"},
+  {"g": "アニメ", "q": "『Angel Beats!』で主人公の音無結弦が最初に失っていたものは？", "a": ["生前の記憶", "名前", "声", "右手"], "k": "音無は死後の世界に来たとき、生前の記憶を失っていた。記憶を取り戻すことが物語の鍵になる。"},
+  {"g": "アニメ", "q": "『STEINS;GATE』で椎名まゆりの口ぐせは？", "a": ["トゥットゥルー", "にゃんぱすー", "はわわ", "にぱー"], "k": "「トゥットゥルー♪ まゆしぃ☆です」があいさつ。岡部の幼なじみで、ラボメン No.002。"},
+  {"g": "ギャルゲ", "q": "『ToHeart2』で向坂環のあだ名は？", "a": ["タマ姉", "環ちゃん", "お嬢", "姉御"], "k": "主人公・河野貴明の幼なじみのお姉さん。弟の向坂雄二は貴明の親友。PS2版は2004年に発売された。"},
+  {"g": "ギャルゲ", "q": "『To Heart』でうわさ話を広めるのが得意なヒロインは？", "a": ["長岡志保", "神岸あかり", "保科智子", "来栖川綾香"], "k": "「志保ちゃん情報」として学校のうわさを広める。神岸あかりは主人公・藤田浩之の幼なじみ。"},
+  {"g": "ギャルゲ", "q": "『To Heart』で超能力に悩む後輩のヒロインは？", "a": ["姫川琴音", "松原葵", "雛山理緒", "宮内レミィ"], "k": "琴音は自分の超能力を不吉なものだと思い込み、人を避けている。松原葵は格闘技に打ち込む後輩。"},
+  {"g": "ギャルゲ", "q": "『To Heart』で格闘技に打ち込む後輩は？", "a": ["松原葵", "姫川琴音", "来栖川芹香", "マルチ"], "k": "葵は総合格闘技「エクストリーム」を目指して練習している。来栖川芹香の妹・綾香は葵のあこがれの選手。"},
+  {"g": "ギャルゲ", "q": "『To Heart』でアメリカ人とのハーフのヒロインは？", "a": ["宮内レミィ", "保科智子", "長岡志保", "セリオ"], "k": "レミィは明るく弓道が得意な帰国子女。日本語の言い間違いもかわいらしい。"},
+  {"g": "ギャルゲ", "q": "『WHITE ALBUM』（1998年）で森川由綺のライバルのアイドルは？", "a": ["緒方理奈", "篠塚弥生", "河島はるか", "観月マナ"], "k": "緒方理奈はトップアイドル。篠塚弥生は由綺のマネージャー、河島はるかは主人公の幼なじみ。"},
+  {"g": "ギャルゲ", "q": "『WHITE ALBUM2』で学園祭のバンドに加わるアイドル的存在の少女は？", "a": ["小木曽雪菜", "冬馬かずさ", "杉浦小春", "和泉千晶"], "k": "「峰城大付属のアイドル」と呼ばれる雪菜。春希、かずさとの3人で学園祭のステージに立つ。"},
+  {"g": "ギャルゲ", "q": "『WHITE ALBUM2』を開発したブランドは？", "a": ["Leaf", "Key", "âge", "TYPE-MOON"], "k": "アクアプラスのブランドLeafの作品。1998年の『WHITE ALBUM』とは登場人物が異なる、新しい物語。"},
+  {"g": "ギャルゲ", "q": "『こみっくパーティー』で主人公を同人の道に引き込む親友は？", "a": ["九品仏大志", "千堂和樹", "高瀬瑞希", "大庭詠美"], "k": "主人公・千堂和樹は、オタクの親友・大志に誘われて同人誌作りを始める。瑞希は和樹の幼なじみ。"},
+  {"g": "ギャルゲ", "q": "『こみパ』で主人公の幼なじみのヒロインは？", "a": ["高瀬瑞希", "大庭詠美", "猪名川由宇", "塚本千紗"], "k": "瑞希はオタク嫌いのテニス部員。大庭詠美は人気の同人作家で、猪名川由宇は関西弁の同人作家。"},
+  {"g": "ギャルゲ", "q": "『うたわれるもの』でハクオロを助けた村の薬師の少女は？", "a": ["エルルゥ", "アルルゥ", "カミュ", "トウカ"], "k": "記憶を失ったハクオロを看病した少女。妹のアルルゥは森の主の子ども・ムックルと仲良し。"},
+  {"g": "ギャルゲ", "q": "『うたわれるもの』でハクオロがつけているものは？", "a": ["仮面", "眼帯", "手甲", "兜"], "k": "顔の上半分をおおう仮面は、外すことができない。物語が進むと仮面の秘密が明らかになる。"},
+  {"g": "ギャルゲ", "q": "『AIR』で霧島佳乃が手首に巻いているものは？", "a": ["黄色いバンダナ", "赤いリボン", "数珠", "腕時計"], "k": "佳乃は手首の黄色いバンダナを絶対に外さない。姉の霧島聖は町の診療所の医者。"},
+  {"g": "ギャルゲ", "q": "『AIR』で霧島佳乃の飼っている犬のような生き物は？", "a": ["ポテト", "ムックル", "ぴろ", "ボコ"], "k": "「ぴこぴこ」と鳴く白い生き物。ぴろは『Kanon』で沢渡真琴が連れていた猫。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』で図書室にいる天才少女は？", "a": ["一ノ瀬ことみ", "伊吹風子", "藤林椋", "宮沢有紀寧"], "k": "「ひらがな3つで、ことみ。呼ぶときは、ことみちゃん」と自己紹介する。授業に出ず図書室で本を読んでいる。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』で主人公・岡崎朋也の悪友は？", "a": ["春原陽平", "古河秋生", "芳野祐介", "相楽美佐枝"], "k": "春原はサッカー部をやめた不良仲間。いつも朋也に振り回され、ひどい目にあう。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』で古河渚の父・秋生が好きなスポーツは？", "a": ["野球", "サッカー", "バスケ", "ラグビー"], "k": "秋生は元劇団員で、パン屋の主人。近所の子どもと野球をするのが大好き。"},
+  {"g": "ギャルゲ", "q": "『CLANNAD』の後半、社会人になった朋也を描く章は？", "a": ["AFTER STORY", "SUMMER", "Heaven's Feel", "Refrain"], "k": "渚と結婚し、娘の汐が生まれたあとの物語。アニメでは第2期『CLANNAD 〜AFTER STORY〜』として描かれた。"},
+  {"g": "ギャルゲ", "q": "『リトルバスターズ！』で剣道部に所属するメンバーは？", "a": ["宮沢謙吾", "井ノ原真人", "棗恭介", "直枝理樹"], "k": "謙吾は剣道部のエース。真人は筋肉が自慢で、謙吾とはいつもケンカしている。恭介はリトルバスターズのリーダー。"},
+  {"g": "ギャルゲ", "q": "『リトバス』で筋肉が自慢のメンバーは？", "a": ["井ノ原真人", "宮沢謙吾", "棗恭介", "直枝理樹"], "k": "真人は筋トレが大好きで、何かにつけ「筋肉」を持ち出す。好物はカツ。"},
+  {"g": "ギャルゲ", "q": "『リトバス』でお菓子が大好きなヒロインは？", "a": ["神北小毬", "来ヶ谷唯湖", "西園美魚", "三枝葉留佳"], "k": "小毬は甘いお菓子をいつも持ち歩き、口ぐせは「ふえぇ」。西園美魚はいつも日傘をさしている。"},
+  {"g": "ギャルゲ", "q": "『リトバス』でいつも日傘をさしている物静かなヒロインは？", "a": ["西園美魚", "神北小毬", "能美クドリャフカ", "笹瀬川佐々美"], "k": "美魚は体が弱いとされ、日傘を手放さない。本を読むのが大好き。"},
+  {"g": "ギャルゲ", "q": "『Rewrite』で怪力の持ち主のヒロインは？", "a": ["鳳ちはや", "此花ルチア", "神戸小鳥", "千里朱音"], "k": "ちはやは小柄だが怪力。此花ルチアは潔癖症の風紀委員、千里朱音はオカルト研究会の部長。"},
+  {"g": "ギャルゲ", "q": "『planetarian』の主人公の仕事は？", "a": ["屑屋", "郵便配達", "探偵", "医者"], "k": "戦争で荒れた世界で、廃墟から使える物を集めて回る「屑屋」。廃墟のプラネタリウムでロボットのゆめみに出会う。"},
+  {"g": "ギャルゲ", "q": "『月姫』で遠野家に仕える双子のメイドの姉は？", "a": ["琥珀", "翡翠", "秋葉", "シエル"], "k": "琥珀が姉、翡翠が妹の双子。琥珀は明るい割烹着姿、翡翠は無口なメイド服姿で働いている。"},
+  {"g": "ギャルゲ", "q": "『月姫』で遠野志貴がかけているメガネの役割は？", "a": ["魔眼を抑える", "視力を上げる", "霊を見る", "正体を隠す"], "k": "「魔眼殺し」のメガネで、物の「死の線」が見える直死の魔眼を抑えている。魔法使いの蒼崎青子からもらった。"},
+  {"g": "ギャルゲ", "q": "『月姫』で志貴に好意を寄せる同級生の少女は？", "a": ["弓塚さつき", "遠野秋葉", "シエル", "翡翠"], "k": "弓塚さつきはクラスメイト。『月姫』のPC版では攻略できないヒロインとして知られ、ファンの人気も高い。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で聖杯戦争の監督役の神父は？", "a": ["言峰綺礼", "間桐臓硯", "衛宮切嗣", "葛木宗一郎"], "k": "言峰綺礼は冬木の教会の神父で、凛の兄弟子。間桐臓硯は桜の祖父にあたる魔術師。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』でセイバーの真名は？", "a": ["アルトリア", "ジャンヌ", "ネロ", "モードレッド"], "k": "セイバーの正体はアーサー王で、名前はアルトリア・ペンドラゴン。女性であることを隠して王になった。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』でライダーの正体は？", "a": ["メドゥーサ", "メディア", "ヘラクレス", "ギルガメッシュ"], "k": "ライダーはギリシャ神話のメドゥーサ。メディアはキャスター、ヘラクレスはバーサーカーの正体。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』でバーサーカーの正体は？", "a": ["ヘラクレス", "アキレウス", "ペルセウス", "ベオウルフ"], "k": "イリヤのサーヴァント。12の試練を越えた英雄で、宝具「十二の試練」で何度もよみがえる。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』でアサシンとして呼ばれた剣士は？", "a": ["佐々木小次郎", "宮本武蔵", "柳生十兵衛", "沖田総司"], "k": "キャスターに呼ばれた特殊なアサシン。山門を守り、秘剣「燕返し」を使う。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で遠坂凛がヒロインのルートは？", "a": ["Unlimited Blade Works", "Heaven's Feel", "Fate", "Realta Nua"], "k": "3つのルートは「Fate」「Unlimited Blade Works」「Heaven's Feel」。順番にセイバー、凛、桜がヒロインになる。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で衛宮士郎が得意とする魔術は？", "a": ["投影", "召喚", "治癒", "変身"], "k": "物の形を写し取って作り出す「投影」。見た剣を写し取り、戦いの中で自分の武器にしていく。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』の続編のファンディスク（2005年）は？", "a": ["Fate/hollow ataraxia", "Fate/Zero", "Fate/EXTRA", "Fate/Apocrypha"], "k": "聖杯戦争のあとの日常を描くファンディスク。『Fate/Zero』は虚淵玄による前日譚の小説。"},
+  {"g": "ギャルゲ", "q": "『空の境界』で両儀式の同級生で、彼女を気にかける青年は？", "a": ["黒桐幹也", "遠野志貴", "衛宮士郎", "蒼崎橙子"], "k": "幹也は人探しが得意な青年。蒼崎橙子は人形師の魔術師で、幹也と式の雇い主。"},
+  {"g": "ギャルゲ", "q": "『魔法使いの夜』で山から街に出てきた少年は？", "a": ["静希草十郎", "衛宮士郎", "遠野志貴", "岡崎朋也"], "k": "2012年発売。蒼崎青子と久遠寺有珠という2人の魔法使いの屋敷に、草十郎が住むことになる。"},
+  {"g": "ギャルゲ", "q": "『Phantom』でツヴァイを暗殺者に育てた少女のコードネームは？", "a": ["アイン", "ドライ", "キャル", "クロウディア"], "k": "組織「インフェルノ」の暗殺者アイン。ツヴァイこと吾妻玲二は彼女に暗殺の技術を叩き込まれる。"},
+  {"g": "ギャルゲ", "q": "『Phantom』に登場する暗殺組織の名前は？", "a": ["インフェルノ", "ミスリル", "ゼーレ", "ザフト"], "k": "アメリカの犯罪組織インフェルノ。ニトロプラスのデビュー作で、2009年にTVアニメにもなった。"},
+  {"g": "ギャルゲ", "q": "『沙耶の唄』の主人公は？", "a": ["匂坂郁紀", "吾妻玲二", "孔濤羅", "大十字九郎"], "k": "事故のあと、周りの世界が恐ろしい姿に見えるようになった医学生・郁紀。ただ1人、少女の沙耶だけが美しく見えた。"},
+  {"g": "ギャルゲ", "q": "『鬼哭街』の主人公は？", "a": ["孔濤羅", "吾妻玲二", "匂坂郁紀", "湊斗景明"], "k": "2002年発売のニトロプラス作品。剣士・孔濤羅（コン・タオロー）が、妹を奪った者たちに復讐する。"},
+  {"g": "ギャルゲ", "q": "『デモンベイン』で大十字九郎と契約する魔導書は？", "a": ["アル・アジフ", "ネクロノミコン写本", "エイボンの書", "無名祭祀書"], "k": "アル・アジフは魔導書『ネクロノミコン』のアラビア語原典が少女の姿になった存在。"},
+  {"g": "ギャルゲ", "q": "『装甲悪鬼村正』の主人公は？", "a": ["湊斗景明", "大十字九郎", "孔濤羅", "吾妻玲二"], "k": "2009年発売。劔冑（つるぎ）と呼ばれる鎧の村正をまとう景明の、重い戦いを描く。"},
+  {"g": "ギャルゲ", "q": "『君が望む永遠』で水泳部のヒロインは？", "a": ["速瀬水月", "涼宮遥", "涼宮茜", "穂村愛美"], "k": "水月は遥の親友で水泳部のエース。遥の妹・茜も水泳部に入っている。"},
+  {"g": "ギャルゲ", "q": "『マブラヴ』で白銀武の幼なじみは？", "a": ["鑑純夏", "御剣冥夜", "月詠真那", "社霞"], "k": "純夏は武の家の隣に住む幼なじみ。御剣冥夜はある朝突然、武の部屋に現れた財閥の令嬢。"},
+  {"g": "ギャルゲ", "q": "『School Days』で伊藤誠が最初に好きになるのは？", "a": ["桂言葉", "西園寺世界", "清浦刹那", "加藤乙女"], "k": "誠は電車で見かける言葉に片思いし、隣の席の世界が恋の手助けをすることから物語が始まる。"},
+  {"g": "ギャルゲ", "q": "アニメ『School Days』最終回の差し替え映像から広まった言葉は？", "a": ["Nice boat.", "Good job.", "Nice try.", "Big wave."], "k": "2007年、事件の影響で最終回が放送中止に。代わりに流れた船の映像を見た海外の掲示板の書き込みが広まった。"},
+  {"g": "ギャルゲ", "q": "『Ever17』の物語の舞台の年は？", "a": ["2017年", "2027年", "2007年", "2117年"], "k": "2017年の海中テーマパーク「LeMU」が舞台。題名もここから来ている。2002年に発売された。"},
+  {"g": "ギャルゲ", "q": "『YU-NO』のシナリオ・監督を務めたのは？", "a": ["剣乃ゆきひろ", "竜騎士07", "奈須きのこ", "田中ロミオ"], "k": "1996年にエルフから発売。剣乃ゆきひろ（菅野ひろゆき）は『DESIRE』『EVE burst error』も手がけた。"},
+  {"g": "ギャルゲ", "q": "『YU-NO』で主人公が並行世界を移動するのに使う道具は？", "a": ["リフレクター・デバイス", "電話レンジ", "タイムマシン", "デスノート"], "k": "宝玉をはめて分岐点を記録し、別の世界へ移動する。「並列世界を渡る」仕組みが高く評価された。"},
+  {"g": "ギャルゲ", "q": "『ONE』で目が見えない先輩のヒロインは？", "a": ["川名みさき", "長森瑞佳", "七瀬留美", "里村茜"], "k": "みさきは目が見えないが明るく、食べることが大好き。七瀬留美は「乙女」にあこがれる転校生。"},
+  {"g": "ギャルゲ", "q": "『ONE』で言葉を話せず、スケッチブックで会話するヒロインは？", "a": ["上月澪", "川名みさき", "椎名繭", "柚木詩子"], "k": "澪は演劇部の後輩で、スケッチブックに文字を書いて気持ちを伝える。"},
+  {"g": "ギャルゲ", "q": "『痕』で柏木家に流れる血の正体は？", "a": ["鬼", "吸血鬼", "狼男", "天狗"], "k": "柏木家には、宇宙から来た狩猟種族エルクゥ（鬼）の血が流れている。1996年にLeafから発売。"},
+  {"g": "ギャルゲ", "q": "『雫』で主人公に電波の力を教える少女は？", "a": ["月島瑠璃子", "新城沙織", "藍原瑞穂", "太田香奈子"], "k": "瑠璃子は屋上で電波を受け取っているという少女。『雫』はLeafのビジュアルノベル第1弾。"},
+  {"g": "ギャルゲ", "q": "『D.C.』で主人公・朝倉純一の不思議な力は？", "a": ["和菓子を出せる", "人の心が読める", "時間を止める", "空を飛べる"], "k": "純一は手のひらから和菓子を出すことができる。人の夢を見てしまう力も持っている。"},
+  {"g": "ギャルゲ", "q": "『D.C.』で金髪のツインテールの、主人公のいとこは？", "a": ["芳乃さくら", "朝倉音夢", "白河ことり", "月城アリス"], "k": "アメリカから帰ってきたさくらは、純一のいとこ。枯れない桜と深いかかわりがある。"},
+  {"g": "ギャルゲ", "q": "『D.C.II』（2006年）の主人公は？", "a": ["桜井義之", "朝倉純一", "土見稟", "岡崎朋也"], "k": "『D.C.』の53年後の初音島が舞台。義之は芳乃家で育てられた少年。"},
+  {"g": "ギャルゲ", "q": "『SHUFFLE!』で神界から来たヒロインは？", "a": ["リシアンサス", "ネリネ", "芙蓉楓", "時雨亜沙"], "k": "リシアンサス（シア）は神界の王の娘、ネリネは魔界の王の娘。2人とも主人公・土見稟のもとにやってくる。"},
+  {"g": "ギャルゲ", "q": "『SHUFFLE!』で主人公の家事をすべてこなす幼なじみは？", "a": ["芙蓉楓", "リシアンサス", "ネリネ", "麻弓"], "k": "楓は稟と同居し、家事のいっさいを引き受けている。稟への思いには、ある過去がかかわっている。"},
+  {"g": "ギャルゲ", "q": "『車輪の国、向日葵の少女』で人々に「義務」を課す役職は？", "a": ["特別高等人", "監視官", "審問官", "執行官"], "k": "罪を犯した人に「義務」を課して社会に戻す役目。主人公の森田賢一は特別高等人の候補生。"},
+  {"g": "ギャルゲ", "q": "『CROSS†CHANNEL』で主人公が所属する部活は？", "a": ["放送部", "文芸部", "新聞部", "天文部"], "k": "群青学院の放送部の仲間たちとの物語。シナリオは田中ロミオで、2003年に発売された。"},
+  {"g": "ギャルゲ", "q": "『夜明け前より瑠璃色な』の主人公は？", "a": ["朝霧達哉", "土見稟", "桜井義之", "支倉孝平"], "k": "2005年にオーガストから発売。月の王女フィーナが地球の主人公の家にホームステイする。"},
+  {"g": "ギャルゲ", "q": "『パルフェ』の主人公が立て直そうとするお店は？", "a": ["喫茶店", "花屋", "旅館", "本屋"], "k": "喫茶店「ファミーユ」を舞台にした、丸戸史明シナリオの作品。2005年に発売された。"},
+  {"g": "ギャルゲ", "q": "『恋姫†無双』の主人公は？", "a": ["北郷一刀", "劉備", "曹操", "諸葛亮"], "k": "三国志の世界に飛ばされた高校生・北郷一刀。関羽や張飛などの武将が女の子として登場する。"},
+  {"g": "ギャルゲ", "q": "『恋姫†無双』で関羽の真名（まな）は？", "a": ["愛紗", "鈴々", "朱里", "星"], "k": "作中では親しい人だけが呼べる「真名」がある。関羽は愛紗、張飛は鈴々、諸葛亮は朱里、趙雲は星。"},
+  {"g": "ギャルゲ", "q": "『ときめきメモリアル2』のメインヒロインは？", "a": ["陽ノ下光", "藤崎詩織", "虹野沙希", "美樹原愛"], "k": "1999年発売。主人公の幼なじみ・陽ノ下光。藤崎詩織・虹野沙希・美樹原愛は初代『ときメモ』のヒロイン。"},
+  {"g": "ギャルゲ", "q": "『ときめきメモリアル Girl's Side』の舞台の学校は？", "a": ["はばたき学園", "きらめき高校", "ひびきの高校", "私立聖ルカ学園"], "k": "2002年発売の女性向け作品。主人公の女の子が、はばたき学園で男の子たちと出会う。ひびきの高校は『ときメモ2』の舞台。"},
+  {"g": "ギャルゲ", "q": "『サクラ大戦』で帝国華撃団が乗る人型の蒸気兵器は？", "a": ["光武", "戦術機", "エステバリス", "ナイトメアフレーム"], "k": "太正時代の帝都・東京で、霊力を持つ隊員たちが光武に乗って戦う。1996年にセガサターンで発売された。"},
+  {"g": "ギャルゲ", "q": "『サクラ大戦』で真宮寺さくらの出身地は？", "a": ["仙台", "京都", "大阪", "鹿児島"], "k": "さくらは仙台の名門・真宮寺家の娘。霊剣荒鷹（あらたか）を使う。"},
+  {"g": "ギャルゲ", "q": "『アイドルマスター』で歌うことに強いこだわりを持つアイドルは？", "a": ["如月千早", "天海春香", "星井美希", "萩原雪歩"], "k": "千早は歌以外の仕事には興味を示さないほど、歌に真剣なアイドル。"},
+  {"g": "ギャルゲ", "q": "『アイドルマスター』で高槻やよいの口ぐせは？", "a": ["うっうー", "あふぅ", "ぷっぷか", "はわわ"], "k": "やよいは大家族の長女で、家計を助けるためにアイドルになった。「あふぅ」は星井美希の口ぐせ。"},
+  {"g": "ギャルゲ", "q": "『アイドルマスター』で自信がなくなると穴を掘りたがるアイドルは？", "a": ["萩原雪歩", "菊地真", "双海亜美", "水瀬伊織"], "k": "「穴掘って埋まってますぅ」が雪歩のお約束。男の人と犬が苦手。"},
+  {"g": "ギャルゲ", "q": "『アイドルマスター』で「王子様」のようにかっこいいと言われるアイドルは？", "a": ["菊地真", "萩原雪歩", "三浦あずさ", "秋月律子"], "k": "真は本人はかわいい女の子扱いされたいのに、女性ファンからかっこいいと人気を集める。"},
+  {"g": "ギャルゲ", "q": "『ラブプラス』のヒロインで年上の先輩は？", "a": ["姉ヶ崎寧々", "高嶺愛花", "小早川凛子", "七咲逢"], "k": "寧々は主人公より1学年上の先輩で、ファミレスでアルバイトをしている。2009年にニンテンドーDSで発売。"},
+  {"g": "ギャルゲ", "q": "『ラブプラス+』の発売後、ファンが大勢訪れて話題になった温泉地は？", "a": ["熱海", "箱根", "別府", "草津"], "k": "2010年、作中の旅行イベントの舞台・熱海とコラボし、多くのファンが訪れた。"},
+  {"g": "ギャルゲ", "q": "『アマガミ』で裏の顔を持つ優等生のクラス委員は？", "a": ["絢辻詞", "森島はるか", "七咲逢", "桜井梨穂子"], "k": "詞はみんなの前では完璧な優等生だが、主人公の前でだけ本性を見せる。"},
+  {"g": "ギャルゲ", "q": "『アマガミ』で水泳部の後輩のヒロインは？", "a": ["七咲逢", "中多紗江", "棚町薫", "絢辻詞"], "k": "七咲は弟の世話をするしっかり者。中多紗江は人見知りの後輩、棚町薫は主人公の悪友の女の子。"},
+  {"g": "ギャルゲ", "q": "『アマガミ』で主人公・橘純一の妹は？", "a": ["橘美也", "橘美咲", "橘早苗", "橘音夢"], "k": "美也は兄を「にぃに」と呼ぶ妹。まんま肉まんが大好物。"},
+  {"g": "ギャルゲ", "q": "『Memories Off』（1999年）の主人公は？", "a": ["三上智也", "藤田浩之", "岡崎朋也", "鳴海孝之"], "k": "KIDの恋愛アドベンチャー。智也は幼なじみの桧月彩花を事故で亡くし、心に傷を負っている。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』で部活の部長をしているのは？", "a": ["園崎魅音", "竜宮レナ", "北条沙都子", "古手梨花"], "k": "魅音は雛見沢の有力な家・園崎家の次期当主。双子の妹・詩音は興宮に住んでいる。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』で竜宮レナが好きな「かぁいい」物を探す場所は？", "a": ["ゴミ山（ダム現場跡）", "神社の裏", "学校の倉庫", "川原"], "k": "ダム工事の跡地にあるゴミの山で、かわいい物を見つけると「お持ち帰り〜！」と持ち帰ろうとする。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』で雛見沢の村人があがめる神様は？", "a": ["オヤシロさま", "シシ神", "カミナ", "アラハバキ"], "k": "古手神社にまつられた神様。村で起こる不可解な事件は「オヤシロさまの祟り」とうわさされる。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』で前原圭一はどこから引っ越してきた？", "a": ["都会", "海外", "北海道", "離島"], "k": "圭一は都会から雛見沢に引っ越してきた少年。昭和58年の6月が物語の舞台。"},
+  {"g": "ギャルゲ", "q": "『うみねこのなく頃に』で右代宮家の当主は？", "a": ["右代宮金蔵", "右代宮戦人", "右代宮蔵臼", "右代宮留弗夫"], "k": "六軒島の右代宮家の当主・金蔵。黄金の魔女ベアトリーチェにとりつかれているとされる。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』で18歳で論文が科学誌にのった天才少女は？", "a": ["牧瀬紅莉栖", "椎名まゆり", "阿万音鈴羽", "桐生萌郁"], "k": "紅莉栖はアメリカの大学で脳科学を研究する天才。岡部からは「クリスティーナ」「助手」と呼ばれる。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』で岡部たちのサークルの名前は？", "a": ["未来ガジェット研究所", "SOS団", "奉仕部", "古典部"], "k": "秋葉原の雑居ビルにある発明サークル。メンバーは「ラボメン」と呼ばれる。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』で橋田至のあだ名は？", "a": ["ダル", "ルカ子", "フェイリス", "まゆしぃ"], "k": "スーパーハッカーのダル。ルカ子は漆原るか、フェイリスはメイド喫茶のフェイリス・ニャンニャン。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』で物語の鍵になる古いパソコンは？", "a": ["IBN5100", "PC-9801", "MSX", "FM TOWNS"], "k": "昔の特殊なプログラム言語を読むことができる古いパソコン。岡部たちはこのパソコンを探すことになる。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』でタイムマシンの研究をしている巨大な研究機関は？", "a": ["SERN", "NERV", "ゼーレ", "ミスリル"], "k": "実在のCERN（欧州原子核研究機構）をもじった組織。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』で未来からやってきた少女は？", "a": ["阿万音鈴羽", "牧瀬紅莉栖", "漆原るか", "椎名まゆり"], "k": "鈴羽はブラウン管工房でアルバイトをしている少女。自転車が大好き。"},
+  {"g": "ギャルゲ", "q": "『CHAOS;HEAD』の主人公は？", "a": ["西條拓巳", "岡部倫太郎", "海翔", "宮代拓留"], "k": "2008年発売の「科学アドベンチャー」シリーズ第1作。渋谷で起きる猟奇事件に、引きこもりの拓巳が巻き込まれる。"},
+  {"g": "ギャルゲ", "q": "『ROBOTICS;NOTES』で主人公たちが作ろうとする巨大ロボットは？", "a": ["ガンつく1", "ガンダム", "ラガン", "光武"], "k": "種子島の高校のロボット研究部が、アニメに出てくる巨大ロボを本物の大きさで作ろうとする。"},
+  {"g": "ギャルゲ", "q": "『グリザイアの果実』の舞台の学園は？", "a": ["美浜学園", "鳳凰学園", "はばたき学園", "私立聖ルカ学園"], "k": "生徒が主人公を含めて6人しかいない特別な学園。ワケありの少女たちと風見雄二の物語。"},
+  {"g": "ギャルゲ", "q": "『艦これ』でプレイヤーが艦娘を指揮する基地は？", "a": ["鎮守府", "司令部", "ネルフ", "帝国華撃団"], "k": "2013年にサービス開始。提督となったプレイヤーは鎮守府で艦娘（かんむす）を育て、深海棲艦と戦う。"},
+  {"g": "ギャルゲ", "q": "『艦これ』の敵の名前は？", "a": ["深海棲艦", "BETA", "ネウロイ", "使徒"], "k": "深海から現れる謎の敵。艦娘たちが出撃して戦う。"},
+  {"g": "ギャルゲ", "q": "『FORTUNE ARTERIAL』で千堂瑛里華の正体は？", "a": ["吸血鬼", "宇宙人", "魔法使い", "天使"], "k": "2008年にオーガストから発売。島の学園の副会長・瑛里華は吸血鬼。主人公は支倉孝平。"},
+  {"g": "ギャルゲ", "q": "『つよきす』の主人公は？", "a": ["対馬レオ", "藤田浩之", "支倉孝平", "橘純一"], "k": "2005年発売。竜鳴館の生徒会に入れられたレオと、気の強い女の子たちの物語。"},
+  {"g": "ギャルゲ", "q": "『処女はお姉さまに恋してる』で主人公の宮小路瑞穂がすることは？", "a": ["女装して女子校に通う", "男装して男子校に通う", "アイドルになる", "メイドとして働く"], "k": "2005年発売。祖父の遺言で、瑞穂は女装してお嬢様学校に転入する。のちに「エルダー」に選ばれる。"},
+  {"g": "ギャルゲ", "q": "『穢翼のユースティア』の舞台になる、浮遊都市の最下層は？", "a": ["牢獄", "地下街", "スラム", "魔界"], "k": "浮遊都市ノーヴァス・アイテルの最下層「牢獄」。2011年にオーガストから発売された。"},
+  {"g": "ギャルゲ", "q": "『ランス』シリーズでランスのお決まりの笑い方は？", "a": ["がはははは", "ふははははは", "ほーっほっほ", "うけけけけ"], "k": "自信過剰で好き勝手な主人公ランスの代名詞。1989年の第1作から続くアリスソフトの看板シリーズ。"},
+  {"g": "ギャルゲ", "q": "『Kanon』で倉田佐祐理の口ぐせは？", "a": ["あははーっ", "うぐぅ", "あうー", "えぅー"], "k": "佐祐理は舞の親友で、いつも明るく笑っている。「えぅー」は美坂栞の口ぐせ。"},
+  {"g": "ギャルゲ", "q": "『Kanon』で月宮あゆの大好物は？", "a": ["たいやき", "アイスクリーム", "肉まん", "いちごサンデー"], "k": "「うぐぅ」が口ぐせのあゆは、たいやきが大好き。アイスは栞、いちごサンデーは名雪の好物。"},
+  {"g": "ギャルゲ", "q": "『Kanon』で水瀬名雪の大好物は？", "a": ["いちごサンデー", "たいやき", "牛丼", "肉まん"], "k": "名雪は主人公・祐一のいとこで、朝が弱くいつも寝坊ぎみ。"},
+  {"g": "ギャルゲ", "q": "『Kanon』で主人公・相沢祐一が居候する家は？", "a": ["水瀬家", "美坂家", "倉田家", "月宮家"], "k": "祐一は7年ぶりに訪れた雪の町で、叔母の秋子さんといとこの名雪が住む水瀬家に居候する。"},
+  {"g": "ギャルゲ", "q": "『Kanon』を発表した、Keyとして最初の作品は？", "a": ["Kanon", "AIR", "ONE", "CLANNAD"], "k": "Keyはビジュアルアーツのブランド。『ONE』を作ったTacticsのスタッフが中心となって立ち上げた。"},
+  {"g": "ギャルゲ", "q": "『AIR』で国崎往人が持っている不思議な力は？", "a": ["手を触れずに人形を動かす", "未来を見る", "空を飛ぶ", "心を読む"], "k": "往人は「法術」で人形を動かし、旅をしながら人形劇でお金を稼いでいる。"},
+  {"g": "ギャルゲ", "q": "『AIR』で神尾観鈴が好きなものは？", "a": ["恐竜", "ウサギ", "星座", "花火"], "k": "観鈴は恐竜が大好き。いつもひとりで遊んでいて、友だちをつくると発作が起こってしまう。"},
+  {"g": "ギャルゲ", "q": "『AIR』で神尾観鈴と暮らす、母親代わりの叔母は？", "a": ["神尾晴子", "霧島聖", "遠野美凪", "水瀬秋子"], "k": "晴子はお酒好きで豪快な性格。観鈴とのぎこちない関係が、物語の後半で大きく描かれる。"},
+  {"g": "ギャルゲ", "q": "TYPE-MOONの前身となった同人サークルの名前は？", "a": ["竹箒", "07th Expansion", "Tactics", "上海アリス幻樂団"], "k": "奈須きのこ、武内崇たちの同人サークル。『月姫』はこの竹箒から2000年に同人ソフトとして出た。"},
+  {"g": "ギャルゲ", "q": "『ひぐらしのなく頃に』の作者は？", "a": ["竜騎士07", "奈須きのこ", "麻枝准", "虚淵玄"], "k": "07th Expansionの代表。シナリオだけでなく、独特なキャラクターの絵も自分で描いていた。"},
+  {"g": "ギャルゲ", "q": "『シスター・プリンセス』で兄を「兄くん」と呼ぶ妹は？", "a": ["千影", "可憐", "咲耶", "鞠絵"], "k": "妹ごとに兄の呼び方が違うのが特徴。千影は神秘的な雰囲気の妹。可憐は「お兄ちゃん」、咲耶は「お兄様」と呼ぶ。"},
+  {"g": "ギャルゲ", "q": "『シスター・プリンセス』で兄を「アニキ」と呼ぶ発明好きの妹は？", "a": ["鈴凛", "衛", "四葉", "雛子"], "k": "鈴凛はメカいじりが大好き。衛は「あにぃ」、雛子は「おにいたま」と呼ぶ。"},
+  {"g": "ギャルゲ", "q": "『To Heart』でマルチを作った会社は？", "a": ["来栖川エレクトロニクス", "ネルフ", "SERN", "アクアプラス"], "k": "マルチやセリオは来栖川エレクトロニクスの試作メイドロボ。来栖川芹香・綾香はこの来栖川家の令嬢。"},
+  {"g": "ギャルゲ", "q": "『ToHeart2』の主人公は？", "a": ["河野貴明", "藤田浩之", "向坂雄二", "千堂和樹"], "k": "貴明は女の子が苦手な高校生。幼なじみのこのみや、年上の幼なじみの環との日々が描かれる。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で「英雄王」と呼ばれるサーヴァントは？", "a": ["ギルガメッシュ", "アーサー王", "ヘラクレス", "イスカンダル"], "k": "前回の聖杯戦争から残っていたアーチャーのサーヴァント。イスカンダルは『Fate/Zero』のライダー。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』で間桐慎二が最初に従えるサーヴァントは？", "a": ["ライダー", "アサシン", "キャスター", "ランサー"], "k": "本来のマスターは妹の桜で、慎二は桜から令呪を写した「偽臣の書」でライダーを従えた。"},
+  {"g": "ギャルゲ", "q": "『月姫』でシエル先輩が所属する組織は？", "a": ["埋葬機関", "魔術協会", "聖堂教会の騎士団", "ネルフ"], "k": "聖堂教会の中でも最強の異端狩りの部署「埋葬機関」の第七位。カレーが大好き。"},
+  {"g": "ギャルゲ", "q": "『ひぐらし』で雛見沢の人がかかる、とされる病気の名前は？", "a": ["雛見沢症候群", "オヤシロ病", "鬼隠し熱", "綿流し病"], "k": "疑心暗鬼や強い不安を引き起こすとされる風土病。入江診療所の入江京介が研究している。"},
+  {"g": "ギャルゲ", "q": "『アイドルマスター』で星井美希の口ぐせは？", "a": ["あふぅ", "うっうー", "はいさい", "んっふっふ〜"], "k": "美希はのんびり屋で、寝るのが大好き。「はいさい」は沖縄出身の我那覇響のあいさつ。"},
+  {"g": "ギャルゲ", "q": "『D.C.』で白河ことりの得意なことは？", "a": ["歌", "料理", "剣道", "水泳"], "k": "歌が上手で、学園のアイドル的な存在。"},
+  {"g": "ラノベ", "q": "『スレイヤーズ』でリナが恐れている故郷の人物は？", "a": ["姉", "父", "師匠", "祖母"], "k": "リナが「郷里の姉ちゃん」と呼んで恐れる姉のルナ。リナよりもずっと強いとされている。"},
+  {"g": "ラノベ", "q": "『スレイヤーズ』でガウリイが最初に持っていた伝説の剣は？", "a": ["光の剣", "斬妖剣", "ラグナブレード", "エクスカリバー"], "k": "ガウリイの家に伝わる光の剣。ラグナ・ブレードはリナが使う呪文の名前。"},
+  {"g": "ラノベ", "q": "『魔術士オーフェン』で旅に同行するお嬢様の少女は？", "a": ["クリーオウ", "アザリー", "コギー", "ボルカン"], "k": "クリーオウ・エバーラスティンは金持ちの家の娘で、オーフェンについて旅に出る。アザリーはオーフェンの姉弟子。"},
+  {"g": "ラノベ", "q": "『魔術士オーフェン』でオーフェンが最初にしていた仕事は？", "a": ["もぐりの金貸し", "宮廷魔術士", "賞金稼ぎ", "傭兵"], "k": "オーフェンはトトカンタの街でもぐりの金貸しをしていた。借金を返さない地人の兄弟ボルカンとドーチンに手を焼く。"},
+  {"g": "ラノベ", "q": "『フルメタ』で相良宗介の階級は？", "a": ["軍曹", "少尉", "大佐", "伍長"], "k": "ミスリルの陸戦部隊に所属する軍曹。高校では常識外れな行動で騒動ばかり起こしている。"},
+  {"g": "ラノベ", "q": "『フルメタ』で宗介が乗るアーム・スレイブの名前は？", "a": ["アーバレスト", "レーバテイン", "ガーンズバック", "ボン太くん"], "k": "特殊な装置「ラムダ・ドライバ」を積んだ機体。のちに後継機のレーバテインに乗り換える。"},
+  {"g": "ラノベ", "q": "『涼宮ハルヒの消失』でキョン以外の世界から消えた人物は？", "a": ["涼宮ハルヒ", "長門有希", "朝比奈みくる", "古泉一樹"], "k": "ある朝、ハルヒのいない世界になっていた。長門は普通の文芸部員、朝比奈さんも普通の先輩になっていた。"},
+  {"g": "ラノベ", "q": "『ハルヒ』でキョンのクラスの委員長で、キョンを襲う宇宙人は？", "a": ["朝倉涼子", "長門有希", "喜緑江美里", "佐々木"], "k": "朝倉涼子は長門と同じ情報統合思念体の端末。ナイフでキョンを襲う場面が有名。"},
+  {"g": "ラノベ", "q": "『灼眼のシャナ』でシャナと契約している「紅世の王」は？", "a": ["アラストール", "マルコシアス", "ヴィルヘルミナ", "フリアグネ"], "k": "「天壌の劫火」アラストール。シャナが首にさげたペンダント「コキュートス」から話す。"},
+  {"g": "ラノベ", "q": "『灼眼のシャナ』でシャナのような「紅世の徒」と戦う者の呼び名は？", "a": ["フレイムヘイズ", "ミステス", "トーチ", "燐子"], "k": "紅世の王と契約し、人の存在を喰らう徒を討つ異能者。ミステスは宝具を宿したトーチのこと。"},
+  {"g": "ラノベ", "q": "『禁書目録』で上条当麻の口ぐせは？", "a": ["不幸だ", "めんどくせえ", "やれやれ", "うるさいうるさいうるさい"], "k": "運が悪い上条は、トラブルに巻き込まれるたびに「不幸だ……」とつぶやく。"},
+  {"g": "ラノベ", "q": "『禁書目録』で神裂火織のような、神の子に似た力を持つ人の呼び名は？", "a": ["聖人", "超能力者", "魔神", "天使"], "k": "聖人は世界に20人ほどしかいないとされる。神裂はイギリス清教の必要悪の教会に所属する。"},
+  {"g": "ラノベ", "q": "『キノの旅』の主人公キノの性別は？", "a": ["女の子", "男の子", "わからない", "ロボット"], "k": "一人称が「ボク」で男の子に見えるが、キノは女の子。エルメスと国から国へと旅を続ける。"},
+  {"g": "ラノベ", "q": "『マリみて』で福沢祐巳の「お姉さま」は？", "a": ["小笠原祥子", "水野蓉子", "藤堂志摩子", "島津由乃"], "k": "祐巳は紅薔薇のつぼみ（ロサ・キネンシス・アン・ブゥトン）の小笠原祥子の妹になる。"},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』で才人の左手に刻まれた使い魔のルーンは？", "a": ["ガンダールヴ", "ヴィンダールヴ", "ミョズニトニルン", "リーヴスラシル"], "k": "武器を自在に操れる伝説の使い魔「ガンダールヴ」のルーン。"},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』でタバサの使い魔の竜は？", "a": ["シルフィード", "フレイム", "ヴェルダンデ", "デルフリンガー"], "k": "タバサの風竜シルフィード。フレイムはキュルケの火トカゲ、デルフリンガーは才人のしゃべる剣。"},
+  {"g": "ラノベ", "q": "『とらドラ！』で高須竜児が得意なことは？", "a": ["家事", "ケンカ", "勉強", "スポーツ"], "k": "見た目は怖いが、掃除や料理などの家事が大の得意。大河の部屋も竜児が掃除している。"},
+  {"g": "ラノベ", "q": "『狼と香辛料』でホロの正体は？", "a": ["狼の化身", "狐の妖怪", "竜", "魔女"], "k": "「ヨイツの賢狼」と名乗る狼の化身。麦の豊作をつかさどる神として村でまつられていた。"},
+  {"g": "ラノベ", "q": "『バカテス』でFクラスの代表は？", "a": ["坂本雄二", "吉井明久", "土屋康太", "木下秀吉"], "k": "坂本雄二はFクラスの代表で、明久の悪友。土屋康太は「ムッツリーニ」と呼ばれる。"},
+  {"g": "ラノベ", "q": "『俺妹』で高坂桐乃の表の顔は？", "a": ["読者モデル", "アイドル", "声優", "漫画家"], "k": "成績優秀でスポーツも得意、雑誌の読者モデルまでしている桐乃。その裏の趣味を兄の京介が知ってしまう。"},
+  {"g": "ラノベ", "q": "『俺妹』で高坂京介の幼なじみは？", "a": ["田村麻奈実", "新垣あやせ", "来栖加奈子", "赤城瀬菜"], "k": "京介を「きょうちゃん」と呼ぶ、おっとりした幼なじみ。新垣あやせは桐乃の親友。"},
+  {"g": "ラノベ", "q": "『デュラララ!!』で園原杏里の体に宿る妖刀は？", "a": ["罪歌", "村正", "贄殿遮那", "斬月"], "k": "罪歌は人を愛するあまり人を斬る妖刀。斬られた人は罪歌の「子」になってしまう。"},
+  {"g": "ラノベ", "q": "『SAO』でアスナの異名は？", "a": ["閃光", "黒の剣士", "剣姫", "絶剣"], "k": "血盟騎士団の副団長アスナは「閃光」と呼ばれる細剣使い。「絶剣」はユウキの異名。"},
+  {"g": "ラノベ", "q": "『SAO』でキリトの妹は？", "a": ["桐ヶ谷直葉", "結城明日奈", "朝田詩乃", "綾野珪子"], "k": "剣道部の直葉は、ALOではリーファとして登場する。朝田詩乃はGGOのシノン、綾野珪子はシリカ。"},
+  {"g": "ラノベ", "q": "『SAO』第2部で舞台になる、妖精になって空を飛ぶゲームは？", "a": ["アルヴヘイム・オンライン", "ガンゲイル・オンライン", "アンダーワールド", "アインクラッド"], "k": "略してALO。キリトはまだ目覚めないアスナを探してALOに入る。GGOは銃撃戦のゲーム。"},
+  {"g": "ラノベ", "q": "『アクセル・ワールド』で有田春雪のアバターの名前は？", "a": ["シルバー・クロウ", "ブラック・ロータス", "シアン・パイル", "スカイ・レイカー"], "k": "銀色の翼で空を飛ぶアバター。黒雪姫のアバターはブラック・ロータス。"},
+  {"g": "ラノベ", "q": "『アクセル・ワールド』でヒロインの「黒雪姫」の立場は？", "a": ["生徒会副会長", "生徒会長", "風紀委員長", "図書委員"], "k": "梅郷中学の生徒会副会長で、学校の人気者。春雪を加速世界に誘う。"},
+  {"g": "ラノベ", "q": "『化物語』で阿良々木暦の2人の妹のコンビ名は？", "a": ["ファイヤーシスターズ", "ファイアーエンブレム", "ツインテールズ", "スーパーシスターズ"], "k": "阿良々木火憐と月火の姉妹。正義の味方を名乗って活動している。"},
+  {"g": "ラノベ", "q": "『化物語』で怪異の専門家・忍野メメがいつも着ているのは？", "a": ["アロハシャツ", "スーツ", "着物", "白衣"], "k": "廃墟になった学習塾に住む怪異の専門家。いつもアロハシャツ姿で、飄々とした態度で阿良々木たちを助ける。"},
+  {"g": "ラノベ", "q": "『刀語』で鑢七花が使う、刀を使わない剣術の流派は？", "a": ["虚刀流", "飛天御剣流", "二天一流", "北辰一刀流"], "k": "刀を持たず、自分の体を刀とする流派。七花はとがめとともに伝説の刀匠・四季崎記紀の完成形変体刀を集める。"},
+  {"g": "ラノベ", "q": "『GOSICK』でヴィクトリカの兄で、変わった髪型の警部は？", "a": ["グレヴィール", "アブリル", "セシル", "ブライアン"], "k": "グレヴィール・ド・ブロワ警部は、ドリルのようにとがった髪型が特徴。ヴィクトリカの推理を自分の手柄にしている。"},
+  {"g": "ラノベ", "q": "『ロードス島戦記』の主人公の若者は？", "a": ["パーン", "スレイン", "ウッド・チャック", "アシュラム"], "k": "戦士パーンが仲間とともに旅をする。ディードリットはパーンと旅するハイエルフ。"},
+  {"g": "ラノベ", "q": "『生徒会の一存』の主人公・杉崎鍵が掲げている目標は？", "a": ["ハーレムを作る", "生徒会長になる", "全国模試1位", "学園の改革"], "k": "生徒会に入った杉崎は「生徒会をハーレムにする」と宣言している。会長は桜野くりむ。"},
+  {"g": "ラノベ", "q": "『とある飛空士への追憶』で主人公の飛空士が護衛する少女は？", "a": ["ファナ", "シャルル", "イリヤ", "ヴィクトリカ"], "k": "傭兵の飛空士・狩乃シャルルが、次期皇妃ファナを水上偵察機に乗せて敵中を飛ぶ。2008年刊行。"},
+  {"g": "ラノベ", "q": "『人類は衰退しました』の主人公「わたし」の仕事は？", "a": ["調停官", "探偵", "医者", "郵便配達"], "k": "人類と、新しい人類「妖精さん」との間を取り持つ国連の調停官。妖精さんはお菓子が大好き。"},
+  {"g": "ラノベ", "q": "『All You Need Is Kill』で主人公キリヤ・ケイジに起こることは？", "a": ["戦死するたび同じ日に戻る", "未来が見える", "死なない体になる", "心が読める"], "k": "異星生物との戦争で、ケイジは戦死するたびに出撃前日に戻ってしまう。2004年刊行、作者は桜坂洋。"},
+  {"g": "ラノベ", "q": "『俺ガイル』で奉仕部の部長は？", "a": ["雪ノ下雪乃", "由比ヶ浜結衣", "比企谷小町", "一色いろは"], "k": "成績優秀で毒舌な雪ノ下雪乃。由比ヶ浜結衣は奉仕部に依頼に来てそのまま部員になった。"},
+  {"g": "ラノベ", "q": "『ノーゲーム・ノーライフ』で異世界ディスボードの唯一神は？", "a": ["テト", "ステフ", "ジブリール", "いづな"], "k": "すべての争いがゲームで決まる世界の神テト。空と白をディスボードへ招いた。"},
+  {"g": "ラノベ", "q": "『ダンまち』でベルがあこがれる「剣姫」は？", "a": ["アイズ・ヴァレンシュタイン", "ヘスティア", "リリルカ・アーデ", "エイナ・チュール"], "k": "アイズはロキ・ファミリアの第一級冒険者。ベルはアイズに助けられたことで強くなろうと決意する。"},
+  {"g": "ラノベ", "q": "『このすば』でめぐみんが使える唯一の魔法は？", "a": ["爆裂魔法", "氷結魔法", "転移魔法", "回復魔法"], "k": "紅魔族のアークウィザード、めぐみんは爆裂魔法しか使わない。1日1発撃つと倒れてしまう。"},
+  {"g": "ラノベ", "q": "『このすば』でカズマと一緒に異世界へ来た女神は？", "a": ["アクア", "エリス", "ウィズ", "ダクネス"], "k": "死んだカズマが「持っていく物」として指名した女神アクア。宴会芸が得意で、回復魔法も使える。"},
+  {"g": "ラノベ", "q": "『リゼロ』でスバルが助けようとする銀髪のハーフエルフは？", "a": ["エミリア", "レム", "ラム", "ベアトリス"], "k": "エミリアは王選の候補者。レムとラムはロズワール邸で働く双子のメイド。"},
+  {"g": "ラノベ", "q": "『冴えカノ』でイラストを担当する金髪の幼なじみは？", "a": ["澤村・スペンサー・英梨々", "霞ヶ丘詩羽", "加藤恵", "氷堂美智留"], "k": "英梨々は人気同人イラストレーター。霞ヶ丘詩羽は売れっ子のライトノベル作家。"},
+  {"g": "ラノベ", "q": "『ニャル子さん』で八坂真尋がニャル子をこらしめる道具は？", "a": ["フォーク", "ハリセン", "釘バット", "竹刀"], "k": "真尋はフォークを投げて、ニャル子の暴走を止める。ニャル子の正体は宇宙人のニャルラトホテプ星人。"},
+  {"g": "ラノベ", "q": "『中二病でも恋がしたい！』で小鳥遊六花が眼帯の下にあると言う力は？", "a": ["邪王真眼", "直死の魔眼", "写輪眼", "ギアス"], "k": "六花は右目に「邪王真眼」が宿っていると信じる中二病の少女。眼帯とカラーコンタクトをしている。"},
+  {"g": "ラノベ", "q": "『はたらく魔王さま！』で魔王サタンが日本で名乗る名前は？", "a": ["真奥貞夫", "遊佐恵美", "芦屋四郎", "佐々木千穂"], "k": "魔王は真奥貞夫としてファストフード店で働く。勇者エミリアは遊佐恵美という名前で暮らしている。"},
+  {"g": "ラノベ", "q": "『ストライク・ザ・ブラッド』で暁古城の正体は？", "a": ["第四真祖", "人造人間", "死神", "堕天使"], "k": "世界最強の吸血鬼「第四真祖」。古城を監視するために、剣巫の姫柊雪菜が送られてくる。"},
+  {"g": "ラノベ", "q": "『デート・ア・ライブ』で五河士道が精霊の力を封印する方法は？", "a": ["キスをする", "契約書を書く", "剣で斬る", "歌を聞かせる"], "k": "精霊をデートでデレさせ、キスをすることで力を封印する。最初に出会う精霊は夜刀神十香。"},
+  {"g": "ラノベ", "q": "『ログ・ホライズン』で冒険者たちが閉じ込められたゲームは？", "a": ["エルダー・テイル", "ユグドラシル", "ソードアート・オンライン", "ブレイン・バースト"], "k": "人気オンラインゲーム「エルダー・テイル」の世界に3万人の日本人が閉じ込められる。ユグドラシルは『オーバーロード』のゲーム。"},
+  {"g": "ラノベ", "q": "『オーバーロード』でアインズがプレイしていたゲームは？", "a": ["ユグドラシル", "エルダー・テイル", "ソードアート・オンライン", "アルヴヘイム"], "k": "サービス終了の日、ユグドラシルのギルド長モモンガは、ゲームの世界に似た異世界に転移する。"},
+  {"g": "ラノベ", "q": "『IS』でISを開発した天才科学者は？", "a": ["篠ノ之束", "篠ノ之箒", "織斑千冬", "更識楯無"], "k": "束は一夏の幼なじみ・篠ノ之箒の姉。織斑千冬は一夏の姉で、IS学園の教師。"},
+  {"g": "ラノベ", "q": "『緋弾のアリア』で武装した探偵の呼び名は？", "a": ["武偵", "探偵団", "特警", "エージェント"], "k": "武装探偵の略。遠山キンジは武偵を育てる東京武偵高校に通っている。2008年刊行。"},
+  {"g": "ラノベ", "q": "『緋弾のアリア』で遠山キンジが特別な状態になると強くなる体質は？", "a": ["ヒステリアモード", "バーサーク", "ゾーン", "トランス"], "k": "異性に興奮すると、頭も体も一時的に超人的になる体質。正式には「ヒステリア・サヴァン・シンドローム」。"},
+  {"g": "ラノベ", "q": "『東京レイヴンズ』の主人公たちが学ぶのは？", "a": ["陰陽術", "錬金術", "黒魔術", "忍術"], "k": "陰陽塾に通う土御門春虎の物語。春虎は陰陽師の名門・土御門家の分家の生まれ。"},
+  {"g": "ラノベ", "q": "『ブラック・ブレット』で人類を脅かす怪物の名前は？", "a": ["ガストレア", "BETA", "ネウロイ", "使徒"], "k": "ガストレアウイルスに感染した生き物の怪物。主人公の里見蓮太郎は「呪われた子供たち」の少女・延珠と戦う。"},
+  {"g": "ラノベ", "q": "『ゴールデンタイム』の作者は？", "a": ["竹宮ゆゆこ", "伏見つかさ", "平坂読", "鴨志田一"], "k": "『とらドラ！』の作者による大学生の恋愛小説。主人公は事故で記憶を失った多田万里。"},
+  {"g": "ラノベ", "q": "『さくら荘のペットな彼女』で椎名ましろの才能は？", "a": ["絵", "歌", "ピアノ", "料理"], "k": "世界的に評価される天才画家だが、生活能力はほとんどない。主人公の神田空太が世話係になる。"},
+  {"g": "ラノベ", "q": "『スクラップド・プリンセス』でパシフィカが呼ばれる名前は？", "a": ["廃棄王女", "灼眼の討ち手", "黒の剣士", "狂戦士"], "k": "「世界を滅ぼす毒」と予言され、生まれてすぐ捨てられた王女。作者は榊一郎。1999年刊行。"},
+  {"g": "ラノベ", "q": "『ムシウタ』で虫にとりつかれた人の呼び名は？", "a": ["虫憑き", "蟲師", "トーチ", "喰種"], "k": "夢を持つ人が「虫」に憑かれ、夢を食べられる代わりに特殊な力を得る。作者は岩井恭平。"},
+  {"g": "ラノベ", "q": "『GOSICK』の作者は？", "a": ["桜庭一樹", "有川浩", "野村美月", "米澤穂信"], "k": "桜庭一樹はのちに『私の男』で直木賞を受賞した。GOSICKは2003年に富士見ミステリー文庫から刊行が始まった。"},
+  {"g": "ラノベ", "q": "『“文学少女”』シリーズの作者は？", "a": ["野村美月", "桜庭一樹", "竹宮ゆゆこ", "杉井光"], "k": "ファミ通文庫から2006年に刊行が始まった。本を食べる「文学少女」天野遠子と井上心葉の物語。"},
+  {"g": "ラノベ", "q": "『マリア様がみてる』の作者は？", "a": ["今野緒雪", "竹宮ゆゆこ", "野村美月", "有沢まみず"], "k": "1998年にコバルト文庫から刊行が始まった。お嬢様学校リリアン女学園が舞台の物語。"},
+  {"g": "ラノベ", "q": "『いぬかみっ！』の作者は？", "a": ["有沢まみず", "築地俊彦", "鈴木大輔", "杉井光"], "k": "電撃文庫から2004年に刊行が始まった。川平家の少年・啓太と犬神ようこのドタバタコメディ。"},
+  {"g": "ラノベ", "q": "『ベン・トー』の作者は？", "a": ["アサウラ", "平坂読", "葵せきな", "蒼山サグ"], "k": "スーパーダッシュ文庫から刊行。スーパーの半額弁当をめぐるバトルを描く。"},
+  {"g": "ラノベ", "q": "『僕は友達が少ない』の作者は？", "a": ["平坂読", "伏見つかさ", "渡航", "鴨志田一"], "k": "MF文庫Jから2009年に刊行が始まった。友達のいない高校生たちが「隣人部」を作る。"},
+  {"g": "ラノベ", "q": "『よくわかる現代魔法』と『All You Need Is Kill』の作者は？", "a": ["桜坂洋", "川原礫", "秋山瑞人", "上遠野浩平"], "k": "どちらも集英社スーパーダッシュ文庫から刊行された。『All You Need Is Kill』はハリウッドで映画化された。"},
+  {"g": "ラノベ", "q": "『這いよれ！ニャル子さん』の作者は？", "a": ["逢空万太", "平坂読", "鈴木大輔", "橘公司"], "k": "GA文庫大賞の優秀賞を受けた作品。クトゥルフ神話の神々を宇宙人として描いたコメディ。"},
+  {"g": "ラノベ", "q": "『生徒会の一存』の作者は？", "a": ["葵せきな", "アサウラ", "築地俊彦", "蒼山サグ"], "k": "富士見ファンタジア文庫から2008年に刊行が始まった。ほとんどの話が生徒会室での会話だけで進む。"},
+  {"g": "ラノベ", "q": "『ロウきゅーぶ！』の作者は？", "a": ["蒼山サグ", "葵せきな", "鈴木大輔", "伏見つかさ"], "k": "電撃小説大賞の銀賞を受けた作品。高校生の昴が、小学生の女子バスケ部のコーチをする。"},
+  {"g": "ラノベ", "q": "『神様のメモ帳』の作者は？", "a": ["杉井光", "野村美月", "入間人間", "竹宮ゆゆこ"], "k": "電撃文庫から2007年に刊行が始まった。ニート探偵のアリスと、高校生の藤島鳴海が事件に挑む。"},
+  {"g": "ラノベ", "q": "『この素晴らしい世界に祝福を！』の作者は？", "a": ["暁なつめ", "長月達平", "大森藤ノ", "丸山くがね"], "k": "小説投稿サイト「小説家になろう」で連載され、スニーカー文庫から2013年に書籍化された。"},
+  {"g": "ラノベ", "q": "『Re:ゼロから始める異世界生活』の作者は？", "a": ["長月達平", "暁なつめ", "伏瀬", "理不尽な孫の手"], "k": "「小説家になろう」で2012年に連載が始まり、MF文庫Jから2014年に書籍化された。"},
+  {"g": "ラノベ", "q": "『冴えない彼女の育てかた』の作者は？", "a": ["丸戸史明", "伏見つかさ", "鴨志田一", "平坂読"], "k": "ゲーム『パルフェ』『WHITE ALBUM2』のシナリオライター。富士見ファンタジア文庫から2012年に刊行が始まった。"},
+  {"g": "ラノベ", "q": "『IS〈インフィニット・ストラトス〉』の作者は？", "a": ["弓弦イズル", "赤松中学", "あざの耕平", "三雲岳斗"], "k": "2009年に刊行が始まった。世界で唯一ISを動かせる男子・織斑一夏が、女子ばかりのIS学園に入学する。"},
+  {"g": "ラノベ", "q": "『緋弾のアリア』の作者は？", "a": ["赤松中学", "弓弦イズル", "神崎紫電", "川上稔"], "k": "MF文庫Jから2008年に刊行が始まった。武偵高校を舞台にしたアクション作品。"},
+  {"g": "ラノベ", "q": "『東京レイヴンズ』の作者は？", "a": ["あざの耕平", "三雲岳斗", "橘公司", "渡航"], "k": "富士見ファンタジア文庫から2010年に刊行が始まった。あざの耕平は『BLACK BLOOD BROTHERS』の作者でもある。"},
+  {"g": "ラノベ", "q": "『ブラック・ブレット』の作者は？", "a": ["神崎紫電", "赤松中学", "鏡貴也", "鎌池和馬"], "k": "電撃文庫から2011年に刊行が始まった。ウイルスで生まれた怪物ガストレアと戦う人類の物語。"},
+  {"g": "ラノベ", "q": "『さくら荘のペットな彼女』の作者は？", "a": ["鴨志田一", "竹宮ゆゆこ", "平坂読", "伏見つかさ"], "k": "電撃文庫から2010年に刊行が始まった。鴨志田一はのちに『青春ブタ野郎』シリーズを書いた。"},
+  {"g": "ラノベ", "q": "『魔術士オーフェン』の作者は？", "a": ["秋田禎信", "神坂一", "水野良", "賀東招二"], "k": "富士見ファンタジア文庫から1994年に刊行が始まった。正式なタイトルは『魔術士オーフェンはぐれ旅』。"},
+  {"g": "ラノベ", "q": "『星界の紋章』の作者は？", "a": ["森岡浩之", "田中芳樹", "小川一水", "神林長平"], "k": "1996年にハヤカワ文庫JAから刊行。作中のアーヴ語という架空の言語まで作り込まれている。"},
+  {"g": "ラノベ", "q": "『フォーチュン・クエスト』の作者は？", "a": ["深沢美潮", "水野良", "神坂一", "秋田禎信"], "k": "1989年から続くシリーズ。パステルたち駆け出し冒険者パーティーの、ほのぼのした冒険を描く。"},
+  {"g": "ラノベ", "q": "『ソードアート・オンライン』のイラストを担当したのは？", "a": ["abec", "HIMA", "いとうのいぢ", "灰村キヨタカ"], "k": "abecは淡い色づかいの画風で知られる。同じ川原礫の『アクセル・ワールド』はHIMAが担当した。"},
+  {"g": "ラノベ", "q": "『化物語』のイラストを担当したのは？", "a": ["VOFAN", "竹", "いとうのいぢ", "ヤス"], "k": "台湾出身のイラストレーター。西尾維新の「戯言シリーズ」のイラストは竹が担当した。"},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』のイラストを担当したのは？", "a": ["兎塚エイジ", "いとうのいぢ", "ヤス", "黒星紅白"], "k": "MF文庫Jの人気作品。ピンク色の髪のルイズのイメージを形づくった。"},
+  {"g": "ラノベ", "q": "『キノの旅』のイラストを担当したのは？", "a": ["黒星紅白", "緒方剛志", "灰村キヨタカ", "abec"], "k": "黒星紅白は時雨沢恵一の『アリソン』シリーズなどでもコンビを組んでいる。"},
+  {"g": "ラノベ", "q": "『バカとテストと召喚獣』のイラストを担当したのは？", "a": ["葉賀ユイ", "ブリキ", "ヤス", "かんざきひろ"], "k": "葉賀ユイは漫画家としても活動している。ファミ通文庫から2007年に刊行が始まった。"},
+  {"g": "ラノベ", "q": "『僕は友達が少ない』のイラストを担当したのは？", "a": ["ブリキ", "ヤス", "兎塚エイジ", "しらび"], "k": "ブリキはMF文庫Jの『はがない』で人気を集めた。"},
+  {"g": "ラノベ", "q": "『デュラララ!!』のイラストを担当したのは？", "a": ["ヤスダスズヒト", "エナミカツミ", "かんざきひろ", "abec"], "k": "ヤスダスズヒトは『ダンまち』のイラストも担当している。『バッカーノ！』のイラストはエナミカツミ。"},
+  {"g": "ラノベ", "q": "『魔法科高校の劣等生』のイラストを担当したのは？", "a": ["石田可奈", "abec", "HIMA", "ブリキ"], "k": "2011年に電撃文庫から書籍化された。もとは作者がWebで連載していた作品。"},
+  {"g": "ラノベ", "q": "『このすば』のイラストを担当したのは？", "a": ["三嶋くろね", "大塚真一郎", "ヤスダスズヒト", "so-bin"], "k": "スニーカー文庫版のイラスト。めぐみんやアクアのデザインは三嶋くろねによる。"},
+  {"g": "ラノベ", "q": "『リゼロ』のイラストを担当したのは？", "a": ["大塚真一郎", "三嶋くろね", "abec", "ブリキ"], "k": "MF文庫J版のイラスト。エミリアやレム、ラムのデザインを手がけた。"},
+  {"g": "ラノベ", "q": "『俺ガイル』のイラストを担当したのは？", "a": ["ぽんかん⑧", "ブリキ", "かんざきひろ", "しらび"], "k": "ガガガ文庫から2011年に刊行が始まった。"},
+  {"g": "ラノベ", "q": "電撃文庫を創刊したときの出版社は？", "a": ["メディアワークス", "角川書店", "エンターブレイン", "富士見書房"], "k": "1993年に創刊。メディアワークスはのちに角川グループと合併し、アスキー・メディアワークスとなった。"},
+  {"g": "ラノベ", "q": "角川スニーカー文庫を出している出版社（創刊当時）は？", "a": ["角川書店", "メディアワークス", "富士見書房", "集英社"], "k": "1980年代の終わりに角川文庫から分かれる形で始まった。『涼宮ハルヒ』シリーズや『ロードス島戦記』を出している。"},
+  {"g": "ラノベ", "q": "スーパーダッシュ文庫の出版社は？", "a": ["集英社", "小学館", "講談社", "ホビージャパン"], "k": "2000年に創刊。『よくわかる現代魔法』『ベン・トー』『パパのいうことを聞きなさい！』などを出した。"},
+  {"g": "ラノベ", "q": "HJ文庫の出版社は？", "a": ["ホビージャパン", "集英社", "メディアファクトリー", "一迅社"], "k": "2006年に創刊。ホビージャパンは模型やホビーの雑誌で知られる出版社。"},
+  {"g": "ラノベ", "q": "コバルト文庫の出版社は？", "a": ["集英社", "講談社", "小学館", "角川書店"], "k": "少女向けのレーベルで、『マリア様がみてる』や『炎の蜃気楼』などを出している。"},
+  {"g": "ラノベ", "q": "富士見ファンタジア文庫の出版社（創刊当時）は？", "a": ["富士見書房", "角川書店", "メディアワークス", "エンターブレイン"], "k": "1988年に創刊。『スレイヤーズ』『フルメタル・パニック！』などの人気作を出した。"},
+  {"g": "ラノベ", "q": "講談社ラノベ文庫が創刊された年は？", "a": ["2011年", "2005年", "2001年", "2015年"], "k": "講談社が新しく立ち上げたライトノベルのレーベル。"},
+  {"g": "ラノベ", "q": "『化物語』シリーズで、阿良々木暦と忍の出会いを描く巻は？", "a": ["傷物語", "偽物語", "猫物語", "花物語"], "k": "春休みに、暦が瀕死の吸血鬼キスショットを助けた出来事を描く。劇場版アニメにもなった。"},
+  {"g": "ラノベ", "q": "『猫物語（黒）』で羽川翼が変わってしまう姿は？", "a": ["ブラック羽川", "ホワイト羽川", "キャット翼", "猫耳委員長"], "k": "ストレスで猫の怪異「障り猫」にとりつかれた羽川の、もうひとつの人格。"},
+  {"g": "ラノベ", "q": "『SAO』で茅場晶彦がゲーム内で名乗っていた姿は？", "a": ["ヒースクリフ", "キリト", "クライン", "エギル"], "k": "血盟騎士団の団長ヒースクリフの正体が、ゲームを作った茅場晶彦だった。"},
+  {"g": "ラノベ", "q": "『魔法科高校の劣等生』で司波達也が入ったのは？", "a": ["二科生", "一科生", "特待生", "研究生"], "k": "成績で一科生（ブルーム）と二科生（ウィード）に分かれる。達也は二科生、妹の深雪は一科生。"},
+  {"g": "ラノベ", "q": "『GOSICK』の舞台になるヨーロッパの小国は？", "a": ["ソヴュール", "トリステイン", "ブリタニア", "ハルケギニア"], "k": "ヨーロッパにある架空の小国ソヴュール。聖マルグリット学園に留学した久城一弥がヴィクトリカと出会う。"},
+  {"g": "ラノベ", "q": "『図書館戦争』で本を守るために戦う組織は？", "a": ["図書隊", "武偵", "公安9課", "調査兵団"], "k": "有害図書を取り締まる「メディア良化法」に対抗するため、図書館が持つ武装組織。主人公は笠原郁。"},
+  {"g": "ラノベ", "q": "有川浩のデビュー作で、電撃ゲーム小説大賞の大賞を受けた作品は？", "a": ["塩の街", "図書館戦争", "空の中", "海の底"], "k": "2004年刊行。人が塩になってしまう病が広がる世界で、少女と自衛官の恋を描く。"},
+  {"g": "ラノベ", "q": "『ミミズクと夜の王』の作者は？", "a": ["紅玉いづき", "有川浩", "桜庭一樹", "壁井ユカコ"], "k": "2007年刊行、電撃小説大賞の大賞を受けた。自分を食べてほしいと願う少女ミミズクと、夜の王の物語。"},
+  {"g": "ラノベ", "q": "『キーリ』の主人公の少女の力は？", "a": ["霊が見える", "時間を戻せる", "人の心を読める", "傷を治せる"], "k": "霊が見えるために周りから浮いていた少女キーリが、不死人のハーヴェイと旅をする。作者は壁井ユカコ。"},
+  {"g": "ラノベ", "q": "『デュラララ!!』でセルティが探しているものは？", "a": ["自分の首", "失った記憶", "家族", "愛馬"], "k": "アイルランドの妖精デュラハンのセルティは、盗まれた自分の首を探して池袋にやって来た。"},
+  {"g": "ラノベ", "q": "『鋼殻のレギオス』の主人公は？", "a": ["レイフォン・アルセイフ", "ニーナ・アントーク", "フェリ・ロス", "カリアン・ロス"], "k": "移動都市ツェルニの学園に入ったレイフォンは、かつてグレンダン最強の武芸者の一人だった。"},
+  {"g": "ラノベ", "q": "『伝説の勇者の伝説』の主人公ライナが何より好きなことは？", "a": ["昼寝", "読書", "料理", "釣り"], "k": "やる気がなく昼寝ばかりしているライナだが、実は魔眼「複写眼（アルファ・スティグマ）」を持っている。"},
+  {"g": "ラノベ", "q": "『とらドラ！』の題名の由来は？", "a": ["竜児と大河", "虎と竜の絵", "作者の好きな言葉", "舞台の地名"], "k": "竜（ドラゴン）の竜児と虎（タイガー）の大河の組み合わせ。2人は協力して互いの恋を応援しようとする。"},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』でルイズが才人を呼ぶときの言葉は？", "a": ["犬", "下僕", "執事", "相棒"], "k": "ルイズはたびたび才人を「犬」と呼び、鞭で叩こうとする。"},
+  {"g": "ラノベ", "q": "『狼と香辛料』でロレンスの夢は？", "a": ["自分の店を持つ", "世界一周", "騎士になる", "王の財宝を探す"], "k": "ロレンスはどこかの町に自分の店を構えることを目標に、行商の旅を続けている。"},
+  {"g": "ラノベ", "q": "『禁書目録』で御坂美琴のクローンとして作られた少女たちの呼び名は？", "a": ["妹達", "姉妹", "複製体", "素体"], "k": "「妹達（シスターズ）」は美琴のDNAから作られた量産型の少女たち。ある実験のために生み出された。"},
+  {"g": "ラノベ", "q": "『禁書目録』でインデックスが着ている修道服の名前は？", "a": ["歩く教会", "聖骸布", "天使の衣", "神の鎧"], "k": "どんな攻撃も防ぐ強力な防御の服。ところが上条の右手に触れたことで壊れてしまった。"},
+  {"g": "ラノベ", "q": "『氷菓』に続く「古典部シリーズ」第2作は？", "a": ["愚者のエンドロール", "クドリャフカの順番", "遠まわりする雛", "ふたりの距離の概算"], "k": "映画研究会の未完成の自主映画の謎を、古典部の4人が解こうとする。2002年刊行。"},
+  {"g": "ラノベ", "q": "『禁書目録』で上条当麻のクラスの担任で、見た目が小学生のような先生は？", "a": ["月詠小萌", "黄泉川愛穂", "神裂火織", "オルソラ"], "k": "小萌先生は身長135cmほどで、子どもにしか見えない。黄泉川愛穂は体育教師で警備員（アンチスキル）。"},
+  {"g": "ラノベ", "q": "『禁書目録』で一方通行（アクセラレータ）の能力は？", "a": ["ベクトル操作", "空間移動", "電撃使い", "未元物質"], "k": "触れたものの力の向き（ベクトル）を自由に変える能力。学園都市レベル5の第1位。"},
+  {"g": "ラノベ", "q": "『SAO』でキリトが手に入れた、ただ1人しか持てないスキルは？", "a": ["二刀流", "神聖剣", "抜刀術", "射撃"], "k": "「ユニークスキル」の二刀流。ヒースクリフのユニークスキルは「神聖剣」。"},
+  {"g": "ラノベ", "q": "『SAO』でキリトとアスナの「娘」になるAIの少女は？", "a": ["ユイ", "リーファ", "シリカ", "リズベット"], "k": "ユイはSAOのプレイヤーの心のケアをするために作られたAI。2人を「パパ」「ママ」と呼ぶ。"},
+  {"g": "ラノベ", "q": "『アクセル・ワールド』で加速するときに唱える言葉は？", "a": ["バースト・リンク", "リンク・スタート", "ゲート・オープン", "セットアップ"], "k": "「バースト・リンク」で思考が加速する。「リンク・スタート」は『SAO』でゲームに入るときの言葉。"},
+  {"g": "ラノベ", "q": "『化物語』シリーズで忍野忍の大好物は？", "a": ["ミスタードーナツ", "ハーゲンダッツ", "カップ麺", "たいやき"], "k": "忍はドーナツ、とくにミスタードーナツが大好き。ゴールデンチョコレートがお気に入り。"},
+  {"g": "ラノベ", "q": "『刀語』でとがめの肩書きは？", "a": ["奇策士", "軍師", "陰陽師", "剣士"], "k": "尾張幕府の家鳴将軍家に仕える奇策士。刀を使わない七花を「刀」として連れていく。"},
+  {"g": "ラノベ", "q": "『バカテス』でクラス同士が召喚獣で戦うことを何と呼ぶ？", "a": ["試験召喚戦争", "クラス対抗戦", "召喚大会", "テスト戦争"], "k": "「試召戦争」とも略される。勝ったクラスは負けたクラスの教室の設備を手に入れられる。"},
+  {"g": "ラノベ", "q": "『俺妹』で高坂桐乃が大好きなアニメは？", "a": ["星くず☆うぃっちメルル", "マスケラ", "らき☆すた", "カードキャプターさくら"], "k": "女児向けの魔法少女アニメ「メルル」。黒猫は「マスケラ」が好きで、2人はよく言い争いになる。"},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』でルイズの故郷の国は？", "a": ["トリステイン", "ゲルマニア", "ガリア", "アルビオン"], "k": "ハルケギニアにあるトリステイン王国。キュルケはゲルマニア、タバサはガリアの出身。"},
+  {"g": "ラノベ", "q": "『デュラララ!!』で平和島静雄の仕事は？", "a": ["借金の取り立て", "バーテンダー", "情報屋", "運び屋"], "k": "バーテン服を着ているが、仕事は田中トムと組んでする取り立て。バーテン服は弟の幽からもらったもの。"},
+  {"g": "ラノベ", "q": "『ダンまち』でベルが持つ、成長が早くなるスキルは？", "a": ["憧憬一途", "英雄願望", "怪物祭", "神の恩恵"], "k": "アイズへのあこがれの強さに応じて成長が早くなるスキル「憧憬一途（リアリス・フレーゼ）」。"},
+  {"g": "ラノベ", "q": "『リゼロ』でレムとラムの種族は？", "a": ["鬼族", "エルフ", "獣人", "魔女"], "k": "ロズワール邸で働く双子のメイドは鬼族。青い髪がレム、ピンクの髪がラム。"},
+  {"g": "ラノベ", "q": "『オーバーロード』でアインズの見た目は？", "a": ["骸骨の魔法使い", "吸血鬼", "竜", "スライム"], "k": "ゲーム内のアバターのまま異世界に来たため、骸骨の姿をした「死の支配者（オーバーロード）」になっている。"},
+  {"g": "ラノベ", "q": "『ログ・ホライズン』でシロエにつけられたあだ名は？", "a": ["腹ぐろメガネ", "黒の剣士", "魔王", "参謀長"], "k": "策略が得意で、メガネをかけていることから。シロエはギルド「記録の地平線（ログ・ホライズン）」を作る。"},
+  {"g": "ラノベ", "q": "『IS』で織斑一夏の専用機は？", "a": ["白式", "紅椿", "打鉄", "ブルー・ティアーズ"], "k": "白い機体の白式（びゃくしき）。紅椿は篠ノ之箒、ブルー・ティアーズはセシリアの機体。"},
+  {"g": "ラノベ", "q": "『デート・ア・ライブ』で夜刀神十香の大好物は？", "a": ["きなこパン", "メロンパン", "たいやき", "カレー"], "k": "十香は人間界の食べ物、とくにきなこパンが大好き。メロンパンは『灼眼のシャナ』のシャナの好物。"},
+  {"g": "ラノベ", "q": "『ストライク・ザ・ブラッド』で姫柊雪菜の武器の槍は？", "a": ["雪霞狼", "贄殿遮那", "雪月花", "獅子王"], "k": "獅子王機関から与えられた槍。魔力を打ち消す力がある。"},
+  {"g": "ラノベ", "q": "『はたらく魔王さま！』で勇者エミリアが日本でしている仕事は？", "a": ["コールセンター", "ファストフード店", "コンビニ", "塾講師"], "k": "遊佐恵美として、携帯電話会社のコールセンターで働いている。魔王はファストフード店でアルバイト。"},
+  {"g": "ラノベ", "q": "『冴えカノ』で安芸倫也たちのゲーム制作サークルの名前は？", "a": ["blessing software", "Key", "TYPE-MOON", "07th Expansion"], "k": "倫也が加藤恵をメインヒロインにしたギャルゲーを作るために立ち上げた同人サークル。"},
+  {"g": "ラノベ", "q": "『ニャル子さん』でクトゥグア星人の少女は？", "a": ["クー子", "ハス太", "ニャル子", "シャンタッ君"], "k": "炎を操るクー子はニャル子が大好き。ハス太はハスター星人の少年。"},
+  {"g": "ラノベ", "q": "『中二病でも恋がしたい！』で富樫勇太が中学時代に名乗っていた名前は？", "a": ["ダークフレイムマスター", "鳳凰院凶真", "ダークネスドラゴン", "邪王真眼"], "k": "中二病だった過去を隠して高校生活を送ろうとしたが、六花にその過去を知られてしまう。"},
+  {"g": "ラノベ", "q": "『ベン・トー』の主人公は？", "a": ["佐藤洋", "吉井明久", "羽瀬川小鷹", "杉崎鍵"], "k": "半額弁当の争奪戦に巻き込まれた高校生。仲間からは「変態」と呼ばれている。"},
+  {"g": "ラノベ", "q": "『スレイヤーズ』でリナにつけられた、ひどい呼び名は？", "a": ["ドラまた", "魔王の娘", "破壊魔", "赤い悪魔"], "k": "「ドラゴンもまたいで通る」の略。リナの暴れっぷりから生まれた呼び名。"},
+  {"g": "ラノベ", "q": "『フルメタ』で千鳥かなめが持つ特別な能力の持ち主の呼び名は？", "a": ["ウィスパード", "ニュータイプ", "フレイムヘイズ", "ミステス"], "k": "存在しないはずの技術の知識をささやかれる人。そのためかなめは敵組織に狙われ、宗介が護衛につく。"},
+  {"g": "ラノベ", "q": "『神様のメモ帳』でアリスがいつも飲んでいる飲み物は？", "a": ["ドクターペッパー", "コーラ", "紅茶", "牛乳"], "k": "アリスは部屋にこもってドクターペッパーを飲み続けている。"},
+  {"g": "ラノベ", "q": "『俺ガイル』で比企谷八幡が大好きな缶コーヒーは？", "a": ["MAXコーヒー", "ジョージア", "BOSS", "ワンダ"], "k": "千葉県民の八幡は、とても甘い缶コーヒー「MAXコーヒー」を愛飲している。"},
+  {"g": "ラノベ", "q": "『俺ガイル』で八幡が「天使」と呼ぶテニス部の男子は？", "a": ["戸塚彩加", "材木座義輝", "葉山隼人", "川崎沙希"], "k": "女の子のようにかわいらしい戸塚は男子。材木座は中二病の小説家志望、葉山はクラスの人気者。"},
+  {"g": "ラノベ", "q": "『緋弾のアリア』で神崎・H・アリアの大好物は？", "a": ["ももまん", "たいやき", "メロンパン", "きなこパン"], "k": "桃の形をしたまんじゅう「ももまん」。アリアは2丁拳銃と2本の刀を使う、Sランクの武偵。"},
+  {"g": "ラノベ", "q": "『幼女戦記』の主人公は？", "a": ["ターニャ・デグレチャフ", "リムル", "ルーデウス", "アインズ"], "k": "前世は合理主義のサラリーマン。「存在X」によって、戦争の続く世界に幼女として生まれ変わった。"},
+  {"g": "ラノベ", "q": "『転生したらスライムだった件』の主人公の前世の名前は？", "a": ["三上悟", "岩谷尚文", "佐藤和真", "ナツキ・スバル"], "k": "通り魔に刺されて死んだ37歳の会社員が、異世界のスライム・リムルに転生する。"},
+  {"g": "ラノベ", "q": "『無職転生』の主人公の名前は？", "a": ["ルーデウス", "リムル", "スバル", "カズマ"], "k": "34歳の無職の男性が、異世界でルーデウス・グレイラットとして生まれ変わり、人生をやり直す。"},
+  {"g": "ラノベ", "q": "『盾の勇者の成り上がり』で岩谷尚文の仲間になる亜人の少女は？", "a": ["ラフタリア", "フィーロ", "メルティ", "マイン"], "k": "尚文が奴隷として買ったタヌキ型の亜人の少女。フィーロは鳥の魔物「フィロリアル」の少女。"},
+  {"g": "ラノベ", "q": "『キノの旅』でキノに旅の技術を教えた人物の呼び名は？", "a": ["師匠", "先生", "マスター", "老人"], "k": "キノは森の家に住む「師匠」から、銃やサバイバルの技術を学んだ。"},
+  {"g": "ラノベ", "q": "『灼眼のシャナ』で坂井悠二の正体は？", "a": ["ミステス", "フレイムヘイズ", "紅世の王", "燐子"], "k": "悠二はすでに存在を喰われたトーチで、体の中に宝具「零時迷子」を宿す「ミステス」だった。"},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』で才人がいた元の世界は？", "a": ["日本", "アメリカ", "地球ではない星", "未来"], "k": "東京に住む高校生の才人は、ノートパソコンの修理帰りにルイズに召喚された。"},
+  {"g": "ラノベ", "q": "『狼と香辛料』でホロが何より大切にしている自分の体の一部は？", "a": ["尻尾", "耳", "牙", "爪"], "k": "ホロは自慢の尻尾の毛並みの手入れを欠かさない。"},
+  {"g": "ラノベ", "q": "『涼宮ハルヒ』シリーズで古泉一樹を送りこんだ組織は？", "a": ["機関", "SOS団の支部", "生徒会", "ゼーレ"], "k": "古泉は超能力者たちの組織「機関」から送られてきた。ハルヒの機嫌を損ねないように気を配っている。"},
+  {"g": "ラノベ", "q": "『SAO』でゲーム開始の日にキリトと知り合った、赤いバンダナの刀使いは？", "a": ["クライン", "エギル", "ヒースクリフ", "シンカー"], "k": "赤いバンダナがトレードマークのクライン。ゲーム開始の日にキリトと知り合った最初の友人。"},
+  {"g": "ラノベ", "q": "『魔法科高校の劣等生』で司波深雪が兄の達也を呼ぶときの言葉は？", "a": ["お兄様", "兄さん", "兄上", "にぃに"], "k": "深雪は兄を心から尊敬し「お兄様」と呼ぶ。優等生の深雪は新入生総代を務めた。"},
+  {"g": "ラノベ", "q": "『ノゲノラ』で空と白の兄妹の年齢差は？", "a": ["7歳差", "1歳差", "双子", "10歳差"], "k": "兄の空は18歳、妹の白は11歳。2人そろわないと何もできないほど仲がよい。"},
+  {"g": "ラノベ", "q": "『このすば』でダクネスの職業は？", "a": ["クルセイダー", "アークウィザード", "アークプリースト", "冒険者"], "k": "防御力は高いが攻撃がまったく当たらない騎士。めぐみんはアークウィザード、アクアはアークプリースト。"},
+  {"g": "ラノベ", "q": "『はがない』で柏崎星奈の父の仕事は？", "a": ["理事長", "医者", "社長", "政治家"], "k": "星奈の父は聖クロニカ学園の理事長。星奈は成績も運動も完璧なお嬢様だが、友達がいない。"},
+  {"g": "ラノベ", "q": "『ゴールデンタイム』のヒロイン・加賀香子が大学で追いかけている相手は？", "a": ["幼なじみの柳澤光央", "主人公の多田万里", "先輩の林田奈々", "サークルの先輩"], "k": "香子は幼なじみの光央を追いかけて同じ大学に入学した。その様子を見ていた万里と出会う。"},
+  {"g": "ラノベ", "q": "『GOSICK』でヴィクトリカの口ぐせは？", "a": ["退屈だ", "気になります", "不幸だ", "やれやれ"], "k": "図書館塔にこもるヴィクトリカは「退屈だ」とぼやき、一弥が持ち込む事件の謎で退屈をしのぐ。"},
+  {"g": "ラノベ", "q": "『涼宮ハルヒの憂鬱』でハルヒが自己紹介で呼びかけた相手に入っていないのは？", "a": ["魔法使い", "宇宙人", "未来人", "超能力者"], "k": "呼びかけたのは宇宙人・未来人・異世界人・超能力者の4つ。魔法使いは入っていない。"},
+  {"g": "アニメ", "q": "劇場版『涼宮ハルヒの消失』が公開された年は？", "a": ["2010年", "2008年", "2012年", "2006年"], "k": "原作第4巻『涼宮ハルヒの消失』をもとにした劇場版。京都アニメーションが制作した。"},
+  {"g": "アニメ", "q": "『けいおん！』で唯たちが通う高校は？", "a": ["桜が丘高校", "陵桜学園", "県立北高", "音ノ木坂学院"], "k": "私立桜が丘女子高等学校。陵桜学園は『らき☆すた』、県立北高は『ハルヒ』の学校。"},
+  {"g": "アニメ", "q": "『らき☆すた』の原作漫画の作者は？", "a": ["美水かがみ", "あずまきよひこ", "かきふらい", "蒼樹うめ"], "k": "4コマ漫画として連載された。かきふらいは『けいおん！』、蒼樹うめは『ひだまりスケッチ』の作者。"},
+  {"g": "アニメ", "q": "『化物語』のOP「恋愛サーキュレーション」を歌ったキャラクターは？", "a": ["千石撫子", "戦場ヶ原ひたぎ", "羽川翼", "八九寺真宵"], "k": "千石撫子役の花澤香菜が歌った。『化物語』ではヒロインごとに別のOP曲が用意されていた。"},
+  {"g": "アニメ", "q": "『まどか☆マギカ』で佐倉杏子が使う武器は？", "a": ["槍", "マスケット銃", "剣", "弓"], "k": "杏子は多節の槍を使う。マスケット銃は巴マミ、剣は美樹さやか、弓はまどか。"},
+  {"g": "アニメ", "q": "TVアニメ『進撃の巨人』（2013年）を制作したスタジオは？", "a": ["WIT STUDIO", "マッドハウス", "ボンズ", "ufotable"], "k": "プロダクション・アイジーから生まれたスタジオ。立体機動装置で飛び回る迫力ある映像が話題になった。"},
+  {"g": "アニメ", "q": "TVアニメ『ラブライブ！』（2013年）を制作したスタジオは？", "a": ["サンライズ", "京都アニメーション", "A-1 Pictures", "シャフト"], "k": "ガンダムシリーズで知られるサンライズが制作した。ライブ場面には3DCGも使われた。"},
+  {"g": "アニメ", "q": "『ガールズ＆パンツァー』の監督は？", "a": ["水島努", "山田尚子", "新房昭之", "長井龍雪"], "k": "水島努は『侵略！イカ娘』『SHIROBAKO』などの監督も務めた。"},
+  {"g": "アニメ", "q": "『あの花』を制作したアニメスタジオは？", "a": ["A-1 Pictures", "京都アニメーション", "P.A.WORKS", "シャフト"], "k": "監督・長井龍雪、脚本・岡田麿里、キャラクターデザイン・田中将賀のチームで作られた。"},
+  {"g": "アニメ", "q": "TVアニメ『けいおん！』の監督は？", "a": ["山田尚子", "水島努", "長井龍雪", "石原立也"], "k": "京都アニメーションの山田尚子。のちに『たまこまーけっと』や映画『聲の形』も監督した。"},
+  {"g": "ギャルゲ", "q": "『リトルバスターズ！』で風紀委員長を務めるヒロインは？", "a": ["二木佳奈多", "三枝葉留佳", "来ヶ谷唯湖", "笹瀬川佐々美"], "k": "佳奈多は規律にきびしい風紀委員長。三枝葉留佳とは深い関係がある。"},
+  {"g": "ギャルゲ", "q": "『STEINS;GATE』が最初に発売された年は？", "a": ["2009年", "2007年", "2011年", "2005年"], "k": "Xbox 360版が2009年に発売された。2011年にTVアニメ化された。"},
+  {"g": "ギャルゲ", "q": "『ひぐらしのなく頃に』の最初のエピソードが頒布された年は？", "a": ["2002年", "1999年", "2005年", "2008年"], "k": "2002年の夏のコミックマーケットで「鬼隠し編」が頒布された。同人ゲームとしては異例の大ヒットになった。"},
+  {"g": "ギャルゲ", "q": "『Fate/stay night』が発売された年は？", "a": ["2004年", "2001年", "2006年", "2008年"], "k": "TYPE-MOONの商業作品第1作。2006年にTVアニメ化された。"},
+  {"g": "ギャルゲ", "q": "Keyの『CLANNAD』が発売された年は？", "a": ["2004年", "2000年", "2002年", "2007年"], "k": "『Kanon』『AIR』に続くKeyの3作目。全年齢向けの作品として発売された。"},
+  {"g": "ギャルゲ", "q": "『リトルバスターズ！』が発売された年は？", "a": ["2007年", "2004年", "2010年", "2002年"], "k": "Keyの作品。2008年には新しいヒロインを加えた『リトルバスターズ！エクスタシー』が出た。"},
+  {"g": "ラノベ", "q": "『涼宮ハルヒの憂鬱』が刊行された年は？", "a": ["2003年", "2000年", "2006年", "1998年"], "k": "角川スニーカー文庫から刊行。2006年のTVアニメ化で大ブームになった。"},
+  {"g": "ラノベ", "q": "『灼眼のシャナ』の第1巻が刊行された年は？", "a": ["2002年", "1999年", "2005年", "2008年"], "k": "電撃文庫から刊行。2005年にTVアニメ化され、全3期が放送された。"},
+  {"g": "ラノベ", "q": "『とある魔術の禁書目録』の第1巻が刊行された年は？", "a": ["2004年", "2001年", "2007年", "2010年"], "k": "電撃文庫から刊行。2008年にTVアニメ化され、外伝『とある科学の超電磁砲』も人気を集めた。"},
+  {"g": "ラノベ", "q": "『キノの旅』の第1巻が刊行された年は？", "a": ["2000年", "1996年", "2003年", "2006年"], "k": "電撃文庫から刊行。短い話を集めた形式で、どこから読んでも楽しめる。"},
+  {"g": "ラノベ", "q": "『狼と香辛料』が受けた電撃小説大賞の賞は？", "a": ["銀賞", "大賞", "金賞", "選考委員奨励賞"], "k": "第12回電撃小説大賞の銀賞。2006年に第1巻が刊行された。"},
+  {"g": "ラノベ", "q": "『化物語』の単行本が最初に出たレーベルは？", "a": ["講談社BOX", "電撃文庫", "講談社文庫", "星海社FICTIONS"], "k": "2006年に講談社BOXから刊行された。イラストはVOFANが担当している。"},
+  {"g": "ラノベ", "q": "『ブギーポップは笑わない』が受けた電撃ゲーム小説大賞の賞は？", "a": ["大賞", "金賞", "銀賞", "佳作"], "k": "第4回電撃ゲーム小説大賞の大賞。1998年に刊行され、のちのライトノベルに大きな影響を与えた。"},
+  {"g": "ラノベ", "q": "『ゼロの使い魔』の第1巻が刊行された年は？", "a": ["2004年", "2001年", "2007年", "2010年"], "k": "MF文庫Jから刊行。2006年にTVアニメ化され、全4期が放送された。"},
+  {"g": "ラノベ", "q": "『とらドラ！』の第1巻が刊行された年は？", "a": ["2006年", "2003年", "2009年", "2001年"], "k": "電撃文庫から刊行。2008年にTVアニメ化された。"}
 ];
 /* 出題済みの問題を記録し、全問出し切るまで同じ問題を出さない（ページを読み直しても続きから） */
 const QKEY = "smokeBoard.quiz.v1";
@@ -2714,6 +3322,7 @@ $("quizBox").addEventListener("click", (e) => {
     const c = e.target.closest("[data-o]"); if (!c) return;
     quiz.pick = +c.dataset.o; quiz.done = true;
     renderQuiz();
+    if (gameAnswer(quiz.pick === 0)) return;
   }
   showQuizDetail();
 });
@@ -2760,6 +3369,222 @@ function quizTick() {
   if (sec) sec.textContent = Math.ceil(left / 1000);
 }
 setInterval(quizTick, 250);
+
+/* ---------- 連続正解のゲーム（コンボ → フィーバー → ぷちゅん → クイズジェネレーター → 100でクリア） ---------- */
+const GM = Object.assign({ comboFrom: 5, feverAt: 10, genAt: 20, stageEvery: 20, clearAt: 100, stageSec: [18, 14, 11, 8], idleTimeouts: 3, feverIdleMin: 10 }, CONFIG.game || {});
+const GAME = { combo: 0, fever: false, gen: false, busy: false, lastAt: 0 };
+const GKEY = "smokeBoard.game";
+function gameMem() { try { return JSON.parse(localStorage.getItem(GKEY) || "{}") || {}; } catch (e) { return {}; } }
+function gameSave(o) { try { localStorage.setItem(GKEY, JSON.stringify(Object.assign(gameMem(), o))); } catch (e) {} }
+const gameBusy = () => GAME.fever || GAME.gen || GAME.busy;
+const gcl = (x) => Math.max(0, Math.min(1, x)), gease = (x) => 1 - (1 - gcl(x)) ** 3;
+// 時間で進む演出を動かす（fn(秒) が false を返すまで毎フレーム呼ぶ）
+function playFx(fn, done) { let t0 = null; const step = (now) => { if (t0 === null) t0 = now; if (fn((now - t0) / 1000) === false) { if (done) done(); return; } requestAnimationFrame(step); }; requestAnimationFrame(step); }
+function comboColor(n) { return n >= 9 ? "#ffcc33" : n >= 7 ? "#a35bff" : "#05d9e8"; }
+function bumpBest() { if (GAME.combo > (gameMem().best || 0)) gameSave({ best: GAME.combo }); }
+function renderComboBadge() {
+  let bd = $("cbadge");
+  if (!bd) { bd = document.createElement("span"); bd.id = "cbadge"; bd.className = "cbadge"; $("slotTitle").after(bd); }
+  const on = GAME.combo >= GM.comboFrom && slideOrder()[slideIdx] === "quiz";
+  bd.hidden = !on;
+  if (on) { bd.style.setProperty("--cc", comboColor(GAME.combo)); bd.innerHTML = `${GAME.combo}<small>COMBO</small>`; }
+}
+function comboBand(n) {
+  const slot = document.querySelector(".fortune"), col = comboColor(n);
+  slot.style.setProperty("--cc", col);
+  slot.querySelectorAll(".cfxB").forEach((e) => e.remove());
+  const fx = document.createElement("div"); fx.className = "cfxB";
+  fx.innerHTML = `<div class="band"><div class="lines"></div><div class="inn"><b>${n}</b><strong>COMBO!!</strong></div></div>`;
+  slot.classList.remove("cglow"); void slot.offsetWidth; slot.classList.add("cglow");
+  slot.appendChild(fx); setTimeout(() => fx.remove(), 1700);
+}
+// 右下のクイズで答えたとき。true を返したら解説画面は自動で開かない（演出を見せるため）
+function gameAnswer(ok) {
+  if (GAME.busy || GAME.gen) return false;   // 演出中・ジェネレーター中の右下のクイズは数えない
+  GAME.lastAt = Date.now();
+  if (!ok) { GAME.combo = 0; if (GAME.fever) feverEnd(); renderComboBadge(); return false; }
+  GAME.combo++; bumpBest(); renderComboBadge();
+  if (GAME.combo >= GM.comboFrom) comboBand(GAME.combo);
+  if (GAME.fever && GAME.combo >= GM.genAt) { GAME.busy = true; setTimeout(puchun, 1500); return true; }
+  if (!GAME.fever && GAME.combo >= GM.feverAt) setTimeout(feverStart, 1000);
+  return GAME.combo >= GM.comboFrom;
+}
+function feverStart() {
+  if (GAME.fever) return;
+  GAME.fever = true; GAME.lastAt = Date.now();
+  const d = document.createElement("div"); d.id = "fvr";
+  const t = `FEVER TIME ／ ${GM.feverAt}問連続正解！ ／ 次に間違えるまで続きます ／ `;
+  d.innerHTML = `<div class="tint"></div><div class="flash"></div><div class="sweep"></div><div class="edge"></div><div class="ban"><b>FEVER</b></div><div class="mq"><div>${t.repeat(6)}</div></div>`;
+  document.body.appendChild(d);
+  setTimeout(() => { const b = d.querySelector(".ban"); if (b) b.remove(); }, 3000);
+}
+function feverEnd(instant) {
+  GAME.fever = false;
+  const d = $("fvr"); if (!d) return;
+  if (instant) { d.remove(); return; }
+  d.style.transition = "opacity .6s"; d.style.opacity = "0"; setTimeout(() => d.remove(), 650);
+}
+// フィーバー中に長い間だれも答えなければ、静かに終わる
+setInterval(() => { if (GAME.fever && !GAME.gen && !GAME.busy && Date.now() - GAME.lastAt > GM.feverIdleMin * 60e3) { GAME.combo = 0; feverEnd(); renderComboBadge(); } }, 30e3);
+
+// ぷちゅん：画面が止まってずれる → 一瞬で消える → 無音の暗闇 → 白黒反転が4回チカッ → 白に「20 COMBO」 → ジェネレーターへ
+function puchun() {
+  GAME.busy = true;
+  if (!$("modal").hidden) { onModalClose = null; closeModal(); }
+  const f = document.createElement("div"); f.id = "pz";
+  f.innerHTML = `<div class="inv"></div><div class="blk"></div><div class="line"></div><div class="wf"></div><div class="big"><b>${GAME.combo}</b><span>COMBO</span></div>`;
+  document.body.appendChild(f);
+  const q = (x) => f.querySelector(x), fit = $("fit"), fv = $("fvr"), cut = 1.4;
+  const flashes = [[4.0, 4.1], [4.6, 4.7], [5.1, 5.18], [5.35, 5.45]];
+  let opened = false;
+  playFx((T) => {
+    if (T > .6 && fv && !fv.dataset.frozen) { fv.dataset.frozen = 1; try { fv.getAnimations({ subtree: true }).forEach((a) => a.pause()); } catch (e) {} }
+    const dz = gcl((T - .6) / .8), fr = T > .6 && T < cut;
+    fit.style.transform = fr ? `translateX(${4 + 16 * dz}px) skewX(${-dz * 3}deg)` : "";
+    fit.style.filter = fr ? `saturate(${1 - dz * .8})` : "";
+    const ln = q(".line"); ln.style.opacity = (T >= cut && T < cut + .14) ? 1 : 0; ln.style.transform = `scaleX(${1 - gcl((T - cut) / .14)})`;
+    const on = flashes.some(([a, b]) => T >= a && T < b);
+    q(".blk").style.opacity = T < cut ? 0 : (T < 6.0 ? (on ? 0 : 1) : 0);
+    q(".inv").style.opacity = on ? 1 : 0;
+    q(".wf").style.opacity = T < 6.0 ? 0 : T < 7.0 ? 1 : 1 - gcl((T - 7.0) / .3);
+    const bg = q(".big"); bg.style.opacity = T >= 6.0 && T < 7.0 ? 1 : 0; bg.style.transform = `scale(${1.8 - .8 * gcl((T - 6.0) / .15)})`;
+    f.style.transform = (T > 6.0 && T < 6.4) ? `translate(${Math.sin(T * 120) * 16}px,${Math.cos(T * 90) * 12}px)` : "";
+    if (T >= 7.0 && !opened) { opened = true; feverEnd(true); genOpen(); }
+    if (opened) { const g = $("gen"); g.style.transform = `scale(${.6 + .4 * gease((T - 7.0) / .45)})`; }
+    return T < 7.5;
+  }, () => { f.remove(); const g = $("gen"); if (g) g.style.transform = ""; GAME.busy = false; genNext(); });
+}
+
+// クイズジェネレーター（画面全体がクイズになる）
+const GSTAGES = [["#ffcc33", "#ff9f1a", "255,204,51"], ["#ff4d2e", "#ff1f6b", "255,77,46"], ["#b26bff", "#7a3dff", "178,107,255"], ["#e8eef8", "#8fa3c7", "232,238,248"]];
+const stageOf = (n) => Math.max(0, Math.min(GSTAGES.length - 1, Math.floor((n - GM.genAt) / GM.stageEvery)));
+let genQ = null, genTimer = null, genIdle = 0;
+function genOpen() {
+  GAME.gen = true; genIdle = 0;
+  const g = document.createElement("div"); g.id = "gen";
+  g.innerHTML = `<div class="gbox"><div class="g1"><div class="spot"></div>
+    <div class="top"><div class="tl"><div class="logo"><small>FEVER EXTRA STAGE</small>QUIZ GENERATOR</div><span class="stg"></span></div><div class="cmb"><b></b><span>COMBO</span></div></div>
+    <div class="qbox"><div class="meta"></div><div class="q"></div></div><div class="chs"></div>
+    <div class="bot"><span>のこり時間</span><div class="bar"><i></i></div><span class="rest"></span></div><div class="msg"></div></div></div>`;
+  document.body.appendChild(g);
+  g.querySelector(".chs").addEventListener("click", genPick);
+  genFit(); genTheme();
+}
+function genFit() {
+  const b = document.querySelector("#gen .gbox"); if (!b) return;
+  const sc = Math.min(innerWidth / 1180, innerHeight / 780);
+  b.style.transform = `translate(${(innerWidth - 1180 * sc) / 2}px,${(innerHeight - 780 * sc) / 2}px) scale(${sc})`;
+}
+window.addEventListener("resize", genFit);
+function genTheme() {
+  const g = $("gen"); if (!g) return;
+  const st = stageOf(GAME.combo), [c, d, r] = GSTAGES[st];
+  g.style.setProperty("--gc", c); g.style.setProperty("--gd", d); g.style.setProperty("--gr", r);
+  g.querySelector(".stg").textContent = `STAGE ${st + 1}`;
+  g.querySelector(".cmb b").textContent = GAME.combo;
+  g.querySelector(".rest").textContent = `ゲームクリアまで あと${Math.max(0, GM.clearAt - GAME.combo)}`;
+}
+function genNext() {
+  const g = $("gen"); if (!g || !GAME.gen) return;
+  const item = nextQuizItem().item, order = shuffle([0, 1, 2, 3]), sec = GM.stageSec[stageOf(GAME.combo)] || 10;
+  genQ = { item, order, start: Date.now(), ms: sec * 1000, done: false };
+  g.querySelector(".meta").innerHTML = `<span>第${GAME.combo + 1}問</span><span>${esc(item.g)}</span><span>${sec}秒</span>`;
+  const qe = g.querySelector(".q"); qe.textContent = item.q; qe.classList.toggle("lg", [...item.q].length > 30);
+  const cols = ["#ff3d7f", "#05d9e8", "#f9f002", "#3dff8b"];
+  g.querySelector(".chs").innerHTML = order.map((oi, j) => `<div data-o="${oi}" style="--c:${cols[j]}"><b>${"ABCD"[j]}</b><span>${esc(item.a[oi])}</span></div>`).join("");
+  g.querySelector(".msg").textContent = "";
+  genTheme();
+  clearInterval(genTimer);
+  genTimer = setInterval(() => {
+    if (!genQ || genQ.done) return;
+    const left = Math.max(0, genQ.ms - (Date.now() - genQ.start));
+    g.querySelector(".bar i").style.width = (left / genQ.ms * 100).toFixed(1) + "%";
+    if (left === 0) genTimeout();
+  }, 100);
+}
+function genReveal(pick) {
+  const g = $("gen"); genQ.done = true; clearInterval(genTimer);
+  g.querySelectorAll(".chs div").forEach((d) => { const oi = +d.dataset.o; d.classList.add(oi === 0 ? "ok" : pick === oi ? "ng" : "dim"); });
+}
+function genPick(e) {
+  const c = e.target.closest("[data-o]"); if (!c || !genQ || genQ.done || GAME.busy) return;
+  const oi = +c.dataset.o; genReveal(oi); genIdle = 0; GAME.lastAt = Date.now();
+  const g = $("gen");
+  if (oi !== 0) { g.querySelector(".msg").textContent = `残念… ${GAME.combo} COMBOで終了`; setTimeout(genEnd, 1600); return; }
+  GAME.combo++; bumpBest();
+  const cb = g.querySelector(".cmb b"); cb.textContent = GAME.combo; cb.classList.remove("pop"); void cb.offsetWidth; cb.classList.add("pop");
+  g.querySelector(".rest").textContent = `ゲームクリアまで あと${Math.max(0, GM.clearAt - GAME.combo)}`;
+  if (GAME.combo >= GM.clearAt) { GAME.busy = true; setTimeout(gameClear, 900); return; }
+  if ((GAME.combo - GM.genAt) % GM.stageEvery === 0) { GAME.busy = true; setTimeout(stageUp, 700); return; }
+  setTimeout(genNext, 1200);
+}
+function genTimeout() {
+  genReveal(null); genIdle++;
+  const g = $("gen");
+  if (genIdle >= GM.idleTimeouts) { g.querySelector(".msg").textContent = "時間切れが続いたので終了します"; setTimeout(genEnd, 2000); return; }
+  g.querySelector(".msg").textContent = "時間切れ（コンボはそのまま）"; setTimeout(genNext, 2200);
+}
+function genEnd() {
+  GAME.gen = false; GAME.busy = false; clearInterval(genTimer); genQ = null; GAME.combo = 0; feverEnd(true);
+  const g = $("gen"); if (g) { g.style.transition = "opacity .8s"; g.style.opacity = "0"; setTimeout(() => g.remove(), 850); }
+  renderComboBadge(); slideShownAt = Date.now(); nShownAt = Date.now();
+}
+// 40・60・80：光の帯の中に「STAGE UP」。途中でテーマの色が変わり、答える時間が短くなる
+function stageUp() {
+  const st = stageOf(GAME.combo), prev = GSTAGES[Math.max(0, st - 1)], cur = GSTAGES[st], sec = GM.stageSec[st];
+  const f = document.createElement("div"); f.id = "ms";
+  f.innerHTML = `<div class="dim"></div><div class="bars"></div><div class="txt"><b>${GAME.combo}</b><span>STAGE UP</span><em>STAGE ${st + 1} ― 答える時間は${sec}秒に</em></div>`;
+  document.body.appendChild(f);
+  const q = (x) => f.querySelector(x); let sw = false;
+  playFx((T) => {
+    const c = T < 1.9 ? prev : cur; f.style.setProperty("--mc", c[0]); f.style.setProperty("--mr", c[2]);
+    if (T >= 1.9 && !sw) { sw = true; genTheme(); }
+    q(".dim").style.opacity = T < .2 ? 0 : T < 2.6 ? gcl((T - .2) / .2) : 1 - gcl((T - 2.6) / .3);
+    q(".bars").style.transform = `scaleY(${T < .3 ? 0 : T < 2.6 ? gcl((T - .3) / .15) : 1 - gcl((T - 2.6) / .2)})`;
+    const tx = q(".txt"); tx.style.opacity = T < .4 ? 0 : T < 2.6 ? 1 : 1 - gcl((T - 2.6) / .2); tx.style.transform = `scale(${1.6 - .6 * gcl((T - .4) / .2)})`;
+    return T < 3.0;
+  }, () => { f.remove(); GAME.busy = false; genNext(); });
+}
+// 100コンボでクリア：0→100のカウントアップ → 衝撃の輪と「PERFECT」 → 金色のオーラと金の粉 → 静かにボードへ戻る
+function gameClear() {
+  clearInterval(genTimer);
+  const f = document.createElement("div"); f.id = "gend";
+  const dust = Array.from({ length: 90 }, () => ({ x: Math.random() * innerWidth, sp: 60 + Math.random() * 110, sw: 10 + Math.random() * 30, ph: Math.random() * 6.28, d: Math.random() * 1.2, s: .5 + Math.random() * 1.1 }));
+  f.innerHTML = `<div class="dim"></div><div class="aura"></div>${dust.map(() => '<i class="dust"></i>').join("")}<div class="rg"></div><div class="rg"></div>
+    <div class="cnt"><em>PERFECT</em><b>0</b><small>COMBO</small></div><div class="shine"></div><div class="wf"></div><div class="ty">THANK YOU FOR PLAYING</div>`;
+  document.body.appendChild(f);
+  const q = (x) => f.querySelector(x), qa = (x) => [...f.querySelectorAll(x)], dEl = qa(".dust"), N = GM.clearAt, H = innerHeight;
+  playFx((T) => {
+    q(".dim").style.opacity = T < .4 ? 0 : .9 * gcl((T - .4) / .4);
+    const n = T < .8 ? 0 : Math.round(N * (1 - (1 - gcl((T - .8) / 1.7)) ** 2));
+    const c = q(".cnt"); c.style.opacity = T < .8 ? 0 : 1; c.querySelector("b").textContent = n;
+    const br = T > 3 ? .02 * Math.sin((T - 3) * 3) : 0;
+    c.style.transform = `scale(${T < 2.5 ? .7 + .3 * n / N : 1.15 - .15 * gcl((T - 2.5) / .25) + br})`;
+    const em = c.querySelector("em"); em.style.opacity = gcl((T - 2.6) / .2); em.style.transform = `translateY(${30 * (1 - gease((T - 2.6) / .3))}px)`;
+    qa(".rg").forEach((r, i) => { const t0 = 2.5 + i * .18, k = gcl((T - t0) / .8); r.style.opacity = T < t0 ? 0 : 1 - k; r.style.transform = `scale(${1 + k * 7})`; });
+    q(".wf").style.opacity = T < 2.5 ? 0 : .9 * (1 - gcl((T - 2.5) / .35));
+    f.style.transform = (T > 2.5 && T < 2.9) ? `translate(${Math.sin(T * 130) * 16 * (1 - (T - 2.5) / .4)}px,${Math.cos(T * 97) * 12 * (1 - (T - 2.5) / .4)}px)` : "";
+    const sh = q(".shine"); sh.style.opacity = T > 3.4 && T < 4.2 ? 1 : 0; sh.style.left = (-300 + (innerWidth + 500) * gcl((T - 3.4) / .8)) + "px";
+    const au = q(".aura"); au.style.opacity = T < 2.5 ? 0 : gcl((T - 2.5) / .6) * (.85 + .15 * Math.sin(T * 2.4)); au.style.transform = `scale(${.6 + .4 * gease((T - 2.5) / 1.0) + .04 * Math.sin(T * 2.4)})`;
+    dEl.forEach((e, i) => { const p = dust[i], u = T - 2.6 - p.d; if (u < 0) return;
+      e.style.opacity = (.4 + .6 * Math.abs(Math.sin(u * 3 + p.ph))) * gcl(u / .4); e.style.transform = `translate(${p.x + Math.sin(u * 1.8 + p.ph) * p.sw}px,${H + 40 - p.sp * u * 1.6}px) scale(${p.s})`; });
+    q(".ty").style.opacity = gcl((T - 5.2) / .6);
+    if (T > 8.0) { const k = gcl((T - 8.0) / 1.2); f.style.opacity = 1 - k; const g = $("gen"); if (g) g.style.opacity = 1 - k; }
+    return T < 9.2;
+  }, () => {
+    f.remove(); const g = $("gen"); if (g) g.remove();
+    GAME.gen = false; GAME.busy = false; GAME.combo = 0; genQ = null; feverEnd(true);
+    const m = gameMem(); gameSave({ clear: ymd(new Date()), clears: (m.clears || 0) + 1 });
+    renderClear(); renderComboBadge(); slideShownAt = Date.now(); nShownAt = Date.now();
+  });
+}
+// クリアした日は、時計の横に「100 CLEAR」の札を出す
+function renderClear() {
+  const on = gameMem().clear === ymd(new Date()); let b = $("clrb");
+  if (on && !b) { b = document.createElement("span"); b.id = "clrb"; b.className = "clrb"; b.textContent = `${GM.clearAt} CLEAR`; document.querySelector(".clock .dline").appendChild(b); }
+  if (!on && b) b.remove();
+}
+setInterval(renderClear, 60e3);
 
 /* ---------- 注意表示 ---------- */
 function renderAlerts() {
@@ -2887,6 +3712,7 @@ $("time").addEventListener("click", (e) => {
 });
 
 tick(); setInterval(tick, 1000);
+renderClear();
 loadHolidays().then(renderTrain);
 setInterval(() => { if (holidaysLoadedOn !== ymd(new Date())) loadHolidays(); }, 10 * 60e3);
 loadTrainStatus(); setInterval(loadTrainStatus, CONFIG.train.statusRefreshMin * 60e3);
@@ -2904,19 +3730,19 @@ window.addEventListener("online", () => { loadWeather(); loadTrainStatus(); load
 if (document.fonts) document.fonts.ready.then(() => { fit(); shrinkToFit(".fc4 .it", 11); autoFit(); });
 [1500, 5000].forEach((ms) => setTimeout(() => { shrinkToFit(".fc4 .it", 11); autoFit(); }, ms));
 setInterval(autoFit, 60e3);
-setTimeout(() => location.reload(), CONFIG.fullReloadHours * 3600e3);
+(function reloadLater() { setTimeout(function again() { if (gameBusy() || hidOpen) setTimeout(again, 60e3); else location.reload(); }, CONFIG.fullReloadHours * 3600e3); })();
 
 /* ---------- 新しい版の自動反映 ----------
    GitHubのファイルを読み直し、下の BOARD_BUILD（版の印）が変わっていたらページを読み直す。
    詳細ウィンドウを開いている間は待つ */
-const BOARD_BUILD = "20261104-1520";
+const BOARD_BUILD = "20261104-1800";
 async function checkUpdate() {
   try {
     const r = await fetch(location.pathname + "?v=" + Date.now(), { cache: "no-store" });
     if (!r.ok) return;
     const m = (await r.text()).match(/const BOARD_BUILD = "([^"]+)"/);
     if (m && m[1] !== BOARD_BUILD) {
-      const go = () => { if ($("modal").hidden && !hidOpen) location.reload(); else setTimeout(go, 10e3); };
+      const go = () => { if ($("modal").hidden && !hidOpen && !gameBusy()) location.reload(); else setTimeout(go, 10e3); };
       go();
     }
   } catch (e) {}
