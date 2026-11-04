@@ -950,9 +950,9 @@ const CONFIG = {
   // ニュース欄を時間で切り替える："wsj"（WSJ日本版）/ "today"（今日は何の日）/ "market"（為替・暗号資産）/ "giga"（GIGAZINE）
   //   並べた順に切り替わる。スワイプでも切り替え可。詳細を開いている間は止まる
   newsSlides: { order: ["wsj", "today", "market"], seconds: 20 },
-  // 連続正解のゲーム：5コンボから演出、10でフィーバー、20でクイズジェネレーター、以後20ごとにステージアップ、100でクリア
+  // 連続正解のゲーム：5コンボから演出、10でフィーバー、15でクイズジェネレーター、以後20ごとにステージアップ（35・55・75）、99でクリア
   // stageSec＝ジェネレーターの各ステージで答えられる秒数。idleTimeouts＝ジェネレーターで何問続けて時間切れなら終わるか
-  game: { comboFrom: 5, feverAt: 10, genAt: 20, stageEvery: 20, clearAt: 100, stageSec: [18, 14, 11, 8], idleTimeouts: 3, feverIdleMin: 10 },
+  game: { comboFrom: 5, feverAt: 10, genAt: 15, stageEvery: 20, clearAt: 99, stageSec: [18, 14, 11, 8], idleTimeouts: 3, feverIdleMin: 10 },
   // 隠し画面（時計の秒を2秒以内に5回タップ）。moveIn＝入居日。
   // countFromOne を true にすると入居日を「1日目」として数える（false＝経過日数）
   hidden: { moveIn: "2024-08-10", countFromOne: true, taps: 5, idleCloseSec: 60 },
@@ -3525,8 +3525,8 @@ function quizTick() {
 }
 setInterval(quizTick, 250);
 
-/* ---------- 連続正解のゲーム（コンボ → フィーバー → ぷちゅん → クイズジェネレーター → 100でクリア） ---------- */
-const GM = Object.assign({ comboFrom: 5, feverAt: 10, genAt: 20, stageEvery: 20, clearAt: 100, stageSec: [18, 14, 11, 8], idleTimeouts: 3, feverIdleMin: 10 }, CONFIG.game || {});
+/* ---------- 連続正解のゲーム（コンボ → フィーバー → ぷちゅん → クイズジェネレーター → 99でクリア） ---------- */
+const GM = Object.assign({ comboFrom: 5, feverAt: 10, genAt: 15, stageEvery: 20, clearAt: 99, stageSec: [18, 14, 11, 8], idleTimeouts: 3, feverIdleMin: 10 }, CONFIG.game || {});
 const GAME = { combo: 0, fever: false, gen: false, busy: false, lastAt: 0 };
 const GKEY = DEMO ? "smokeBoard.demo.game" : "smokeBoard.game";
 let fxToken = 0;   // デモで「リセット」したとき、途中の演出を止めるための番号
@@ -3594,7 +3594,7 @@ function feverEnd(instant) {
 // フィーバー中に長い間だれも答えなければ、静かに終わる
 setInterval(() => { if (GAME.fever && !GAME.gen && !GAME.busy && Date.now() - GAME.lastAt > GM.feverIdleMin * 60e3) { GAME.combo = 0; feverEnd(); renderComboBadge(); } }, 30e3);
 
-// ぷちゅん：画面が止まってずれる → 一瞬で消える → 無音の暗闇 → 白黒反転が4回チカッ → 白に「20 COMBO」 → ジェネレーターへ
+// ぷちゅん：画面が止まってずれる → 一瞬で消える → 無音の暗闇 → 白黒反転が4回チカッ → 白に「15 COMBO」 → ジェネレーターへ
 function puchun() {
   GAME.busy = true;
   if (!$("modal").hidden) { onModalClose = null; closeModal(); }
@@ -3712,7 +3712,7 @@ function stageUp() {
     return T < 3.0;
   }, () => { f.remove(); GAME.busy = false; genNext(); });
 }
-// 100コンボでクリア：0→100のカウントアップ → 衝撃の輪と「PERFECT」 → 金色のオーラと金の粉 → 静かにボードへ戻る
+// 99コンボでクリア：0→99のカウントアップ → 衝撃の輪と「PERFECT」 → 金色のオーラと金の粉 → 静かにボードへ戻る
 function gameClear() {
   clearInterval(genTimer);
   const f = document.createElement("div"); f.id = "gend";
@@ -3754,7 +3754,7 @@ function gameClear() {
     renderClear(); renderComboBadge(); slideShownAt = Date.now(); nShownAt = Date.now();
   });
 }
-// クリアした日は、時計の横に「100 CLEAR」の札を出す
+// クリアした日は、時計の横に「99 CLEAR」の札を出す
 function renderClear() {
   const on = gameMem().clear === ymd(new Date()); let b = $("clrb");
   if (on && !b) { b = document.createElement("span"); b.id = "clrb"; b.className = "clrb"; b.textContent = `${GM.clearAt} CLEAR`; document.querySelector(".clock .dline").appendChild(b); }
@@ -3896,7 +3896,7 @@ function setupDemo() {
   const d = document.createElement("div"); d.id = "demo";
   d.innerHTML = `<div class="st"><span id="dmSt"></span><button class="tg" data-a="min">たたむ</button></div>
     <div class="row"><small>回答</small><button class="ok" data-a="ok">正解する</button><button class="ng" data-a="ng">不正解にする</button><button data-a="next">次の問題</button></div>
-    <div class="row"><small>ここから始める</small><button data-j="4">4コンボ</button><button data-j="9">9コンボ</button><button data-j="19">19コンボ</button><button data-j="39">39コンボ</button><button data-j="59">59コンボ</button><button data-j="79">79コンボ</button><button data-j="99">99コンボ</button><button data-a="reset">リセット</button></div>`;
+    <div class="row"><small>ここから始める</small><button data-j="4">4コンボ</button><button data-j="9">9コンボ</button><button data-j="14">14コンボ</button><button data-j="34">34コンボ</button><button data-j="54">54コンボ</button><button data-j="74">74コンボ</button><button data-j="98">98コンボ</button><button data-a="reset">リセット</button></div>`;
   document.body.appendChild(d);
   d.addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b) return;
@@ -3958,7 +3958,7 @@ setInterval(autoFit, 60e3);
 /* ---------- 新しい版の自動反映 ----------
    GitHubのファイルを読み直し、下の BOARD_BUILD（版の印）が変わっていたらページを読み直す。
    詳細ウィンドウを開いている間は待つ */
-const BOARD_BUILD = "20261104-1900";
+const BOARD_BUILD = "20261104-2140";
 async function checkUpdate() {
   try {
     const r = await fetch(location.pathname + "?v=" + Date.now(), { cache: "no-store" });
